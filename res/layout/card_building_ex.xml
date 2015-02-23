@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+   >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" >
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/CardTitle"
+                android:textColor="@color/black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="Title" />
+
+            <ImageButton
+                android:id="@+id/microGoalBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:src="@drawable/ic_action_labels"
+                android:background="@null" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/stroke"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" >
+
+        <TextView
+            android:id="@+id/location"
+            style="@style/CardText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="Location" 
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/buildingStat"
+            style="@style/CardText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textColor="@color/black"
+            android:text="" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/stroke" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background_cardbank"
+        android:gravity="fill_vertical"
+        android:orientation="horizontal"
+        android:padding="4dp" >
+        <TextView
+            android:id="@+id/tourOrder"
+            style="@style/CardText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="2dp"
+            android:text="1"
+            android:textColor="@color/black"
+            android:textSize="60sp" />
+        
+        
+        <RelativeLayout 
+  	android:layout_width="wrap_content"
+  	android:layout_height="wrap_content"
+  	>
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="113dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/url1" />
+        <ImageView
+            android:id="@+id/photoLock"
+            android:layout_width="113dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_action_secure"
+            android:background="@color/black_overlay" />
+</RelativeLayout>
+        <TextView
+            android:id="@+id/description"
+            style="@style/CardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="end"
+            android:maxLines="8"
+            android:textColor="@color/black"
+            android:text="Description" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/stroke"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" >
+
+        <TextView
+            android:id="@+id/climbingStatus"
+            style="@style/CardText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="left"
+            android:text="Climbing status" 
+            android:textColor="@color/black"/>
+
+        <ProgressBar
+            android:id="@+id/progressBarClimb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/stroke"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="71dp" 
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        >
+
+        <TextView
+            android:id="@+id/textModalita"
+            style="@style/CardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Modalità: " 
+            android:textColor="@color/black"/>
+
+        <Button
+            android:id="@+id/socialClimbButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textModalita"
+            android:layout_toLeftOf="@+id/teamVsTeamButton"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/accent"
+            android:text="Social\nClimb" />
+
+        <Button
+            android:id="@+id/teamVsTeamButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignTop="@+id/socialClimbButton"
+            android:layout_centerHorizontal="true"
+            android:minLines="2"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/accent"
+            
+            android:text="Team \nvs Team" />
+
+        <Button
+            android:id="@+id/socialChallengeButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/teamVsTeamButton"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/accent"
+            
+            android:text="Social\nChallenge" />
+
+    </RelativeLayout>
+
+</LinearLayout>

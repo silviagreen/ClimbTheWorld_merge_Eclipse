@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:climbtheworld="http://schemas.android.com/apk/res-auto" >
+ 
+     <item
+        android:id="@+id/itemUpdate"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/update"
+        climbtheworld:showAsAction="ifRoom">
+    </item>
+    
+    <item
+        android:id="@+id/itemMicroGoal"
+        android:icon="@drawable/ic_action_labels_light"
+        android:title="@string/microGoal"
+        climbtheworld:showAsAction="ifRoom"
+   >
+    </item>
+    
+    <item
+        android:id="@+id/itemHelp"
+        android:icon="@drawable/ic_action_help"
+        android:title="@string/help"
+        climbtheworld:showAsAction="ifRoom"
+   >
+    </item>
+    
+   
+    
+     
+    <!--         android:onClick="onUpdate"
+     -->
+
+</menu>

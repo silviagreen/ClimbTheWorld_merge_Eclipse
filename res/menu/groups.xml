@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:climbtheworld="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.unipd.nbeghin.climbtheworld.GroupsActivity" >
+
+  <!--   <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        climbtheworld:showAsAction="never"/> 
+    
+    <item 
+        android:id="@+id/add_group"
+        android:icon="@drawable/ic_action_new"
+        android:title="Add Group"
+        android:onClick="onCreateNewGroup"
+        climbtheworld:showAsAction="ifRoom"/> -->
+
+</menu>

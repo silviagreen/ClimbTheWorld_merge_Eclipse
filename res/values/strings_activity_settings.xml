@@ -1,0 +1,44 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <string-array name="vstep_for_rstep_titles">
+        <item>1 real step = 1 step</item>
+        <item>1 real step = 4 step</item>
+        <item>1 real step = 8 step</item>
+        <item>1 real step = 10 step</item>
+        <item>1 real step = 50 step</item>
+        <item>1 real step = 100 step</item>
+    </string-array>
+    <string-array name="vstep_for_rstep_values">
+        <item>1</item>
+        <item>4</item>
+        <item>8</item>
+        <item>10</item>
+        <item>50</item>
+        <item>100</item>
+    </string-array>
+    <string-array name="steps_height_titles">
+        <item>Low steps</item>
+        <item>Normal steps</item>
+        <item>High steps</item>
+        <item>Huge steps</item>
+    </string-array>
+    <string-array name="steps_height_values">
+        <item>14</item>
+        <item>17</item>
+        <item>21</item>
+        <item>25</item>
+    </string-array>
+        <string-array name="difficulty_titles">
+        <item>@string/easy</item><!--  1 real step = 100 game step -->
+        <item>@string/normal</item><!-- 1 real step = 10 game step -->
+        <item>@string/hard</item><!-- 1 real step = 1 game step -->
+    </string-array>
+    <string-array name="difficulty_values">
+        <item>100</item>
+        <item>10</item>
+        <item>1</item>
+    </string-array>
+
+</resources>

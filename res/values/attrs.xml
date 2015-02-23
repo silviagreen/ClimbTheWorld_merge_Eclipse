@@ -1,0 +1,32 @@
+<resources>
+
+    <!--
+         Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels.
+    -->
+    <declare-styleable name="ButtonBarContainerTheme">
+<!--         <attr name="buttonBarStyle" format="reference" /> -->
+<!--         <attr name="buttonBarButtonStyle" format="reference" /> -->
+    </declare-styleable>
+    
+     <declare-styleable name="HoloCircleSeekBar">
+        <attr name="wheel_size" format="integer" />
+        <attr name="pointer_size" format="integer" />
+        <attr name="max" format="integer"></attr>
+        <attr name="show_text" format="boolean"></attr>
+        <attr name="start_angle" format="integer"></attr>
+        <attr name="end_angle" format="integer"></attr>
+        <attr name="text_size" format="integer"></attr>
+        <attr name="init_position" format="integer"></attr>
+        <attr name="color_seekbar" format="string"></attr>
+        <attr name="wheel_active_color" format="string"></attr>
+        <attr name="wheel_unactive_color" format="string"></attr>
+        <attr name="pointer_color" format="string"></attr>
+        <attr name="pointer_halo_color" format="string"></attr>
+        <attr name="text_color" format="string"></attr>
+        <attr name="show_percent_symbol" format="boolean" />        
+    </declare-styleable>  
+
+</resources>

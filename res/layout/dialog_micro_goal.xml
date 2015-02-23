@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:padding="12dp" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal" >
+
+        <!-- This is for the info image -->
+
+        <ImageView
+            android:id="@+id/imageGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_action_labels" />
+
+        <!-- Title -->
+
+        <TextView
+            android:id="@+id/tvmessagedialogtitle"
+            android:layout_width="184dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dip"
+            android:layout_weight="0.01"
+            android:padding="8dp"
+            android:text="@string/title_dialog"
+            android:textColor="@color/accent"
+            android:textSize="22sp"
+            android:textStyle="normal"
+            android:typeface="normal" />
+<!--              android:textColor="#ff33b5e5" -->
+    </LinearLayout>
+
+    <!-- Underline with this bluish color -->
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#ff33b5e5" 
+        android:visibility="gone"/>
+
+    <!-- The message -->
+
+    <TextView
+        android:id="@+id/textReward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="left"
+        android:padding="8dp"
+        android:text="Reward"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        android:typeface="normal" />
+<!--          android:textColor="#343434" -->
+
+    <TextView
+        android:id="@+id/tvmessagedialogtext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="left"
+        android:padding="8dp"
+        android:text="Message"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        android:typeface="normal" />
+<!--          android:textColor="#343434" -->
+
+    <TableLayout
+        android:id="@+id/checkBoxesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                        android:textSize="14sp"
+                
+                android:textColor="@color/secondary_text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                        android:textSize="14sp"
+                
+                android:textColor="@color/secondary_text" />
+        </TableRow>
+    </TableLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBarDialog"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:id="@+id/textPercentageDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:text="%"
+                android:textSize="14sp"
+        
+        android:textColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <!-- Yes button -->
+
+        <Button
+            android:id="@+id/bmessageDialogYes"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="4dip"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="end"
+            android:padding="8dp"
+            android:text="@string/accept"
+            android:textAllCaps="true"
+            android:textColor="@color/accent"
+            android:textSize="14sp" />
+        <!--
+               android:textColor="#343434"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:typeface="normal" 
+            android:background="@color/com_facebook_picker_search_bar_background"
+        -->
+
+
+        <!-- No Button -->
+    </LinearLayout>
+
+</LinearLayout>

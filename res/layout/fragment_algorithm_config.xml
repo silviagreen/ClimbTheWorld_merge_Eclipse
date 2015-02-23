@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>    
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"    
+    xmlns:staggered="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"    
+    android:background="@color/white">
+    
+    <com.etsy.android.grid.StaggeredGridView
+        android:id="@+id/alg_conf_gridview"
+   	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/green_picker"
+        android:background="@color/white"
+        android:gravity="center"
+        android:stretchMode="columnWidth"        
+        staggered:column_count="4"
+        staggered:item_margin="1dp"/>
+    
+    <!--  <android.widget.GridView 
+        android:id="@+id/alg_conf_gridview"
+        android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+    	android:gravity="center"
+        android:layout_above="@+id/button1"
+        android:layout_alignParentLeft="true" 
+        android:numColumns="4"
+   		android:stretchMode="columnWidth"
+   		android:background="#FFFFFF"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
+        android:visibility="visible"/>   -->
+ 
+
+    <TextView
+        android:id="@+id/choose_color_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"        
+        android:layout_centerHorizontal="true"
+        android:paddingTop="12dp"
+        android:paddingLeft="8dp"
+        android:text="@string/choose_color"
+        android:layout_marginBottom="10dp"
+        android:paddingBottom="16dp"
+        android:textColor="#87000000" />
+
+    <TextView
+        android:id="@+id/green_picker"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/choose_color_text"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rectangle_shape"
+        android:clickable="true"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:onClick="selectAction"
+        android:text="@string/green_time_slot"/>
+
+    <TextView
+        android:id="@+id/yellow_picker"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/alg_conf_gridview"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/rectangle_shape"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="selectAction"
+        android:text="@string/yellow_time_slot"
+        android:textAllCaps="true" />
+
+    <TextView
+        android:id="@+id/red_picker"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/alg_conf_gridview"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/rectangle_shape"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="selectAction"
+        android:text="@string/red_time_slot"
+        android:textAllCaps="true" />
+    
+</RelativeLayout>

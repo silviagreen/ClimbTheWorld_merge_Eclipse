@@ -1,0 +1,49 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView_endconfig"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:fillViewport="true" 
+    android:background="@color/white" > 
+    
+<RelativeLayout
+    android:id="@+id/lyt_endconfig"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <include
+        android:id="@+id/include1"
+        layout="@layout/activity_end_toolbar" />
+
+    <TextView
+        android:id="@+id/endConfigLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/include1"
+        android:text="@string/lab_endconfig"
+        android:textColor="#87000000"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="36dp"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btt_endConfig"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/endConfigLabel"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="right"
+        android:padding="8dp"
+         android:textAllCaps="true"
+        android:layout_marginRight="16dp"
+            android:layout_marginTop="4dip"
+        android:text="@string/btt_ok"
+        android:textSize="14sp"
+        android:textColor="@color/accent" />
+
+</RelativeLayout>
+
+</ScrollView>

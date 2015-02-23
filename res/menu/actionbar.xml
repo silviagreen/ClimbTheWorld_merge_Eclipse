@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:climbtheworld="http://schemas.android.com/apk/res-auto" >
+
+    <!-- 
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/search"
+        climbtheworld:actionViewClass="android.support.v7.widget.SearchView"
+        climbtheworld:showAsAction="ifRoom|collapseActionView">
+    </item>
+     -->
+    
+    <item
+        android:id="@+id/itemProfile"
+        android:icon="@drawable/ic_action_user"
+        android:onClick="onShowActionProfile"
+        android:title="@string/profile"
+        climbtheworld:showAsAction="ifRoom">
+    </item>
+     <item
+        android:id="@+id/show_algorithm_log"
+        android:title="Log"
+   	    android:onClick="onShowLog"
+        climbtheworld:showAsAction="ifRoom">
+    </item>
+    <item
+        android:id="@+id/itemSettings"
+        android:onClick="onShowSettings"
+        android:title="@string/settings"
+        climbtheworld:showAsAction="never">
+    </item>
+   <!--  <item
+        android:id="@+id/itemInviteFacebookFriends"
+        android:onClick="onInviteFacebookFriends"
+        android:title="@string/invite_friends"
+        climbtheworld:showAsAction="never">
+    </item> -->
+    
+      <item
+        android:id="@+id/itemNotifications"
+        android:onClick="downloadFBNotification"
+        android:title="@string/FB_notification"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    <item
+        android:id="@+id/itemDemo"
+        android:onClick="showDemo"
+        android:title="@string/how_to"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    <item
+        android:id="@+id/itemShareDb"
+        android:onClick="onShareDb"
+        android:title="Share db[D]"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    <item
+        android:id="@+id/itemShareAnr"
+        android:onClick="onShareAnr"
+        android:title="Share Anr[D]"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    <item
+        android:id="@+id/itemShareLog"
+        android:onClick="onShareLog"
+        android:title="Share LogFile[D]"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    
+    <!-- <item
+        android:id="@+id/itemGroups"
+        android:onClick="onShowGroups"
+        android:title="@string/groups"
+        climbtheworld:showAsAction="never">
+    </item> -->
+    
+  
+    
+  
+    <!-- onUpdateNotifications -->
+
+</menu>

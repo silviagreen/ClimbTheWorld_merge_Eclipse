@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.unipd.nbeghin.climbtheworld.GroupsActivity" >
+
+    <!--
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" 
+    -->
+
+    <EditText
+        android:id="@+id/insertName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/textCreator"
+        android:layout_below="@+id/textCreator"
+        android:ems="10" />
+
+    <ExpandableListView
+        android:id="@+id/groupsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/insertName"
+        android:layout_centerHorizontal="true" >
+
+    </ExpandableListView>
+
+    <TextView
+        android:id="@+id/textCreator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/new_group" />
+
+    <ImageButton
+        android:id="@+id/addMembers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/groupsList"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/insertName"
+        android:src="@drawable/ic_action_add_group" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_alignBottom="@+id/insertName"
+        android:layout_alignParentLeft="true"
+        android:background="@color/gray" />
+
+</RelativeLayout>

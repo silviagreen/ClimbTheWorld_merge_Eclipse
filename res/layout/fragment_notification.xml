@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <com.fima.cardsui.views.CardUI
+        android:id="@+id/cardsNotification"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </com.fima.cardsui.views.CardUI>
+    
+   <TextView android:id="@+id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center"
+                            android:textColor="@color/black"
+            
+            android:text="@string/no_notifications"/>
+</RelativeLayout>
+
+
+   
