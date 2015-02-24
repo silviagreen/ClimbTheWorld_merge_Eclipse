@@ -1,6 +1,18 @@
 package org.unipd.nbeghin.climbtheworld;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.unipd.nbeghin.climbtheworld.models.User;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -9,6 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -28,11 +44,14 @@ import android.widget.LinearLayout;
 import android.widget.ProfilePictureView;
 import android.widget.TextView;
 
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
 /**
@@ -62,7 +81,7 @@ public class SettingsActivity extends PreferenceActivity {
 			onSessionStateChange(session, state, exception);
 		}
 	};
-	
+	private Bitmap userImage;
 	protected static Activity getThisActivity(){
 		return current_activity;
 	}
@@ -73,16 +92,88 @@ public class SettingsActivity extends PreferenceActivity {
 		Log.d("SettingsActivity", "onCreate");
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
-
+		getUserImage();
 		current_activity = SettingsActivity.this;
 		
 		
 		
 		Session session = Session.getActiveSession();
 		if (session != null && session.isOpened()) {
-			updateFacebookSession(session, session.getState());
+			//updateFacebookSession(session, session.getState());
 		}
 
+	}
+	
+	private void getUserImage(){
+		Bundle params = new Bundle();
+		params.putBoolean("redirect", false);
+		params.putString("height", "200");
+		params.putString("type", "small");
+		params.putString("width", "200");
+		/* make the API call */
+		new Request(
+		    Session.getActiveSession(),
+		    "/me/picture",
+		    params,
+		    HttpMethod.GET,
+		    new Request.Callback() {
+		        public void onCompleted(Response response) {
+		        	GraphObject graphObject = response.getGraphObject();
+		            FacebookRequestError error = response.getError();
+		            if (graphObject != null) { System.out.println(graphObject.toString());
+		            GraphObject res = response.getGraphObject(); 
+		            JSONObject array = (JSONObject) res.getProperty("data");
+		            try {
+						if (array.getString("url") != null) {
+							   try {
+								   String imageURL = ( array.getString("url")).replace("\\", "");
+							        new RetrieveImageTask(imageURL).execute();
+							        
+							    } catch (Exception e) {
+							        // Log exception
+							        userImage = null;
+							        e.printStackTrace();
+							    }
+						   }
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		           }
+		        }
+		    }
+		).executeAsync();
+	}
+	
+	class RetrieveImageTask extends AsyncTask<String, Void, Bitmap> {
+
+	    private Exception exception;
+	    String url_image;
+	    
+	    public RetrieveImageTask(String url){
+	    	this.url_image = url;
+	    }
+
+	    protected Bitmap doInBackground(String... urls) {
+	        try {
+	        	URL url = new URL(url_image);
+		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		        connection.setDoInput(true);
+		        connection.connect();
+		        InputStream input = connection.getInputStream();
+		        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+		        return ProfilePictureView.getRoundedBitmap(myBitmap);
+	        } catch (Exception e) {
+	            this.exception = e;
+	            return null;
+	        }
+	    }
+
+	    protected void onPostExecute(Bitmap myBitmap) {
+	    	userImage = myBitmap;
+			final Preference profile_name = findPreference("profile_name");
+	        profile_name.setIcon(new BitmapDrawable(getResources(), userImage));
+	    }
 	}
 
 	/**
@@ -132,15 +223,32 @@ public class SettingsActivity extends PreferenceActivity {
 	}
 
 	private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
-		updateFacebookSession(session, state);
+		//updateFacebookSession(session, state);
 	}
 	
+//	public Bitmap getUserPic(String userID) {
+//	    String imageURL;
+//	    Bitmap bitmap = null;
+//	    Log.d("PreferenceActivity", "Loading Picture");
+//	    imageURL = "http://graph.facebook.com/"+userID+"/picture?type=small";
+//	    try {
+//	        bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageURL).getContent());
+//	    } catch (Exception e) {
+//	        Log.d("TAG", "Loading Picture FAILED");
+//	        e.printStackTrace();
+//	    }
+//	    return bitmap;
+//	}
+//	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		((ProfilePictureView) findViewById(R.id.fb_profile_picture)).setPresetSize(-2);
 		final Preference profile_name = findPreference("profile_name");
-		profile_name.setIcon(((ProfilePictureView) findViewById(R.id.fb_profile_picture)).getProfileImage());
+		ProfilePictureView image = ((ProfilePictureView) findViewById(R.id.fb_profile_picture));
+		SharedPreferences pref = getSharedPreferences("UserSession", 0);
+		//profile_name.setIcon(new BitmapDrawable(getResources(), getUserPic(pref.getString("FBid", "none"))));
 		((LinearLayout) findViewById(R.id.lblFacebook)).setVisibility(View.GONE);
+		
 		super.onWindowFocusChanged(hasFocus);
 	}
 

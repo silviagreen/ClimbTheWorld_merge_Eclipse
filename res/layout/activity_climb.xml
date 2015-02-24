@@ -95,6 +95,7 @@
             android:layout_height="match_parent"
             android:thumb="@drawable/navigation_next_item"
             android:paddingBottom="30dp"
+            android:splitTrack="false" 
              />
         
         <android.widget.VerticalSeekBar

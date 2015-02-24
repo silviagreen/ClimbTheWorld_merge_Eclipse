@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -417,15 +418,15 @@ public class ProfilePictureView extends FrameLayout {
         }
     }
 
-    private void setImageBitmap(Bitmap imageBitmap) { System.out.println("setimage");
+    private void setImageBitmap(Bitmap imageBitmap) { 
         if (image != null && imageBitmap != null) {
             imageContents = imageBitmap; // Hold for save-restore cycles
             image.setImageBitmap(ProfilePictureView.getRoundedBitmap(imageBitmap));
         }
     }
     
-    public Drawable getProfileImage(){ if(image.getDrawable() == null) System.out.println(" null");
-    	return image.getDrawable();
+    public Drawable getProfileImage(){ 
+    	return new BitmapDrawable(getResources(), imageContents);
     }
 
     private void sendImageRequest(boolean allowCachedResponse) {

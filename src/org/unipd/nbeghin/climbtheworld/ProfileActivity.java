@@ -180,6 +180,7 @@ public class ProfileActivity extends ActionBarActivity implements NetworkRequest
 						if (user != null && profilePictureView != null) {
 							profilePictureView.setCropped(true);
 							profilePictureView.setProfileId(user.getId());
+							System.out.println("ID " + user.getId());
 						} else
 							System.err.println("no user");
 					}
