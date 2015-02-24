@@ -426,7 +426,15 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 			updateStats(); // update the view of current stats
 			if (win && !isCounterMode) {
-				new SaveProgressTask(AlarmUtils.getAlarm(appContext, settings.getInt("alarm_id", -1)), settings.getInt("artificialDayIndex", 0), true, true).execute(); // stopClassify(); // stop classifier service service
+				
+				//si recupera il prossimo alarm impostato
+				int next_alarm_id = settings.getInt("alarm_id", -1);
+				Alarm next_alarm = null;				
+				if(next_alarm_id!=-1){
+					next_alarm = AlarmUtils.getAlarm(appContext, next_alarm_id);
+				}
+				
+				new SaveProgressTask(next_alarm, settings.getInt("artificialDayIndex", 0), true, true).execute(); // stopClassify(); // stop classifier service service
 				((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.av_play); // set
 				findViewById(R.id.progressBarClimbing).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_out)); // hide
 				// progress
@@ -854,7 +862,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				return false;
 			}
 		});
-		secondSeekbar.hideStars();
 		secondSeekbar.setMax(building.getSteps());
 		current = (TextView) findViewById(R.id.textPosition);
 		for (int i = 1; i <= ClimbApplication.N_MEMBERS_PER_GROUP; i++) {
@@ -1918,7 +1925,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		//seekbarIndicator.setInitialGoldenStars(num_steps/unit);
 		
 		//calculate interval 
-		if(!isCounterMode){
 				int percentage = 5;
 				if(building.getSteps() < 6000)
 					percentage = 25;
@@ -1931,8 +1937,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
 				if(num_steps == building.getSteps()) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
-				
-	}
 		
 		super.onWindowFocusChanged(hasFocus);
 	}
@@ -2786,8 +2790,19 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		Editor editor = paused.edit();
 		editor.putBoolean("paused", true);
 		editor.commit();
-		if (samplingEnabled)
-			new SaveProgressTask(AlarmUtils.getAlarm(appContext, settings.getInt("alarm_id", -1)), settings.getInt("artificialDayIndex", 0), true, false).execute(); // this.finish();
+		if (samplingEnabled){
+			
+			//si recupera il prossimo alarm impostato
+			int next_alarm_id = settings.getInt("alarm_id", -1);
+			Alarm next_alarm = null;				
+			if(next_alarm_id!=-1){
+				next_alarm = AlarmUtils.getAlarm(appContext, next_alarm_id);
+			}
+			
+			new SaveProgressTask(next_alarm, settings.getInt("artificialDayIndex", 0), true, false).execute(); // this.finish();
+		}
+			
+			
 	}
 
 	private void saveBeforeQuit(boolean changes) {
@@ -2879,7 +2894,15 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		super.onDestroy();
 		uiHelper.onDestroy();
 		if (samplingEnabled) {
-			new SaveProgressTask(AlarmUtils.getAlarm(appContext, settings.getInt("alarm_id", -1)), settings.getInt("artificialDayIndex", 0), true, false).execute();
+			
+			//si recupera il prossimo alarm impostato
+			int next_alarm_id = settings.getInt("alarm_id", -1);
+			Alarm next_alarm = null;				
+			if(next_alarm_id!=-1){
+				next_alarm = AlarmUtils.getAlarm(appContext, next_alarm_id);
+			}
+						
+			new SaveProgressTask(next_alarm, settings.getInt("artificialDayIndex", 0), true, false).execute();
 		}
 	}
 
@@ -3170,8 +3193,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							ParseUtils.saveTeamDuel(teamDuel_parse, teamDuel);
 
 							Iterator<String> keys = myTeam.keys();
-							myTeamScores.clear(); //ADD
-
 							while (keys.hasNext()) {
 								String key = keys.next();
 								if (!key.equals(pref.getString("FBid", ""))) {
