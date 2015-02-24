@@ -29,14 +29,14 @@
         <TextView
             android:id="@+id/text"
             style="@style/CardText"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:lines="4"
             android:layout_weight="1"
             android:minLines="4"
             android:gravity="center|left"
-                            android:textColor="@color/black"
-            
-            android:text="Text\ntext\n text" />
+            android:textColor="@color/black"
+            android:text="Text\ntexttttttttttttttttttttttttttttttttttttttttt\ntext" />
 
         <ProgressBar
             android:id="@+id/progressBarNotf"

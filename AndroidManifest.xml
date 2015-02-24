@@ -130,7 +130,7 @@
             android:name=".GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:parentActivityName=".ClimbActivity"
-            android:theme="@style/Theme.AppCompat.Light" >
+             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.unipd.nbeghin.climbtheworld.ClimbActivity" />
@@ -139,7 +139,7 @@
             android:name=".PhotoPagerActivity"
             android:label="@string/title_activity_photo_pager_activity"
             android:parentActivityName=".GalleryActivity"
-            android:theme="@style/Theme.AppCompat.Light" >
+           >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.unipd.nbeghin.climbtheworld.GalleryActivity" />

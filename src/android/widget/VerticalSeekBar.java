@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +35,8 @@ public class VerticalSeekBar extends SeekBar {
 	 private int width = 0;
 	 private List<View> lines = new ArrayList<View>();
 	 private List<Bitmap> thumbs = new ArrayList<Bitmap>();
+	 
+	 private boolean show = true;
 	 
 	 private void setLists(){
 			RelativeLayout parent = (RelativeLayout) this.getParent();
@@ -82,7 +85,8 @@ public class VerticalSeekBar extends SeekBar {
 	protected void onDraw(Canvas c) {
 		c.rotate(-90);
 		c.translate(-getHeight(), 0);
-		if(lines.isEmpty() && thumbs.isEmpty()) setLists();
+		
+		if(lines.isEmpty() && thumbs.isEmpty() && show) setLists();
 
 		for(int i = 0; i < lines.size(); i++){
 			View v = lines.get(i);
@@ -141,8 +145,12 @@ public class VerticalSeekBar extends SeekBar {
 		perc_unit = unit;
 		Bitmap goldenStar = BitmapFactory.decodeResource(getResources(), R.drawable.gold_star);
 		for(int i = 0; i < finalPosition; i++)
-			thumbs.set(i, goldenStar);
+			
 		invalidate();
+	}
+	
+	public void hideStars(){
+		show = false;
 	}
 
 	/*

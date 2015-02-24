@@ -138,7 +138,7 @@ public class GalleryActivity extends BaseImageLoaderActivity implements AbsListV
 	
 	 @Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-	        Toast.makeText(this, "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
+	        //Toast.makeText(this, "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
 		 startImagePagerActivity(position);
 	  }
 }

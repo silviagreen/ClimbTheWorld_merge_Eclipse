@@ -854,6 +854,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				return false;
 			}
 		});
+		secondSeekbar.hideStars();
 		secondSeekbar.setMax(building.getSteps());
 		current = (TextView) findViewById(R.id.textPosition);
 		for (int i = 1; i <= ClimbApplication.N_MEMBERS_PER_GROUP; i++) {
@@ -1917,6 +1918,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		//seekbarIndicator.setInitialGoldenStars(num_steps/unit);
 		
 		//calculate interval 
+		if(!isCounterMode){
 				int percentage = 5;
 				if(building.getSteps() < 6000)
 					percentage = 25;
@@ -1929,6 +1931,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
 				if(num_steps == building.getSteps()) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
+				
+	}
 		
 		super.onWindowFocusChanged(hasFocus);
 	}
@@ -3166,6 +3170,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							ParseUtils.saveTeamDuel(teamDuel_parse, teamDuel);
 
 							Iterator<String> keys = myTeam.keys();
+							myTeamScores.clear(); //ADD
+
 							while (keys.hasNext()) {
 								String key = keys.next();
 								if (!key.equals(pref.getString("FBid", ""))) {
