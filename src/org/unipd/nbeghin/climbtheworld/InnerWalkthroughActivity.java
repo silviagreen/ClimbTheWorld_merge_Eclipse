@@ -145,22 +145,22 @@ public class InnerWalkthroughActivity extends Activity{
        	 switch (position) {
    			case 0:
    				title.setText(getString(R.string.demo2_title, "Social Climb"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.request);
    				textDown.setText(getString(R.string.demo2_slide10));
    				break;
    			case 1:
    				title.setText(getString(R.string.demo2_title, "Social Climb"));
-   				image.setImageResource(R.drawable.solo_play);	
+   				image.setImageResource(R.drawable.collaboration_thr);	
    				textDown.setText(getString(R.string.demo2_slide11));
    				break;
    			case 2:
    				title.setText(getString(R.string.demo2_title, "Social Climb"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.collaboration_update);
    				textDown.setText(getString(R.string.demo2_slide12));
    				break;
    			case 3:
    				title.setText(getString(R.string.demo2_title, "Social Climb"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.lock_win);
    				textDown.setText(getString(R.string.demo2_slide13));
    				break;
    			
@@ -171,22 +171,22 @@ public class InnerWalkthroughActivity extends Activity{
        	 switch (position) {
    			case 0:
    				title.setText(getString(R.string.demo2_title, "Social Challenge"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.request);
    				textDown.setText(getString(R.string.demo2_slide20));
    				break;
    			case 1:
    				title.setText(getString(R.string.demo2_title, "Social Challenge"));
-   				image.setImageResource(R.drawable.solo_play);	
+   				image.setImageResource(R.drawable.competition);	
    				textDown.setText(getString(R.string.demo2_slide21));
    				break;
    			case 2:
    				title.setText(getString(R.string.demo2_title, "Social Challenge"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.competition_update);
    				textDown.setText(getString(R.string.demo2_slide22));
    				break;
    			case 3:
    				title.setText(getString(R.string.demo2_title, "Social Challenge"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.lock_win);
    				textDown.setText(getString(R.string.demo2_slide23));
    				break;
    			
@@ -197,22 +197,22 @@ public class InnerWalkthroughActivity extends Activity{
        	 switch (position) {
    			case 0:
    				title.setText(getString(R.string.demo2_title, "Team vs Team"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.request);
    				textDown.setText(getString(R.string.demo2_slide30));
    				break;
    			case 1:
    				title.setText(getString(R.string.demo2_title, "Team vs Team"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.team_done);
    				textDown.setText(getString(R.string.demo2_slide31));
    				break;
    			case 2:
    				title.setText(getString(R.string.demo2_title, "Team vs Team"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.team_vs_team_thr);
    				textDown.setText(getString(R.string.demo2_slide32));
    				break;
    			case 3:
    				title.setText(getString(R.string.demo2_title, "Team vs Team"));
-   				image.setImageResource(R.drawable.solo_play);
+   				image.setImageResource(R.drawable.team_vs_team_update);
    				textDown.setText(getString(R.string.demo2_slide33));
    				break;
    			
