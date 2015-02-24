@@ -38,7 +38,7 @@ public class VerticalSeekBar extends SeekBar {
 	 
 	 private boolean show = true;
 	 
-	 private void setLists(){
+	 private void setLists(){ System.out.println("setto liste");
 			RelativeLayout parent = (RelativeLayout) this.getParent();
 			lines.add(parent.findViewById(R.id.redLine1));
 			lines.add(parent.findViewById(R.id.redLine2));
@@ -86,7 +86,7 @@ public class VerticalSeekBar extends SeekBar {
 		c.rotate(-90);
 		c.translate(-getHeight(), 0);
 		
-		if(lines.isEmpty() && thumbs.isEmpty() && show) setLists();
+		if(lines.size() < 4 && thumbs.size() < 4) setLists();
 
 		for(int i = 0; i < lines.size(); i++){
 			View v = lines.get(i);
@@ -145,7 +145,7 @@ public class VerticalSeekBar extends SeekBar {
 		perc_unit = unit;
 		Bitmap goldenStar = BitmapFactory.decodeResource(getResources(), R.drawable.gold_star);
 		for(int i = 0; i < finalPosition; i++)
-			
+			thumbs.set(i, goldenStar);
 		invalidate();
 	}
 	

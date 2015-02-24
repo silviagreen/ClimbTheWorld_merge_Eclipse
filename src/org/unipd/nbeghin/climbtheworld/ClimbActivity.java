@@ -1925,6 +1925,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		//seekbarIndicator.setInitialGoldenStars(num_steps/unit);
 		
 		//calculate interval 
+		if(!isCounterMode){ System.out.println("gioco");
 				int percentage = 5;
 				if(building.getSteps() < 6000)
 					percentage = 25;
@@ -1937,6 +1938,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
 				if(num_steps == building.getSteps()) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
+		}
 		
 		super.onWindowFocusChanged(hasFocus);
 	}
