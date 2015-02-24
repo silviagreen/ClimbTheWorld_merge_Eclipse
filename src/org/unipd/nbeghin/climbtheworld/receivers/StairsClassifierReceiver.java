@@ -77,6 +77,8 @@ public class StairsClassifierReceiver extends BroadcastReceiver {
 			if(climb!=null){ // && ClimbActivity.samplingEnabled){
 				Log.d(MainActivity.AppName,"STAIRS RECEIVER - refresh GUI:");
 				climb.refreshOnStep();
+
+				prefs.edit().putInt("steps_with_game_today",prefs.getInt("steps_with_game_today",0)+1).commit();
 			}
 		}
 		

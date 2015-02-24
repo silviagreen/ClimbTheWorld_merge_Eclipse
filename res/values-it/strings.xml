@@ -482,4 +482,7 @@
     
     <string name="lab_endconfig">Grazie!\n\nL\'app è stata configurata secondo le tue indicazioni.\nSe pensi di aver sbagliato qualcosa, non ti preoccupare: l\'app è intelligente!\n\nOra inizia subito a giocare!</string>
     	
+    <!-- Trigger notification -->   
+    <string name="trigger_text">Fai degli scalini giocando con l\'app!!</string>
+    
 </resources>

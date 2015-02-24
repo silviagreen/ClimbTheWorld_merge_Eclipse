@@ -93,13 +93,15 @@ public final class LogUtils {
     
     
     //
-    public static void offIntervalsTracking(Context context, SharedPreferences pref, int alarm_id){
+    public static void offIntervalsTracking(Context context, int alarm_id){
+    	
+    	//riferimento alle SharedPreferences
+    	SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
     	
     	//si considerano gli intervalli che non sono stati valutati durante il
 		//periodo di tempo in cui l'algoritmo non era attivo (a causa del device spento o del
     	//livello critico della batteria); è utile per tracciarli nel file di output e, se si
     	//vuole, per cambiare la loro valutazione
-
 		    	
     	Calendar time_now = Calendar.getInstance();
 		time_now.set(Calendar.HOUR_OF_DAY, 0);

@@ -47,7 +47,7 @@
             android:exported="false"/>
         
         <service
- 		    android:name="org.unipd.nbeghin.climbtheworld.services.SetNextAlarmIntentService"
+ 		    android:name="org.unipd.nbeghin.climbtheworld.services.SetNextAlarmTriggersIntentService"
   	        android:exported="false" />
         
         <service

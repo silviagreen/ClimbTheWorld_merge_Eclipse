@@ -1,31 +1,32 @@
 package org.unipd.nbeghin.climbtheworld.util;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.unipd.nbeghin.climbtheworld.AlgorithmConfigFragment;
+import org.unipd.nbeghin.climbtheworld.ClimbActivity;
 import org.unipd.nbeghin.climbtheworld.ClimbApplication;
 import org.unipd.nbeghin.climbtheworld.MainActivity;
 import org.unipd.nbeghin.climbtheworld.activity.recognition.ActivityRecognitionIntentService;
-import org.unipd.nbeghin.climbtheworld.comparator.AlarmComparator;
 import org.unipd.nbeghin.climbtheworld.db.DbHelper;
 import org.unipd.nbeghin.climbtheworld.models.Alarm;
 import org.unipd.nbeghin.climbtheworld.receivers.StairsClassifierReceiver;
 import org.unipd.nbeghin.climbtheworld.services.ActivityRecognitionRecordService;
 import org.unipd.nbeghin.climbtheworld.services.SamplingClassifyService;
+import org.unipd.nbeghin.climbtheworld.R;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,6 +37,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseIntArray;
 
@@ -275,7 +277,7 @@ public final class AlarmUtils {
     }
     */
     
-    public static Alarm getAlarm(Context context, int alarm_id){  //filtrare per id utente
+    public static Alarm getAlarm(Context context, int alarm_id){ 
     	
     	return DbHelper.getInstance(context).getAlarmDao().queryForId(alarm_id);
     }
@@ -349,47 +351,49 @@ public final class AlarmUtils {
 	
 	
 	
-    public static List<Alarm> getAllAlarms(Context context) { //filtrare per id utente
+    public static List<Alarm> getAllAlarms(Context context) {
     	
     	DbHelper helper = DbHelper.getInstance(context);
     	    	
     	return helper.getAlarmDao().queryForAll();  
     }
 	
+    
+    public static long countAlarms(Context context){
+    	
+    	DbHelper helper = DbHelper.getInstance(context);
+    	
+    	return helper.getAlarmDao().countOf(); 
+    }
+    
 
     /**
      * Sets up the next alarm; it is also called to initialize the first alarm.
      * @param context context of the application.
-     * @param alarms list of all alarms saved in the database.
      * @param takeAllAlarms boolean indicating if the algorithm have to take all the alarms saved in the database.
      * @param prevAlarmNotAvailable boolean indicating if the previous alarm is no longer available.
      * @param current_alarm_id id of the current alarm, previously set.
      */
-	@SuppressLint("NewApi") public static void setNextAlarm(Context context, List<Alarm> alarms, boolean takeAllAlarms, boolean prevAlarmNotAvailable, int current_alarm_id){
+	public static void setNextAlarm(Context context, boolean takeAllAlarms, boolean prevAlarmNotAvailable, int current_alarm_id){
 		//questo metodo serve per settare il prossimo alarm dopo averne consumato uno nell'apposito
 		//receiver; è chiamato inizialmente per	inizializzare il primo alarm
 		
+		//riferimento alle SharedPreferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		
+		//riferimento alla dao degli alarm
 		RuntimeExceptionDao<Alarm, Integer> alarmDao = DbHelper.getInstance(context).getAlarmDao();    	
 		
 		//si usa l'indice artificiale per il test dell'algoritmo (altrimenti l'indice del
 		//giorno si può ricavare dalla data corrente) 
 		int artificialIndex = prefs.getInt("artificialDayIndex", 0);//context.getSharedPreferences("appPrefs", 0).getInt("artificialDayIndex", 0);
-		
-		
+				
 		int alarm_artificial_day_index=0;
 		
+		//si recupera il numero di alarm salvati nel database
+		int alarms_number = prefs.getInt("alarms_number", 0);
+				
 		
-		if(ClimbApplication.logEnabled){
-			Log.d(MainActivity.AppName, "AlarmUtils - SetNextAlarm: list size " + alarms.size());
-			Log.d(MainActivity.AppName, "AlarmUtils - SetNextAlarm: list elements");
-			for (Alarm e : alarms) {		    
-				Log.d(MainActivity.AppName,"Alarm id: " + e.get_id() + " - hms: " + e.get_hour() + "," + e.get_minute() + "," + e.get_second());			
-			}
-		}
-		
-		
+		//riferimento all'alarm che si andrà ad impostare
 		Alarm nextAlarm=null;
 		
 		/*
@@ -416,13 +420,49 @@ public final class AlarmUtils {
 		//int today = alarmTime.get(Calendar.DAY_OF_WEEK)-1;
 		
 		
+		//si recupera l'id dell'alarm di stop dell'ultimo intervallo valutato
+		int last_evaluated_stop_alarm_id = prefs.getInt("last_evaluated_interval_stop_id",-1);			
+		//calendar per l'ultimo intervallo valutato
+		Calendar last_evaluated_interval_time = (Calendar) alarmTime.clone();	
+		
+		//se esiste un precedente intervallo valutato
+		if(last_evaluated_stop_alarm_id!=-1){
+			
+			//si recupera l'alarm di stop dell'ultimo intervallo valutato
+			Alarm last_evaluated=getAlarm(context, last_evaluated_stop_alarm_id);
+			
+			//si settano i parametri del calendar con data e ora dell'ultimo intervallo valutato
+			last_evaluated_interval_time.set(Calendar.HOUR_OF_DAY, last_evaluated.get_hour());
+			last_evaluated_interval_time.set(Calendar.MINUTE, last_evaluated.get_minute());
+			last_evaluated_interval_time.set(Calendar.SECOND, last_evaluated.get_second());
+			last_evaluated_interval_time.set(Calendar.DATE, prefs.getInt("last_evaluated_interval_alarm_date", -1));
+			last_evaluated_interval_time.set(Calendar.MONTH, prefs.getInt("last_evaluated_interval_alarm_month", -1));
+			last_evaluated_interval_time.set(Calendar.YEAR, prefs.getInt("last_evaluated_interval_alarm_year", -1));			
+		}
+		else{
+			last_evaluated_interval_time=null;
+		}
+			
+		
 		boolean stop=false;		
 				
-		//se si è al primo avvio dell'applicazione o all'evento di boot del device, allora
-		//per cercare il prossimo alarm si considera tutta la lista di alarm e si sceglie
-		//il primo che risulta valido per essere lanciato nel giorno corrente (o in uno
-		//successivo); in tal caso si esegue una ricerca binaria
+		//se si è al primo avvio dell'applicazione, all'evento di boot del device o se si sta
+		//per riavviare l'algoritmo, allora per cercare il prossimo alarm si considera tutta la
+		//lista di alarm e si sceglie il primo che risulta valido per essere lanciato nel giorno
+		//corrente (o in uno successivo); in tal caso si esegue una ricerca binaria
 		if(takeAllAlarms){ 
+			
+			//si recupera la lista di tutti gli alarm
+		    List<Alarm> alarms = getAllAlarms(context);
+			
+		    if(ClimbApplication.logEnabled){
+				Log.d(MainActivity.AppName, "AlarmUtils - SetNextAlarm: COUNT DB " + countAlarms(context));
+				Log.d(MainActivity.AppName, "AlarmUtils - SetNextAlarm: list size " + alarms.size());
+				Log.d(MainActivity.AppName, "AlarmUtils - SetNextAlarm: list elements");
+				for (Alarm e : alarms) {		    
+					Log.d(MainActivity.AppName,"Alarm id: " + e.get_id() + " - hms: " + e.get_hour() + "," + e.get_minute() + "," + e.get_second());			
+				}
+			}
 			
 			int begin = 0;
 			int end = alarms.size()-1;
@@ -467,8 +507,12 @@ public final class AlarmUtils {
 				//quando un alarm di start viene attivato (disattivato) viene attivato
 				//(disattivato) anche l'alarm di stop successivo)
 				
+				int id_this_alarm=nextAlarm.get_id();	
 				
-				if(isLastListenedIntervalFarEnough(context, nextAlarm, prevAlarmNotAvailable,0)){
+				boolean last_evaluated_far_enough =  isLastListenedIntervalFarEnough(context, nextAlarm, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
+				prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
+				
+				if(hasTrigger(prefs, id_this_alarm) || last_evaluated_far_enough){
 					
 					//se l'alarm non è attivato per questo giorno e se esso è di start, vuol dire
 					//che il relativo intervallo non è stato attivato per questo giorno					
@@ -487,7 +531,7 @@ public final class AlarmUtils {
 						}			
 												
 						////////////////////////////
-						int id_this_alarm=nextAlarm.get_id();				
+						//int id_this_alarm=nextAlarm.get_id();				
 						
 						//se è un alarm di start
 						if(nextAlarm.get_actionType()){
@@ -495,7 +539,7 @@ public final class AlarmUtils {
 							System.out.println("next alarm non attivo e di start");
 													
 							//si prova ad effettuare la mutazione, attivando l'intervallo
-							if(!intervalMutated(nextAlarm, alarms, artificialIndex, alarmDao,context)){
+							if(!intervalMutated(nextAlarm, artificialIndex, alarmDao,context)){
 								
 								//si scrive nel file di log che questo intervallo non è stato
 								//mutato e, quindi, non viene valutato
@@ -587,8 +631,12 @@ public final class AlarmUtils {
 					//normalmente l'indice è dato dalla data corrente: e.getRepeatingDay(today)
 					/////////
 					
+					int e_id=e.get_id();
 					
-					if(isLastListenedIntervalFarEnough(context, e, prevAlarmNotAvailable,0)){
+					boolean last_evaluated_far_enough =  isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
+					prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
+					
+					if(hasTrigger(prefs, e_id) || last_evaluated_far_enough){
 						
 						if(e.getRepeatingDay(artificialIndex)){
 							//l'alarm è attivato per questo giorno
@@ -606,7 +654,7 @@ public final class AlarmUtils {
 								//è un alarm di start
 										
 								//si prova ad effettuare la mutazione, attivando l'intervallo
-								stop=intervalMutated(e, alarms, artificialIndex, alarmDao,context);
+								stop=intervalMutated(e, artificialIndex, alarmDao,context);
 								if(stop){
 									nextAlarm=e;
 								}
@@ -626,7 +674,7 @@ public final class AlarmUtils {
 										status="E,0";
 									}			
 									
-									int id_start=e.get_id();
+									//int id_start=e.get_id();
 									
 									/*if(id_start==1){
 										int month = alarmTime.get(Calendar.MONTH)+1;
@@ -634,7 +682,7 @@ public final class AlarmUtils {
 									}*/
 									
 									//si ottiene il relativo alarm di stop (esiste sicuramente)
-									Alarm next_stop= getAlarm(context, id_start+1); 							
+									Alarm next_stop= getAlarm(context, e_id+1); 							
 									/*
 									LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
 											":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
@@ -712,18 +760,22 @@ public final class AlarmUtils {
 				 }					
 			}*/			
 		}
-		else{ //non si è al primo avvio dell'app o al boot del device
+		else{ //non si è al primo avvio dell'app o al boot del device o al riavvio dell'algoritmo
 			  //dato un certo alarm che è stato consumato, il prossimo alarm che viene
 			  //settato ha un id maggiore del precedente (infatti gli alarm sono ordinati
 			  //per orario); quindi, per cercare il prossimo alarm si parte dall'id
 			  //successivo a quello dell'alarm corrente (che ha id>=1, visto che nel database
-			  //gli id autoincrementanti partono da 1)
-					
-			for(int i=current_alarm_id+1; i<=alarms.size() && !stop; i++){
-				Alarm e = alarms.get(i-1);
+			  //gli id autoincrementanti partono da 1)			
+			
+			for(int i=current_alarm_id+1; i<=alarms_number && !stop; i++){ //i<=alarms.size()
+				
+				Alarm e = getAlarm(context, i); //alarms.get(i-1);
 				
 				
-				if(isLastListenedIntervalFarEnough(context, e, prevAlarmNotAvailable,0)){
+				boolean last_evaluated_far_enough = isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
+				prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
+												
+				if(hasTrigger(prefs, i) || last_evaluated_far_enough){
 					
 					if(e.getRepeatingDay(artificialIndex)){
 						nextAlarm=e;
@@ -733,7 +785,7 @@ public final class AlarmUtils {
 						if(e.get_actionType()){
 							//è un alarm di start						
 							//si prova ad effettuare la mutazione, attivando l'intervallo
-							stop=intervalMutated(e, alarms, artificialIndex, alarmDao, context);
+							stop=intervalMutated(e, artificialIndex, alarmDao, context);
 							if(stop){
 								nextAlarm=e;
 							}
@@ -752,7 +804,7 @@ public final class AlarmUtils {
 									status="E,0";
 								}			
 								
-								int id_start=e.get_id();
+								//int id_start=e.get_id();
 								
 								/*if(id_start==1){
 									int month = alarmTime.get(Calendar.MONTH)+1;
@@ -760,7 +812,7 @@ public final class AlarmUtils {
 								}*/
 								
 								//si ottiene il relativo alarm di stop (esiste sicuramente)
-								Alarm next_stop= getAlarm(context, id_start+1); 							
+								Alarm next_stop= getAlarm(context, i+1); 							
 								/*
 								LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
 										":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
@@ -836,17 +888,20 @@ public final class AlarmUtils {
 				currentIndex=getNextDayIndex(currentIndex);
 				/////////
 				
-				for(int i=0; i<alarms.size() && !stop; i++){
+				for(int i=1; i<=alarms_number && !stop; i++){ //int i=0; i<alarms.size()
 					
-					Alarm e = alarms.get(i);
+					Alarm e = getAlarm(context, i); //alarms.get(i);
 					
 					/////////
 					//PER TEST ALGORITMO: si fa sempre riferimento all'indice artificiale;
 					//normalmente: e.getRepeatingDay(alarmTime.get(Calendar.DAY_OF_WEEK)-1)
 					/////////
 					
+					boolean last_evaluated_far_enough = isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
+					prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
 					
-					if(isLastListenedIntervalFarEnough(context, e, prevAlarmNotAvailable, days_added)){
+					
+					if(hasTrigger(prefs, i) || last_evaluated_far_enough){
 						
 						//gli alarm hanno un istante di inizio sicuramente > di ora in quanto
 						//si stanno cercando in un giorno successivo a quello corrente
@@ -860,7 +915,7 @@ public final class AlarmUtils {
 								//è un alarm di start
 								
 								//si prova ad effettuare la mutazione, attivando l'intervallo
-								stop=intervalMutated(e, alarms, currentIndex, alarmDao, context);
+								stop=intervalMutated(e, currentIndex, alarmDao, context);
 								if(stop){
 									nextAlarm=e;
 								}
@@ -879,7 +934,7 @@ public final class AlarmUtils {
 										status="E,0";
 									}			
 									
-									int id_start=e.get_id();
+									//int id_start=e.get_id();
 									
 									/*if(id_start==1){
 										int month = alarmTime.get(Calendar.MONTH)+1;
@@ -887,7 +942,7 @@ public final class AlarmUtils {
 									}*/
 									
 									//si ottiene il relativo alarm di stop (esiste sicuramente)
-									Alarm next_stop= getAlarm(context, id_start+1); 							
+									Alarm next_stop= getAlarm(context, i+1); 							
 									/*
 									LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
 											":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
@@ -949,8 +1004,9 @@ public final class AlarmUtils {
 		
 		
 		//prevAlarmNotAvailable==true: questo metodo è stato chiamato dopo il completamento
-		//del boot perché l'alarm precedentemente impostato non è più valido; dopo aver
-		//trovato un nuovo alarm, se quest'ultimo è di stop significa che si è all'interno di
+		//del boot perché l'alarm precedentemente impostato non è più valido, current_alarm_id==-1:
+		//questo metodo è stato invocato subito dopo la configurazione iniziale dell'algoritmo; dopo
+		//aver trovato un nuovo alarm, se quest'ultimo è di stop significa che si è all'interno di
 		//un nuovo intervallo attivo: si fa ripartire il classificatore Google/scalini
 		if((prevAlarmNotAvailable || current_alarm_id==-1) && !nextAlarm.get_actionType()){
 						 
@@ -963,11 +1019,14 @@ public final class AlarmUtils {
 			
 			//è un "intervallo di esplorazione"
 			if(!nextAlarm.isStepsInterval(artificialIndex)){ //normalmente alarmTime.get(Calendar.DAY_OF_WEEK))-1
-					
-				context.startService(new Intent(context, ActivityRecognitionRecordService.class));
-				//si registra anche il receiver per la registrazione dell'attività utente
-				//context.getApplicationContext().registerReceiver(userMotionReceiver, userMotionFilter);
-				//context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, UserMotionReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				
+				//si attiva il classificatore Google solo se il gioco non è attivo
+				if(!ClimbActivity.isGameActive()){
+					context.startService(new Intent(context, ActivityRecognitionRecordService.class));
+					//si registra anche il receiver per la registrazione dell'attività utente
+					//context.getApplicationContext().registerReceiver(userMotionReceiver, userMotionFilter);
+					//context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, UserMotionReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				}
 			}				
 			else{ //è un "intervallo con scalini"
 				
@@ -993,12 +1052,17 @@ public final class AlarmUtils {
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		
 		if(Build.VERSION.SDK_INT < 19){
+			
+			System.out.println("API "+ Build.VERSION.SDK_INT +", SET next alarm");
+			
 			alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), pi);
 		}
 		else{
 			//se nel sistema sta eseguendo una versione di Android con API >=19
     		//allora è necessario invocare il metodo setExact
 			alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), pi);
+			
+			System.out.println("API "+ Build.VERSION.SDK_INT +", SET EXACT next alarm");
 		}
 		
 		
@@ -1045,8 +1109,8 @@ public final class AlarmUtils {
 	 
 	
 	
-	private static boolean intervalMutated(Alarm a_start, List<Alarm> alarms, 
-			int current_day_index, RuntimeExceptionDao<Alarm, Integer> alarmDao, Context context){
+	private static boolean intervalMutated(Alarm a_start, int current_day_index, 
+			RuntimeExceptionDao<Alarm, Integer> alarmDao, Context context){
 		
 		//la probabilità di attivare l'intervallo è data dalla sua valutazione v
 		//(0 <= v <= valore_soglia) 
@@ -1075,7 +1139,7 @@ public final class AlarmUtils {
 			//si recupera dalla lista il relativo alarm di stop 
 			//(c'è sicuramente visto che un alarm di start deve essere seguito
 			//dal suo alarm di stop)
-			Alarm a_stop = alarms.get(id_start);//'id_start' perché indice_lista = alarm_id-1 
+			Alarm a_stop = getAlarm(context, id_stop); //alarms.get(id_start);//'id_start' perché indice_lista = alarm_id-1 
 			System.out.println("Alarm stop: id: "+a_stop.get_id()+" index: "+id_start);
 			a_stop.setRepeatingDay(current_day_index, true);
 			a_stop.setStepsInterval(current_day_index, false);
@@ -1176,106 +1240,50 @@ public final class AlarmUtils {
 	}
 	
 	
-	private static boolean isNextIntervalActive(Context context, Alarm current_alarm, int current_day_index){
+	
+	
+	
+	private static boolean isLastListenedIntervalFarEnough(Context context, Alarm current_alarm, 
+			Calendar current_alarm_time, Calendar last_evaluated_interval_time, 
+			boolean prevAlarmNotAvailable){ //int days_number_to_add
 				
-		//se l'alarm corrente è di stop, l'id di start del prossimo intervallo è quello successivo; il
-		//tempo che intercorre tra i due alarm deve essere pari a 1 secondo
-		int next_id=current_alarm.get_id()+1;		
-		long target_time_diff = 1000;
-		//se l'alarm corrente è di start, l'id di start dell'intervallo successivo dista 2 lunghezze da
-		//quello corrente; il tempo che intercorre tra i due alarm deve essere pari a 5 minuti
-		if(current_alarm.get_actionType()){
-			next_id=current_alarm.get_id()+2;	
-			target_time_diff=300000; //5 minuti
-		}
-		
-		//si recupera il prossimo alarm
-		Alarm next_alarm=getAlarm(context, next_id);
-		//se il prossimo alarm esiste ed è attivo per il giorno corrente, si controlla che questo sia
-		//consecutivo all'alarm corrente
-		if(next_alarm!=null && next_alarm.getRepeatingDay(current_day_index)){
-			
-			Calendar current_alarm_time = Calendar.getInstance();
-			Calendar next_interval_time = (Calendar) current_alarm_time.clone();
-			int current_h=current_alarm.get_hour();
-			int current_m=current_alarm.get_minute();
-			current_alarm_time.set(Calendar.HOUR_OF_DAY, current_h);
-			current_alarm_time.set(Calendar.MINUTE, current_m);
-			current_alarm_time.set(Calendar.SECOND, current_alarm.get_second());
-			next_interval_time.set(Calendar.HOUR_OF_DAY, next_alarm.get_hour());
-			next_interval_time.set(Calendar.MINUTE, next_alarm.get_minute());
-			next_interval_time.set(Calendar.SECOND, next_alarm.get_second());
-			
-			//differenza di tempo tra i due alarm
-			long time_diff = next_interval_time.getTime().getTime() - current_alarm_time.getTime().getTime();
-			
-			//si ritorna 'true' se il prossimo intervallo è attivo e viene immediatamente dopo in ordine
-			//di tempo rispetto all'alarm corrente
-			if(time_diff==target_time_diff){
-				return true;
-			}
-			return false;			
-		}		
-		return false;
-	}
-	
-	
-	private static boolean isLastListenedIntervalFarEnough(Context context, Alarm current_alarm, boolean prevAlarmNotAvailable, int days_number_to_add){
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		
-		//si recupera l'id dell'alarm di stop dell'ultimo intervallo valutato
-		int last_evaluated_stop_alarm_id = prefs.getInt("last_evaluated_interval_stop_id",-1);
-		
 		//se il metodo di set alarm è stato chiamato a causa del fatto che l'alarm precedentemente impostato
 		//non è più valido allora significa che l'alarm precedente si è concluso senza essere valutato;
 		//se non è mai stato valutato alcun intervallo allora si esce subito
-		if(prevAlarmNotAvailable || last_evaluated_stop_alarm_id==-1){
+		if(prevAlarmNotAvailable || last_evaluated_interval_time==null){ //last_evaluated_stop_alarm_id==-1
 			Log.d(MainActivity.AppName, "AlarmUtils - filtro bilanciamento energetico: OK (non più valido o nessuno ancora valutato)");
 			return true;
 		}
-				
-		long target_time_diff = 600000; 
 		
-		//si recupera l'alarm di stop dell'ultimo intervallo valutato
-		Alarm last_evaluated=getAlarm(context, last_evaluated_stop_alarm_id);	
+		//la distanza temporale tra l'intervallo corrente e l'ultimo valutato deve essere di
+		//almeno 10 minuti
+		long target_time_diff = 600000;
 		
-		Calendar current_alarm_time = Calendar.getInstance();
-		Calendar last_interval_time = (Calendar) current_alarm_time.clone();
-		
-		if(days_number_to_add>0){
-			current_alarm_time.add(Calendar.DATE, days_number_to_add);
-		}
+		//si impostano ora, minuti e secondi per il calendar dell'alarm corrente
 		current_alarm_time.set(Calendar.HOUR_OF_DAY, current_alarm.get_hour());
 		current_alarm_time.set(Calendar.MINUTE, current_alarm.get_minute());
 		current_alarm_time.set(Calendar.SECOND, current_alarm.get_second());
 		
-		int last_val_hh=last_evaluated.get_hour();
-		int last_val_mm=last_evaluated.get_minute();
-		
-		if(last_val_hh==23 && last_val_mm==59){
+		//caso particolare in cui l'ultimo intervallo valutato è l'ultimo della giornata (intervallo
+		//che finisce 5 secondi prima); in tal caso si aggiungono 5 secondi alla distanza target
+		if(last_evaluated_interval_time.get(Calendar.HOUR_OF_DAY)==23 
+				&& last_evaluated_interval_time.get(Calendar.MINUTE)==59){
 			target_time_diff+=5000;
 		}
 		
-		last_interval_time.set(Calendar.HOUR_OF_DAY, last_val_hh);
-		last_interval_time.set(Calendar.MINUTE, last_val_mm);
-		last_interval_time.set(Calendar.SECOND, last_evaluated.get_second());
-		last_interval_time.set(Calendar.DATE, prefs.getInt("last_evaluated_interval_alarm_date", -1));
-		last_interval_time.set(Calendar.MONTH, prefs.getInt("last_evaluated_interval_alarm_month", -1));
-		last_interval_time.set(Calendar.YEAR, prefs.getInt("last_evaluated_interval_alarm_year", -1));
-				
+		
 		//differenza di tempo tra i due alarm
-		long time_diff = current_alarm_time.getTime().getTime() - last_interval_time.getTime().getTime();
+		long time_diff = current_alarm_time.getTime().getTime() - last_evaluated_interval_time.getTime().getTime();
 		
 		if(ClimbApplication.logEnabled){
 			int alr_m=current_alarm_time.get(Calendar.MONTH)+1;  
-			int last_m=last_interval_time.get(Calendar.MONTH)+1;  
+			int last_m=last_evaluated_interval_time.get(Calendar.MONTH)+1;  
 			Log.d(MainActivity.AppName, "AlarmUtils - filtro bilanciamento energetico: CURR:" 
 					+ current_alarm_time.get(Calendar.HOUR_OF_DAY)+":"+ current_alarm_time.get(Calendar.MINUTE)+":"+ current_alarm_time.get(Calendar.SECOND) +
 					"  "+current_alarm_time.get(Calendar.DATE)+"/"+alr_m+"/"+current_alarm_time.get(Calendar.YEAR)+
-					"; LAST: "+ last_interval_time.get(Calendar.HOUR_OF_DAY)+":"+ last_interval_time.get(Calendar.MINUTE)+":"+ 
-					last_interval_time.get(Calendar.SECOND) + "  "+last_interval_time.get(Calendar.DATE)+"/"+last_m+"/"+
-					last_interval_time.get(Calendar.YEAR));
+					"; LAST: "+ last_evaluated_interval_time.get(Calendar.HOUR_OF_DAY)+":"+ last_evaluated_interval_time.get(Calendar.MINUTE)+":"+ 
+					last_evaluated_interval_time.get(Calendar.SECOND) + "  "+last_evaluated_interval_time.get(Calendar.DATE)+"/"+last_m+"/"+
+					last_evaluated_interval_time.get(Calendar.YEAR));
 		}		
 		
 		//se il tempo che intercorre tra la fine dell'ultimo intervallo valutato e l'intervallo
@@ -1378,23 +1386,7 @@ public final class AlarmUtils {
 	
 	
 	
-	private static boolean areIntervalSetsFarEnough(Context context, Alarm last_alarm_first_set, Alarm first_alarm_second_set){
-		
-		Calendar alarm_first_set_time = Calendar.getInstance();
-		Calendar alarm_second_set_time = (Calendar) alarm_first_set_time.clone();
-		
-		alarm_first_set_time.set(Calendar.HOUR_OF_DAY, last_alarm_first_set.get_hour());
-		alarm_first_set_time.set(Calendar.MINUTE, last_alarm_first_set.get_minute());
-		alarm_first_set_time.set(Calendar.SECOND, last_alarm_first_set.get_second());
-		alarm_second_set_time.set(Calendar.HOUR_OF_DAY, first_alarm_second_set.get_hour());
-		alarm_second_set_time.set(Calendar.MINUTE, first_alarm_second_set.get_minute());
-		alarm_second_set_time.set(Calendar.SECOND, first_alarm_second_set.get_second());
-		
-		if(alarm_second_set_time.getTime().getTime() - alarm_first_set_time.getTime().getTime() >= 21600000){
-			return true;
-		}
-		return false;		
-	}
+	
 	
 	
 	
@@ -1421,16 +1413,13 @@ public final class AlarmUtils {
 	
 	
 	
-	private static ArrayList<ArrayList<Alarm>> getActiveIntervalSets(Context context){
+	private static ArrayList<ArrayList<Alarm>> getActiveIntervalSets(Context context, List<Alarm> all_alarms){
 		
 		//si recupera l'indice del giorno corrente
 		int day_index = PreferenceManager.getDefaultSharedPreferences(context).getInt("artificialDayIndex", 0);//context.getSharedPreferences("appPrefs", 0).getInt("artificialDayIndex", 0);
 		
 		ArrayList<ArrayList<Alarm>> intervalSets = new ArrayList<ArrayList<Alarm>>();
 				
-		//si recuperano tutti gli alarm salvati nel database
-		List<Alarm> all_alarms = getAllAlarms(context);
-		
 		//indice per scorrere gli intervalli 
 		int i=1;
 		while(i<=all_alarms.size()){
@@ -1490,7 +1479,7 @@ public final class AlarmUtils {
 	
 
 	@SuppressLint("UseSparseArrays")
-	private static Map<Long,IntPair> getPossibleTriggerSetPairs(Context context, ArrayList<ArrayList<Alarm>> activeSets){
+	private static Map<Long,IntPair> getPossibleTriggerPairs(Context context, ArrayList<ArrayList<Alarm>> activeSets){
 		
 		//in input si ha la lista di gruppi di intervalli consecutivi attivi (un gruppo è formato
 		//da almeno 3 e al massimo da 12 intervalli); questo metodo viene chiamato nel caso ci siano
@@ -1531,13 +1520,24 @@ public final class AlarmUtils {
 			Alarm first_alarm_second_set = (activeSets.get(end_index)).get(0); //per ultimo: secondSet.size()-1
 			int first_alarm_second_set_id = first_alarm_second_set.get_id();
 			//Alarm last_alarm_second_set = getAlarm(context, last_start_alarm_second_set.get_id()+1);			
+			
+			//se si sta considerando una coppia di gruppi diversa dalla prima (quella più esterna),
+			//allora si recuperano anche il primo alarm del gruppo precedente al primo e il primo
+			//alarm del gruppo successivo al secondo
+			Alarm first_alarm_prev_first_set=null;
+			int first_alarm_prev_first_set_id=-1;
+			Alarm first_alarm_next_second_set=null;
+			int first_alarm_next_second_set_id=-1;
+			
+			if(i!=0){
+				//si recupera anche il primo alarm del gruppo precedente al primo
+				first_alarm_prev_first_set = (activeSets.get(i-1)).get(0);
+				first_alarm_prev_first_set_id = first_alarm_prev_first_set.get_id();
+				//si recupera anche il primo alarm del gruppo successivo al secondo
+				first_alarm_next_second_set = (activeSets.get(end_index+1)).get(0);		
+				first_alarm_next_second_set_id = first_alarm_next_second_set.get_id();
+			}
 						
-			//si recupera anche il primo alarm del gruppo precedente al primo
-			Alarm first_alarm_prev_first_set = (activeSets.get(i-1)).get(0);
-			int first_alarm_prev_first_set_id = first_alarm_prev_first_set.get_id();
-			//si recupera anche il primo alarm del gruppo successivo al secondo
-			Alarm first_alarm_next_second_set = (activeSets.get(end_index+1)).get(0);		
-			int first_alarm_next_second_set_id = first_alarm_next_second_set.get_id();
 			
 			//se il primo intervallo del primo gruppo e il primo intervallo del secondo gruppo 
 			//distano almeno 6 ore, allora si tiene la coppia di alarm
@@ -1609,58 +1609,275 @@ public final class AlarmUtils {
 		return pairs;		
 	}
 	
-	public static JSONObject toJSONObject(List<Alarm> alarms){
-        JSONObject json_alarms = new JSONObject();
-        for(Alarm alarm: alarms){
-            try {
-                json_alarms.put(String.valueOf(alarm.get_id()), alarm.toJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return json_alarms;
-    }
-
-    public static void fromJSONtoAlarm(Context context, JSONObject alarms){
-        DbHelper helper = DbHelper.getInstance(context);
-        RuntimeExceptionDao<Alarm, Integer> alarmDao = helper.getAlarmDao();
-
-        Iterator<String> it = alarms.keys();
-        while(it.hasNext()){
-            try {
-                String alarm_id = it.next();
-                JSONObject json_alarm = alarms.getJSONObject(alarm_id);
-                Alarm alarm  = getAlarm(context, Integer.valueOf(alarm_id)); //get per id e utente
-                if(alarm == null) alarm = new Alarm();
-                alarm.set_actionType(Boolean.valueOf(json_alarm.getString("actionType")));
-                alarm.set_hour(Integer.valueOf(json_alarm.getInt("hour")));
-                alarm.set_minute(json_alarm.getInt("minute"));
-                alarm.set_second(json_alarm.getInt("seconds"));
-                JSONArray repeatingDays = json_alarm.getJSONArray("repeatingDays");
-                for(int i = 0; i < repeatingDays.length(); i++)
-                    alarm.setRepeatingDay(i, repeatingDays.getBoolean(i));
-                JSONArray evaluations = json_alarm.getJSONArray("evaluations");
-                for(int i = 0; i < evaluations.length(); i++)
-                    alarm.setEvaluation(i, (float) evaluations.getDouble(i));
-                JSONArray stepsInterval = json_alarm.getJSONArray("stepsInterval");
-                for(int i = 0; i < stepsInterval.length(); i++)
-                    alarm.setStepsInterval(i, stepsInterval.getBoolean(i));
-
-                alarmDao.createOrUpdate(alarm);
-
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	
+	
+	
+	private static IntPair getBestTriggerPair(Context context, List<Alarm> alarms, Map<Long,IntPair> triggerPairs){
+		
+		//si ottiene il primo alarm del periodo di attività indicato dall'utente
+		Alarm first_alarm = alarms.get(0);
+		//si ottiene l'ultimo alarm del periodo di attività indicato dall'utente
+		Alarm last_alarm = alarms.get(alarms.size()-1);
+		
+		
+		//si ordinano le distanze temporali tra le coppie di possibili trigger trovate		
+		List<Long> sortedKeys=new ArrayList<Long>(triggerPairs.keySet());
+		Collections.sort(sortedKeys);
+		
+		//si itera partendo dalla coppia di trigger a distanza maggiore
+		ListIterator<Long> it = sortedKeys.listIterator(sortedKeys.size());
+		
+		//campo per memorizzare la differenza di distanze minore, cioè quella migliore
+		long best_distances_diff = Long.MAX_VALUE;
+		//relativa coppia di indici dei trigger
+		IntPair best_pair = triggerPairs.get(sortedKeys.size()-1);
+		
+		while(it.hasPrevious()){
+			
+			//si recupera la coppia di trigger, partendo dai loro indici salvati
+			IntPair triggerPair = triggerPairs.get(it.previous());		    
+			Alarm first_trigger = getAlarm(context, triggerPair.getFirstInt());			
+			Alarm second_trigger = getAlarm(context, triggerPair.getSecondInt());
+						
+			//si calcola la distanza temporale tra l'inizio del periodo di attività e il primo trigger
+			long first_time_diff = getTimeDistance(first_trigger, first_alarm, true);
+		    
+			//si calcola la distanza temporale tra la fine del periodo di attività e il secondo trigger
+			long second_time_diff = getTimeDistance(second_trigger, last_alarm, false);
+			
+			//se le due distanze temporali sono più o meno uguali (differenza <= 2 ore) allora 
+			//significa che i due trigger sono abbastanza centrati rispetto al periodo di attività;
+			//in tal caso si ritorna subito la coppia di indici dei due trigger
+			long distances_diff = Math.abs(first_time_diff-second_time_diff);			
+			
+			if(distances_diff <= 7200000){
+				return triggerPair;
+			}
+			else{ 
+				//se la differenza tra le due distanze temporali è > 2 ore, allora si controlla
+				//se questa differenza è minore di quella migliore trovata finora; se è così, questa
+				//differenza di distanze diventa quella migliore
+				if(distances_diff < best_distances_diff){
+					best_distances_diff = distances_diff;
+					best_pair = triggerPair;
+				}
+			}			
+		}
+		return best_pair;		
+	}
+	
+	
+	public static void setTriggers(Context context){
+		
+		System.out.println("SET TRIGGERS");
+		
+		//riferimento alle SharedPreferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		//si ottiene la data corrente e si controlla se per essa sono già stati impostati i trigger
+		Calendar now = Calendar.getInstance();		
+		SimpleDateFormat calFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	String dateFormatted = calFormat.format(now.getTime());
+    	
+    	if(!dateFormatted.equals(prefs.getString("triggers_date", ""))){
+    		
+    		System.out.println("SET TRIGGERS - Not setted yet");
+    		
+    		//si recuperano tutti gli alarm salvati nel database
+    		List<Alarm> all_alarms = getAllAlarms(context);	
+    		
+    		//si ottengono tutti i gruppi di 3 o più intervalli attivi (gruppi composti al massimo da
+    		//12 intervalli)
+    		ArrayList<ArrayList<Alarm>> activeIntervalSets = getActiveIntervalSets(context, all_alarms);
+    		
+    		System.out.println("SET TRIGGERS - active interval sets");
+    		String str="";
+    		for(ArrayList<Alarm> a : activeIntervalSets){
+    			Alarm b = a.get(0);
+    			Alarm c = a.get(a.size()-1);
+    			
+    			str+=b.get_id()+"("+b.get_hour()+":"+b.get_minute()+")"+"-"+c.get_id()+"("+c.get_hour()+":"+c.get_minute()+"), ";    			
+    		}
+    		System.out.println(str);
+    		
+    		System.out.println("SET TRIGGERS - sets size "+activeIntervalSets.size());
+    		
+    		//oggetto che serve per contenere gli indici dei trigger
+    		IntPair bestTriggerPair = new IntPair(-1,-1);
+    		
+    		//se ci sono almeno due gruppi (cioè se si può ricavare almeno una coppia di trigger) 
+    		if(activeIntervalSets.size()>=2){
+    			
+    			//si ricavano tutte le possibili coppie di trigger che soddisfano la condizione per
+    			//la quale la loro distanza deve essere >= 6 ore
+    			Map<Long,IntPair> possibleTriggerPairs = getPossibleTriggerPairs(context, activeIntervalSets);
+    						
+    			System.out.println("SET TRIGGERS - possible trigger pairs");    			
+    			String str_pairs="";
+        		for(Map.Entry<Long, IntPair> e : possibleTriggerPairs.entrySet()){
+        			str_pairs+=e.getKey() + " - " + e.getValue().getFirstInt()+"/"+e.getValue().getSecondInt()+", ";    			
+        		}
+        		System.out.println(str_pairs);
+        		System.out.println("SET TRIGGERS - pairs size "+possibleTriggerPairs.size());  
+        		
+        		
+    			//se esiste almeno una coppia che soddisfa la condizione >= 6 ore
+    			if(possibleTriggerPairs.size()>0){
+    				    				
+    				//si cerca la migliore, cioè quella per cui i trigger sono abbastanza centrati
+    				//rispetto al periodo di attività			
+    				bestTriggerPair = getBestTriggerPair(context, all_alarms, possibleTriggerPairs);
+    				
+    				System.out.println("SET TRIGGERS - best pair "+bestTriggerPair.getFirstInt()+"-"+bestTriggerPair.getSecondInt());  
+    			}
+    			else{
+    				//se nessuna coppia soddisfa la condizione >= 6 ore, allora si cerca l'alarm
+    				//più centrale rispetto al periodo di attività indicato dall'utente; questo alarm
+    				//sarà l'unico trigger
+    				
+    				System.out.println("SET TRIGGERS - NESSUNA COPPIA >=6 ore, si cerca alarm più centrale");  
+    				
+    				//si ottiene il primo alarm del periodo di attività indicato dall'utente
+    				Alarm first_alarm = all_alarms.get(0);
+    				//si ottiene l'ultimo alarm del periodo di attività indicato dall'utente
+    				Alarm last_alarm = all_alarms.get(all_alarms.size()-1);
+    				
+    				Iterator<ArrayList<Alarm>> it = activeIntervalSets.iterator();
+    				boolean stop = false;
+    				
+    				long best_distances_diff = Long.MAX_VALUE;
+    				
+    				while(!stop && it.hasNext()){
+    					
+    					Alarm possible_trigger = (it.next()).get(0);
+    					
+    					//si calcola la distanza temporale tra l'inizio del periodo di attività e il possibile trigger
+    					long begin_time_diff = getTimeDistance(possible_trigger, first_alarm, true);
+    					//si calcola la distanza temporale tra la fine del periodo di attività e il possibile trigger
+    					long end_time_diff = getTimeDistance(possible_trigger, last_alarm, false);
+    					//si calcola la differenza in valore assoluto delle precedenti distanze temporali
+    					long diff = Math.abs(begin_time_diff-end_time_diff);
+    					
+    					//se questa differenza è <= 1 ora 
+    					if(diff <= 3600000){						
+    						bestTriggerPair.setFirstInt(possible_trigger.get_id());
+    						stop=!stop;						
+    					}
+    					else{ //se la differenza tra distanze è minore di quella migliore trovata finora,
+    						  //allora questa differenza di distanze diventa quella migliore
+    						
+    						if(diff < best_distances_diff){
+    							best_distances_diff=diff;
+    							bestTriggerPair.setFirstInt(possible_trigger.get_id());
+    						}
+    					}
+    				}				
+    			}			
+    		}
+    		else{
+    			
+    			//se c'è solo un gruppo: si imposta come unico trigger il primo alarm del gruppo
+    			if(activeIntervalSets.size()==1){				
+    				bestTriggerPair.setFirstInt(((activeIntervalSets.get(0)).get(0)).get_id());	
+    				
+    				System.out.println("SET TRIGGERS - SOLO 1 GRUPPO, trigger: primo alarm del gruppo");
+    			}
+    			else{ //nessun gruppo, non imposto alcun trigger
+    				
+    				System.out.println("SET TRIGGERS - NESSUN GRUPPO, NO TRIGGER");
+    			}
+    		}
+    		
+    		//si impostano gli indici dei trigger 
+    	    prefs.edit().putInt("first_trigger", bestTriggerPair.getFirstInt()).commit();		
+    	    prefs.edit().putInt("second_trigger", bestTriggerPair.getSecondInt()).commit();			    
+    		//si memorizza la data in cui sono stati settati
+    	    prefs.edit().putString("triggers_date", dateFormatted).commit();   
+    	    
+    	    System.out.println("SET TRIGGERS id1: " + prefs.getInt("first_trigger",-1) +", id2: " + prefs.getInt("second_trigger",-1)+", date: "+ prefs.getString("triggers_date", ""));
+    	    //LogUtils.writeLogFile(context, "SET TRIGGERS id1: " + prefs.getInt("first_trigger",-1) +", id2: " + prefs.getInt("second_trigger",-1)+", date: "+ prefs.getString("triggers_date", ""));
+    	    
+    	}
+	}
+	
+	
+	public static boolean hasTrigger(SharedPreferences prefs, int alarm_id){
+		
+		if(prefs.getInt("first_trigger", -1)==alarm_id || 
+				prefs.getInt("second_trigger", -1)==alarm_id){			
+			return true;			
+		}
+		return false;		
+	}
+	
+	
+	
+	public static boolean isLastShownTriggerFarEnough(Context context, int current_trigger_id){
+		
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		//si recupera l'identificativo dell'ultimo trigger mostrato
+		int last_shown_trigger_id = pref.getInt("last_shown_trigger_id", -1);
+		
+		//se non è stato mai visualizzato un trigger, si ritorna 'true'
+		if(last_shown_trigger_id==-1){
+			return true;
+		}
+		
+		Calendar now = Calendar.getInstance();		
+		Calendar last_shown_trigger_time = (Calendar) now.clone();
+		
+		//si imposta il calendar del trigger che si vuole mostrare in questo momento
+		Alarm current_trigger_alarm = getAlarm(context, current_trigger_id);	
+		now.set(Calendar.HOUR_OF_DAY, current_trigger_alarm.get_hour());
+		now.set(Calendar.MINUTE, current_trigger_alarm.get_minute());
+		now.set(Calendar.SECOND, current_trigger_alarm.get_second());
+		
+		//si imposta il calendar con la data completa dell'ultimo trigger mostrato
+		Alarm last_shown_trigger_alarm = getAlarm(context, last_shown_trigger_id);		
+		last_shown_trigger_time.set(Calendar.HOUR_OF_DAY, last_shown_trigger_alarm.get_hour());
+		last_shown_trigger_time.set(Calendar.MINUTE, last_shown_trigger_alarm.get_minute());
+		last_shown_trigger_time.set(Calendar.SECOND, last_shown_trigger_alarm.get_second());		
+		last_shown_trigger_time.set(Calendar.DATE, pref.getInt("last_shown_trigger_date", -1));
+		last_shown_trigger_time.set(Calendar.MONTH, pref.getInt("last_shown_trigger_month", -1));
+		last_shown_trigger_time.set(Calendar.YEAR, pref.getInt("last_shown_trigger_year", -1));
+		
+		//se il trigger che viene visualizzato in questo momento dista almeno 6 ore dall'ultimo
+		//trigger mostrato, allora si può notificare il nuovo trigger
+		if(now.getTime().getTime() - last_shown_trigger_time.getTime().getTime() >= 21600000){
+			return true;
+		}
+		return false;		
+	}
 	
 	
 	
 	
-	
+	public static void showTriggerNotification(Context context){
+		
+		NotificationManager mNotificationManager =
+			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+				
+		Intent notificationIntent = new Intent(context, MainActivity.class);
+
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+		            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+		PendingIntent intent = PendingIntent.getActivity(context, 0,
+		            notificationIntent, 0);
+
+		NotificationCompat.Builder mBuilder =
+				new NotificationCompat.Builder(context)
+					.setSmallIcon(R.drawable.bag)
+			        .setContentTitle("ClimbTheWorld")
+			        .setContentText(context.getString(R.string.trigger_text))
+			        .setContentIntent(intent);
+		    
+		//l'id consente di aggiornare la notifica
+		mNotificationManager.notify(0, mBuilder.build());
+			
+		//LogUtils.writeLogFile(context, "SHOW TRIGGER " + Calendar.getInstance().getTime().toString());
+	}
 	
 	
 	
@@ -1678,7 +1895,73 @@ public final class AlarmUtils {
 	}
 	/////////
 	 
+
+	/*
 	 
+	 private static boolean isNextIntervalActive(Context context, Alarm current_alarm, int current_day_index){
+				
+		//se l'alarm corrente è di stop, l'id di start del prossimo intervallo è quello successivo; il
+		//tempo che intercorre tra i due alarm deve essere pari a 1 secondo
+		int next_id=current_alarm.get_id()+1;		
+		long target_time_diff = 1000;
+		//se l'alarm corrente è di start, l'id di start dell'intervallo successivo dista 2 lunghezze da
+		//quello corrente; il tempo che intercorre tra i due alarm deve essere pari a 5 minuti
+		if(current_alarm.get_actionType()){
+			next_id=current_alarm.get_id()+2;	
+			target_time_diff=300000; //5 minuti
+		}
+		
+		//si recupera il prossimo alarm
+		Alarm next_alarm=getAlarm(context, next_id);
+		//se il prossimo alarm esiste ed è attivo per il giorno corrente, si controlla che questo sia
+		//consecutivo all'alarm corrente
+		if(next_alarm!=null && next_alarm.getRepeatingDay(current_day_index)){
+			
+			Calendar current_alarm_time = Calendar.getInstance();
+			Calendar next_interval_time = (Calendar) current_alarm_time.clone();
+			int current_h=current_alarm.get_hour();
+			int current_m=current_alarm.get_minute();
+			current_alarm_time.set(Calendar.HOUR_OF_DAY, current_h);
+			current_alarm_time.set(Calendar.MINUTE, current_m);
+			current_alarm_time.set(Calendar.SECOND, current_alarm.get_second());
+			next_interval_time.set(Calendar.HOUR_OF_DAY, next_alarm.get_hour());
+			next_interval_time.set(Calendar.MINUTE, next_alarm.get_minute());
+			next_interval_time.set(Calendar.SECOND, next_alarm.get_second());
+			
+			//differenza di tempo tra i due alarm
+			long time_diff = next_interval_time.getTime().getTime() - current_alarm_time.getTime().getTime();
+			
+			//si ritorna 'true' se il prossimo intervallo è attivo e viene immediatamente dopo in ordine
+			//di tempo rispetto all'alarm corrente
+			if(time_diff==target_time_diff){
+				return true;
+			}
+			return false;			
+		}		
+		return false;
+	}
+	 
+	 private static boolean areIntervalSetsFarEnough(Context context, Alarm last_alarm_first_set, Alarm first_alarm_second_set){
+		
+		Calendar alarm_first_set_time = Calendar.getInstance();
+		Calendar alarm_second_set_time = (Calendar) alarm_first_set_time.clone();
+		
+		alarm_first_set_time.set(Calendar.HOUR_OF_DAY, last_alarm_first_set.get_hour());
+		alarm_first_set_time.set(Calendar.MINUTE, last_alarm_first_set.get_minute());
+		alarm_first_set_time.set(Calendar.SECOND, last_alarm_first_set.get_second());
+		alarm_second_set_time.set(Calendar.HOUR_OF_DAY, first_alarm_second_set.get_hour());
+		alarm_second_set_time.set(Calendar.MINUTE, first_alarm_second_set.get_minute());
+		alarm_second_set_time.set(Calendar.SECOND, first_alarm_second_set.get_second());
+		
+		if(alarm_second_set_time.getTime().getTime() - alarm_first_set_time.getTime().getTime() >= 21600000){
+			return true;
+		}
+		return false;		
+	}
+	 
+	 */
+	
+	
 	 
 	 // fare metodo per considerare una coppia di alarm start-stop consecutivi
 	 //      l'idea è che se si seleziona un alarm di start scartato per dargli una 

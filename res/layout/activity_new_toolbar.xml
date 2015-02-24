@@ -10,7 +10,7 @@
     app:navigationContentDescription="@string/abc_action_bar_up_description"
     android:background="?attr/colorPrimary"
 
-    app:title="@string/app_name" > <!--     app:navigationIcon="?attr/homeAsUpIndicator" -->
+    app:title="@string/app_name" > <!-- app:navigationIcon="?attr/homeAsUpIndicator" -->
     
     <RelativeLayout
             android:layout_width="match_parent"

@@ -9,31 +9,34 @@
    	 android:layout_width="fill_parent"
    	 android:layout_height="wrap_content" >
    	 
-	    <include layout="@layout/activity_end_toolbar" />
+	 <include layout="@layout/activity_new_toolbar" />
 
-    <Button
+     <Button
         android:id="@+id/btt_next_config"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/config_text"
         android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="4dip"
         android:fontFamily="sans-serif-medium"
         android:gravity="right"
         android:onClick="selectAction"
         android:padding="8dp"
         android:text="@string/btt_next"
-        android:textSize="14sp" 
-         android:textAllCaps="true"
-         android:textColor="@color/accent"/>
+        android:textSize="18sp" 
+        android:textAllCaps="true"
+        android:textColor="@color/accent"/>
 
-    <TextView
+     <TextView
         android:id="@+id/config_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="138dp"
         android:text="@string/lab_first_config"
@@ -41,10 +44,9 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="36dp"
-        android:textSize="14sp"
-         />
+        android:textSize="18sp" />
 
-    <Button
+     <Button
         android:id="@+id/btt_cancel_config"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
@@ -52,6 +54,7 @@
         android:layout_alignBaseline="@+id/btt_next_config"
         android:layout_alignBottom="@+id/btt_next_config"
         android:layout_toLeftOf="@+id/btt_next_config"
+        android:layout_toStartOf="@+id/btt_next_config"
         android:fontFamily="sans-serif-medium"
         android:gravity="right"
         android:onClick="selectAction"
@@ -59,9 +62,9 @@
         android:text="@string/btt_cancel"
         android:textAllCaps="true"
         android:textColor="@color/accent"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
-    <Button
+     <Button
         android:id="@+id/btt_google_play_action"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
@@ -69,13 +72,14 @@
         android:layout_alignBaseline="@+id/btt_cancel_config"
         android:layout_alignBottom="@+id/btt_cancel_config"
         android:layout_toLeftOf="@+id/btt_cancel_config"
+        android:layout_toStartOf="@+id/btt_cancel_config"
         android:fontFamily="sans-serif-medium"
         android:gravity="right"
         android:onClick="selectAction"
         android:padding="8dp"
         android:textAllCaps="true"
         android:textColor="@color/accent"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:visibility="invisible" />
  
 </RelativeLayout>

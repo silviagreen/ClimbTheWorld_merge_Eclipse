@@ -462,7 +462,7 @@
     <string name="btt_google_play_services_install">Install</string>
     <string name="btt_google_play_services_update">Update</string>
     <string name="btt_google_play_services_enable">Enable</string>
-    <string name="lab_first_config">Consider a typical day.\nWhat are the time slots in which you do exercise/steps?\n\nThe next step will help you to setting these time slots.</string>
+    <string name="lab_first_config">Consider a typical day.\nWhat are the time slots in which you do exercise/stairsteps?\n\nThe next step will help you to setting these time slots.</string>
     <string name="btt_next">Next</string>
     <string name="btt_cancel">Cancel</string>
     <string name="choose_color">Choose a color and then set the time slots</string>
@@ -479,4 +479,8 @@
      
    <string name="lab_endconfig">Thank you!\n\nThe app has been configured according to your specifications.\nIf you think you\'ve done something wrong, don\'t worry: it is smart!\n\nStart playing now!</string>  
    <string name="btt_ok">OK!</string> 
+      
+   <!-- Trigger notification -->   
+   <string name="trigger_text">Make steps playing with the app!!</string>
+   
 </resources>

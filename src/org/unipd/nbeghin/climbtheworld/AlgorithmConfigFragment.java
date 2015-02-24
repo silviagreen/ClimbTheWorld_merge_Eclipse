@@ -4,15 +4,13 @@ import org.unipd.nbeghin.climbtheworld.adapters.RectangleShapeAdapter;
 import org.unipd.nbeghin.climbtheworld.util.AlarmUtils;
 import org.unipd.nbeghin.climbtheworld.util.GeneralUtils;
 import org.unipd.nbeghin.climbtheworld.R;
-
 import com.etsy.android.grid.StaggeredGridView;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.SparseIntArray;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -141,7 +138,8 @@ public class AlgorithmConfigFragment extends Fragment {
     
     
     
-    @Override
+    @SuppressLint("InflateParams")
+	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
     	super.onActivityCreated(savedInstanceState);    	
     	
@@ -180,7 +178,7 @@ public class AlgorithmConfigFragment extends Fragment {
     	config_btt.setText(R.string.config_button_text);
     	config_btt.setId(R.string.config_button_id);
     	//config_btt.setBackgroundResource(R.drawable.blue_button_style);
-    	config_btt.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_action_settings, 0, 0, 0);
+    	//config_btt.setCompoundDrawablesWithIntrinsicBounds( R.drawable.ic_action_settings, 0, 0, 0);
     	//config_btt.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimension(R.dimen.card_small_text));
     	//config_btt.setTypeface(Typeface.SERIF);	
     	

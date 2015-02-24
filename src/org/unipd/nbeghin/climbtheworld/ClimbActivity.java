@@ -4370,4 +4370,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 		ClimbApplication.refreshUserBadge();
 	}
+	
+	
+
+	public static boolean isGameActive(){
+		return samplingEnabled;
+	}
 }

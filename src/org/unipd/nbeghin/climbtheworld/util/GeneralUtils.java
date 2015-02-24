@@ -2,14 +2,11 @@ package org.unipd.nbeghin.climbtheworld.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -20,26 +17,29 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.unipd.nbeghin.climbtheworld.ClimbActivity;
 import org.unipd.nbeghin.climbtheworld.ClimbApplication;
 import org.unipd.nbeghin.climbtheworld.MainActivity;
-import org.unipd.nbeghin.climbtheworld.db.DbHelper;
 import org.unipd.nbeghin.climbtheworld.models.Alarm;
+import org.unipd.nbeghin.climbtheworld.receivers.StairsClassifierReceiver;
 import org.unipd.nbeghin.climbtheworld.receivers.TimeBatteryWatcher;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
-import android.annotation.SuppressLint;
+import org.unipd.nbeghin.climbtheworld.services.ActivityRecognitionRecordService;
+import org.unipd.nbeghin.climbtheworld.services.SamplingClassifyService;
+import org.unipd.nbeghin.climbtheworld.services.SetNextAlarmTriggersIntentService;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.AssetManager;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -136,19 +136,22 @@ public final class GeneralUtils {
     	//readIntervalsFromFile(context);
 		
     	Thread thread = new Thread(){
-    		@SuppressLint("NewApi") @Override
+    		@Override
     		public void run() {
     			
-    			List<Alarm> alarms_created = AlarmUtils.getAllAlarms(context);
-    			
+    			//si recupera il numero di alarm che sono presenti nel database (le API del 
+    			//database presentano un metodo che ritorna il numero in 'long'; si fa il cast a
+    			//'int' per andare meglio ad utilizzare questo numero; tale cast è safe in quanto
+    			//non si perde informazione, infatti il numero ritornato è tra min=0 e max=576 con
+    			//min > Integer.MIN_VALUE e max < Integer.MAX_VALUE)
+    			int alarms_number = (int) AlarmUtils.countAlarms(context);
+    			   			    			
     			//se sono stati creati intervalli
-    			if(alarms_created.size()>0){
-    				Editor editor = prefs.edit();    	
-        	    	//editor.putBoolean("firstRun", false); // si memorizza che non è il primo run dell'app
-        	    	//editor.putInt("current_template", 1); // il template orario che si usa è il primo    	
-        	    	//si salvano le credenziali
-        	    	//editor.commit();  
-        	    	
+    			if(alarms_number>0){
+    				Editor editor = prefs.edit();    
+    				//nelle SharedPreferences si salva il numero totale di alarm creati
+    				editor.putInt("alarms_number", alarms_number).commit();
+    				        	    	
         	    	/////////		
         	    	//PER TEST ALGORITMO
         	    	editor.putInt("artificialDayIndex", 0);    	
@@ -176,11 +179,13 @@ public final class GeneralUtils {
         	    	//alarm inesatti
         	    	if(Build.VERSION.SDK_INT < 19){
         	    		alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), PendingIntent.getBroadcast(context, 0, intent, 0));
+        	    		System.out.println("API "+ Build.VERSION.SDK_INT +", SET first update intent");
         	    	}
         	    	else{ 
         	    		//se nel sistema sta eseguendo una versione di Android con API >=19
         	    		//allora è necessario invocare il metodo setExact
         	    		alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), PendingIntent.getBroadcast(context, 0, intent, 0));
+        	    		System.out.println("API "+ Build.VERSION.SDK_INT +", SET EXACT first update intent");
         	    	}
         	    	
         	    	/*
@@ -204,18 +209,20 @@ public final class GeneralUtils {
         	    	////////////////////////////
         	    	    	
         	    	//LogUtils.writeLogFile(context, "ALGORITMO\n");
-        	    	LogUtils.initLogFile(context, alarms_created);
+        	    	LogUtils.initLogFile(context, AlarmUtils.getAllAlarms(context));
         	    	
-        	    	LogUtils.offIntervalsTracking(context, prefs, -1);    			
+        	    	LogUtils.offIntervalsTracking(context, -1);    			
         	    	//si imposta e si lancia il prossimo alarm
-        	    	AlarmUtils.setNextAlarm(context,alarms_created,true,false,-1); //AlarmUtils.lookupAlarmsForTemplate(context,AlarmUtils.getTemplate(context,1)) 
+        	    	AlarmUtils.setNextAlarm(context,true,false,-1);
+        	    	
+        	    	prefs.edit().putInt("steps_with_game_yesterday",100).commit();
         	    	
         	    	//si imposta l'alarm che serve per recuperare il livello di carica della batteria; è utile per
         	    	//attuare il bilanciamento energetico        	    	
         	    	Intent battery_intent = new Intent(context, TimeBatteryWatcher.class);
         	    	battery_intent.setAction("org.unipd.nbeghin.climbtheworld.BATTERY_ENERGY_BALANCING");    	
-        	    	//si ripete l'alarm circa ogni ora (il primo lancio avviene entro 5 minuti)
-        	    	alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300000,
+        	    	//si ripete l'alarm circa ogni ora (il primo lancio avviene entro 5 secondi)
+        	    	alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000,
         	    			3600000, PendingIntent.getBroadcast(context, 0, battery_intent, 0));
     			}
     			else{
@@ -229,6 +236,44 @@ public final class GeneralUtils {
     
     
     
+    public static void stopAlgorithm(Context context, int alarm_id, SharedPreferences prefs){
+    	
+    	//si recupera il prossimo alarm impostato in precedenza
+		Alarm current_next_alarm = AlarmUtils.getAlarm(context, alarm_id);
+		//se è di stop significa che si è all'interno di un intervallo attivo e, quindi,
+		//si ferma il classificatore eventualmente in esecuzione
+		if(!current_next_alarm.get_actionType()){
+				
+			if(!current_next_alarm.isStepsInterval(prefs.getInt("artificialDayIndex", 0))){
+				if(isActivityRecognitionServiceRunning(context)){
+					Log.d(MainActivity.AppName,"BATTERY LOW - Stop activity recognition");
+					context.stopService(new Intent(context, ActivityRecognitionRecordService.class));
+				}
+			}
+			else{
+				//se l'intervallo è un "intervallo con scalini" e il gioco non è in esecuzione, allora
+				//si ferma il classificatore scalini/non_scalini
+				if(!ClimbActivity.isGameActive()){
+					Log.d(MainActivity.AppName,"BATTERY LOW - Gioco non attivo, si ferma il classificatore scalini");
+					context.stopService(new Intent(context, SamplingClassifyService.class));
+					//si disabilita anche il receiver
+					//context.getApplicationContext().unregisterReceiver(stairsReceiver);
+					context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, StairsClassifierReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+				}	
+			}
+		}
+				
+		//si fa partire l'intent service del setNextAlarm che, in tal caso, cancella
+		//solamente il prossimo alarm, precedentemente impostato (in tal modo si
+		//ferma l'algoritmo)
+		context.startService(new Intent(context, SetNextAlarmTriggersIntentService.class)	
+			.putExtra("current_alarm_id", prefs.getInt("alarm_id",-1))
+			.putExtra("low_battery", true)); 
+    }
+    
+    
+    
+    /*
     private static void readIntervalsFromFile(Context context) {
 
     	DbHelper helper = DbHelper.getInstance(context);
@@ -269,14 +314,7 @@ public final class GeneralUtils {
 	            	Log.d(MainActivity.AppName, "Read intervals file: line number=" + line_number);
 	            	
 	            	if(line_number>1){
-	            		/*
-	            		if(MainActivity.logEnabled){
-	    	    			int month=cal_previous_stop.get(Calendar.MONTH)+1;	
-	    	    			Log.d(MainActivity.AppName, "AlarmUtils - PREVIOUS STOP_" + line_number + "  h:m:s=" 
-	    	    					+ cal_previous_stop.get(Calendar.HOUR_OF_DAY)+":"+ cal_previous_stop.get(Calendar.MINUTE)+":"+ cal_previous_stop.get(Calendar.SECOND) +
-	    	    					"  "+cal_previous_stop.get(Calendar.DATE)+"/"+month+"/"+cal_previous_stop.get(Calendar.YEAR));		    	    			
-	    	    		}	
-	    	            */
+	            	
 		            	int substring_end = receiveString.indexOf(";",0);
 		            		            	
 		            	String str_startTime = receiveString.substring(0,substring_end).trim();
@@ -359,7 +397,7 @@ public final class GeneralUtils {
 	        Log.e(MainActivity.AppName, " - Can not read file: " + e.toString());
 	    }
 	}
-    
+    */
     
     
     @SuppressWarnings("deprecation")
@@ -386,7 +424,7 @@ public final class GeneralUtils {
         	HttpClient client = new DefaultHttpClient();
         	
         	HttpPost post = new HttpPost(uploadServerUri);
-        	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        	MultipartEntityBuilder builder = MultipartEntityBuilder.create();        
         	builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
             FileBody fb = new FileBody(logFile);
