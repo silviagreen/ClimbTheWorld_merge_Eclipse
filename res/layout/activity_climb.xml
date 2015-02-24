@@ -105,6 +105,7 @@
             android:thumb="@drawable/navigation_next_item"
              android:layout_alignParentRight="true"
              android:visibility = "gone"
+             android:splitTrack="false"
             /> <!--   -->
 
         <LinearLayout

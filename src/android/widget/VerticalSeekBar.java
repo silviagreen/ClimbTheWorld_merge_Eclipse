@@ -86,7 +86,7 @@ public class VerticalSeekBar extends SeekBar {
 		c.rotate(-90);
 		c.translate(-getHeight(), 0);
 		
-		if(lines.size() < 4 && thumbs.size() < 4) setLists();
+		if(lines.size() < 4 && thumbs.size() < 4 && show) setLists();
 
 		for(int i = 0; i < lines.size(); i++){
 			View v = lines.get(i);
