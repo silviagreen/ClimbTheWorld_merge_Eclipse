@@ -40,7 +40,12 @@
         android:layout_centerHorizontal="true"
         android:paddingTop="12dp"
         android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
         android:text="@string/choose_color"
+        android:textSize="18sp"
+        android:gravity="center"
         android:layout_marginBottom="10dp"
         android:paddingBottom="16dp"
         android:textColor="#87000000" />
@@ -53,7 +58,6 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/rectangle_shape"
         android:clickable="true"
-        android:textAllCaps="true"
         android:gravity="center"
         android:onClick="selectAction"
         android:text="@string/green_time_slot"/>
@@ -64,12 +68,12 @@
         android:layout_height="60dp"
         android:layout_above="@+id/alg_conf_gridview"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:background="@drawable/rectangle_shape"
         android:clickable="true"
         android:gravity="center"
         android:onClick="selectAction"
-        android:text="@string/yellow_time_slot"
-        android:textAllCaps="true" />
+        android:text="@string/yellow_time_slot" />
 
     <TextView
         android:id="@+id/red_picker"
@@ -77,11 +81,11 @@
         android:layout_height="60dp"
         android:layout_above="@+id/alg_conf_gridview"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:background="@drawable/rectangle_shape"
         android:clickable="true"
         android:gravity="center"
         android:onClick="selectAction"
-        android:text="@string/red_time_slot"
-        android:textAllCaps="true" />
+        android:text="@string/red_time_slot" />
     
 </RelativeLayout>
