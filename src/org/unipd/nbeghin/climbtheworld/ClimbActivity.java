@@ -863,6 +863,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 		});
 		secondSeekbar.setMax(building.getSteps());
+		secondSeekbar.hideStars();
 		current = (TextView) findViewById(R.id.textPosition);
 		for (int i = 1; i <= ClimbApplication.N_MEMBERS_PER_GROUP; i++) {
 			int idNome = getResources().getIdentifier("nome" + i, "id", getPackageName());
