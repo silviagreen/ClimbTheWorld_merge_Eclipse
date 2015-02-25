@@ -48,6 +48,8 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 	private final String UPDATE_DAY_INDEX_FOR_TESTING = "org.unipd.nbeghin.climbtheworld.UPDATE_DAY_INDEX_TESTING";
 	/////////	
 	
+	private final int steps_with_game_threshold = 10;
+	
 	//private BroadcastReceiver stairsReceiver = StairsClassifierReceiver.getInstance();
 	//private IntentFilter stairsActionFilter = new IntentFilter(ClassifierCircularBuffer.CLASSIFIER_ACTION);	
 	
@@ -532,9 +534,9 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						//il livello della batteria non è più critico
 						pref.edit().putBoolean("low_battery_status", false).commit();
 							
-						//se oggi l'utente, giocando, non si è migliorato facendo più scalini
+						//se oggi l'utente, giocando, non si è migliorato facendo almeno 10 scalini in più
 						//rispetto a ieri, allora si attiva l'algoritmo
-						if(pref.getInt("steps_with_game_today",0) <= pref.getInt("steps_with_game_yesterday",0)){
+						if(pref.getInt("steps_with_game_today",0) <= pref.getInt("steps_with_game_yesterday",0)+steps_with_game_threshold){
 							
 							pref.edit().putBoolean("better_game_steps_number",false).commit();
 							
@@ -548,13 +550,13 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 								.putExtra("write_log_off_intervals", true));
 								//ultimo parametro utile per scrivere nel log gli intervalli saltati (solo per test)
 								
-							toLog+=", low before, now ok, steps_game_today <= yesterday, RESTART ALGORITHM (set new next alarm)";
+							toLog+=", low before, now ok, steps_game_today <= yesterday+"+steps_with_game_threshold+", RESTART ALGORITHM (set new next alarm)";
 						}
-						else{ //scalini con gioco oggi > scalini con gioco ieri
+						else{ //scalini con gioco oggi > scalini con gioco ieri+10
 							
 							pref.edit().putBoolean("better_game_steps_number",true).commit();
 							
-							toLog+=", low before, now ok, steps_game_today > yesterday, NO RESTART ALGORITHM";
+							toLog+=", low before, now ok, steps_game_today > yesterday+"+steps_with_game_threshold+", NO RESTART ALGORITHM";
 						}
 					}
 					else{
@@ -563,19 +565,19 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						//prossimo alarm) solo se non lo si è fermato in precedenza per il fatto che
 						//l'utente si è migliorato come numero scalini rispetto a ieri;
 						//si ferma l'algoritmo se, rispetto a ieri, l'utente è migliorato nel numero
-						//di scalini fatti col gioco
+						//di scalini fatti col gioco (ne ha fatti almeno 10 in più rispetto a ieri)
 						
-						//se oggi l'utente, giocando, si è migliorato facendo più scalini rispetto a
-						//ieri, allora si ferma l'algoritmo
-						if(pref.getInt("steps_with_game_today",0) > pref.getInt("steps_with_game_yesterday",0)){
+						//se oggi l'utente, giocando, si è migliorato facendo almeno 10 scalini in più scalini
+						//rispetto a ieri, allora si ferma l'algoritmo
+						if(pref.getInt("steps_with_game_today",0) > pref.getInt("steps_with_game_yesterday",0)+steps_with_game_threshold){
 							
 							GeneralUtils.stopAlgorithm(context, alarm_id, pref);
 							
 							pref.edit().putBoolean("better_game_steps_number",true).commit();
 							
-							toLog+=", steps_game_today > yesterday, STOP ALGORITHM (cancel next alarm)";
+							toLog+=", steps_game_today > yesterday+"+steps_with_game_threshold+", STOP ALGORITHM (cancel next alarm)";
 						}
-						else{//scalini con gioco oggi <= scalini con gioco ieri
+						else{//scalini con gioco oggi <= scalini con gioco ieri+10
 							
 							//se al precedente rilevamento, il numero di scalini era migliorato,
 							//significa che l'algoritmo non è attualmente in esecuzione; quindi
@@ -592,10 +594,10 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 									.putExtra("write_log_off_intervals", true));
 									//ultimo parametro utile per scrivere nel log gli intervalli saltati (solo per test)
 								
-								toLog+=", steps_game_today <= yesterday, before >, RESTART algorithm";
+								toLog+=", steps_game_today <= yesterday+"+steps_with_game_threshold+", before >, RESTART algorithm";
 							}
 							else{
-								toLog+=", steps_game_today <= yesterday, before <=, CONTINUE algorithm";
+								toLog+=", steps_game_today <= yesterday+"+steps_with_game_threshold+", before <=, CONTINUE algorithm";
 							}
 							
 							pref.edit().putBoolean("better_game_steps_number",false).commit();
