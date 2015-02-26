@@ -798,8 +798,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 					editor.putInt("last_shown_trigger_month", now_tr.get(Calendar.MONTH));
 					editor.putInt("last_shown_trigger_year", now_tr.get(Calendar.YEAR));   
 					editor.commit();    				
-				}
-								
+				}	
 				
 				if(pref.getBoolean("next_is_far_enough", false)){
 					//si resetta il numero totale di attività rilevate, il numero di valori che

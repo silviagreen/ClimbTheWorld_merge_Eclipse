@@ -1857,12 +1857,11 @@ public final class AlarmUtils {
 		
 		NotificationManager mNotificationManager =
 			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-				
-		Intent notificationIntent = new Intent(context, MainActivity.class);
-
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-		            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
+		
+		Intent notificationIntent = context.getPackageManager().getLaunchIntentForPackage("org.unipd.nbeghin.climbtheworld");
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT|Intent.FLAG_ACTIVITY_NEW_TASK);
+		notificationIntent.setPackage(null);
+		
 		PendingIntent intent = PendingIntent.getActivity(context, 0,
 		            notificationIntent, 0);
 
