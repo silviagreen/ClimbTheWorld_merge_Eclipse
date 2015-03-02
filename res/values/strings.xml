@@ -72,7 +72,7 @@
     <string name="team_duel_completed">This team is completed</string>
     <string name="wait_notification">Wait for your choice to be saved</string>
     <string name="delete_req">Request Deleted</string>
-    <string name="no_notifications">No notifications \n\n Press b0 to login with Facebook then\n\n press b1 or b2 -> "FB Notification" to download Facebook notification</string>
+    <string name="no_notifications">No notifications \n\n Tap b0 to login with Facebook then\n\n tap b1 or b2 -> "FB Notification" to download Facebook notification</string>
     <string name="team_duel_already_part">You are already part of this team</string>
     <string name="competition_end">Competition already ended</string>
     <string name="no_base_level">You have to reach level %1$d to unlock %1$s</string>
@@ -161,11 +161,11 @@
     <string name="sampling_enabled">Sampling running - Stop it before exiting</string>
     <string name="social_penalty">Move up next time!</string>
     <string name="team_duel_no_available">This team duel is not yet available</string>
-    <string name="your_team_won">Your team has won!!!!</string>
-    <string name="other_team_won">The challenger\'s team has won</string>
+    <string name="your_team_won">Your team has won!\nGood job :)</string>
+    <string name="other_team_won">Oh no:(\nThe challenger\'s team has won</string>
     <string name="competition_no_available">This competition is not yet available</string>
     <string name="competition_win">Yeah!!!! You win this challenge</string>
-    <string name="competition_lose">%s win this challenge</string>
+    <string name="competition_lose">You lose :(\n%s is the winner</string>
     <string name="bonus_collaboration">You have won %d" XP as bonus for your help!!!!</string>
     <string name="bonus_competition">You have won %d XP as bonus for your victory!!!!</string>
     <string name="bonus_team_duel">You have won %d XP as bonus for your help and victory!!!!</string>
@@ -188,7 +188,7 @@
     <string name="team_one">Team One</string>
     <string name="team_two">Team Two</string>
     <string name="creator">Leader: </string>
-    <string name="offline_team">Go online and press Update to see the current teams or to retire</string>
+    <string name="offline_team">Go online to see the current teams or to retire</string>
     <string name="current_position">Chart</string>
     
     <!-- string activity setting -->
@@ -344,14 +344,14 @@
 	
 	<string name="demo2_title">How to play\n%s mode</string>
 	
-	<string name="demo2_slide00">Press play and make stairs</string>
+	<string name="demo2_slide00">Tap play and make stairs</string>
 	<string name="demo2_slide01">You can pause the climb whenever you want</string>
 	<string name="demo2_slide02">Reach the stars to complete goals and earn bonus</string>
 	<string name="demo2_slide03">Reach the top to win the trophy!</string>
 	
 	<string name="demo2_slide10">Invite 5 friends at most and climb the building together\nYour steps will be summed up to theirs\n\n(your previous progress will be maintained)</string>
 	<string name="demo2_slide11">Make stairs and exceed the partecipation threshold to win the final bonus</string>
-	<string name="demo2_slide12">Press Update to see your friends\' progresses</string>
+	<string name="demo2_slide12">Tap Update to see your friends\' progresses</string>
 	<string name="demo2_slide13">Reach the top with your friends and win the trophy with bonus points together!</string>
 	
 	<string name="demo2_slide20">Challenge 5 friends at most: if you reach the top first, you win the challenge!\n\n(your previous progress will be paused)</string>
@@ -414,7 +414,7 @@
 	<string name="team_vs_team_overtake_opengraph_title">We\'re in pole position!</string>
 	<string name="team_vs_team_overtake_opengraph_descr">I\'ve made %1$d new steps in %2$s and now we are in pole!</string>
 
-	<string name="help_chart">Press Update to find out the winner\n %d friends still have to upload their result.</string>
+	<string name="help_chart">Wait to find out the winner\n %d friends still have to upload their result.</string>
 	<string name="creating_mode">Changing game mode...</string>
 	<string name="gallery_no_connection">Connect to see the gallery</string>
 	<string name="gallery_empty">No photos available</string>

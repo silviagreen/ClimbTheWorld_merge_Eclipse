@@ -18,6 +18,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.SimpleTimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +33,6 @@ import org.unipd.nbeghin.climbtheworld.models.Badge;
 import org.unipd.nbeghin.climbtheworld.models.Building;
 import org.unipd.nbeghin.climbtheworld.models.BuildingText;
 import org.unipd.nbeghin.climbtheworld.models.ChartMember;
-import org.unipd.nbeghin.climbtheworld.models.ClassifierCircularBuffer;
 import org.unipd.nbeghin.climbtheworld.models.Climbing;
 import org.unipd.nbeghin.climbtheworld.models.Collaboration;
 import org.unipd.nbeghin.climbtheworld.models.Competition;
@@ -55,7 +56,6 @@ import org.unipd.nbeghin.climbtheworld.util.ModelsUtil;
 import org.unipd.nbeghin.climbtheworld.util.ParseUtils;
 import org.unipd.nbeghin.climbtheworld.util.StatUtils;
 import org.unipd.nbeghin.climbtheworld.util.SystemUiHider;
-import org.unipd.nbeghin.climbtheworld.R;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -115,7 +115,6 @@ import android.widget.VerticalSeekBar;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
-import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
@@ -1206,6 +1205,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			if (dialog.isShowing()) {
 				dialog.dismiss();
 			}
+			//AUTOMATIC UPDATE
+			if(climbing.getGame_mode() != 0)
+				timer.schedule(updates, 3000, 5000); //execute in every 10 ms
+		
 		}
 	}
 
@@ -1321,6 +1324,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							// no collaboration found
 							showMessage(getString(R.string.collab_no_available));
 							Log.e("loadCollaboration", "Collaboration " + collaboration.getId() + " not present in Parse");
+							timer.cancel();
 						} else {
 
 							// collaboration found
@@ -1380,6 +1384,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										group_steps.get(i).setText(String.valueOf(steps));
 										group_members.get(i).setClickable(false);
 										group_members.get(i).setVisibility(View.VISIBLE);
+										group_members.get(i).setTextAppearance(getApplicationContext(), R.style.chartNormal);
+										group_members.get(i).setBackgroundColor(Color.parseColor("#dcdcdc"));
 										if (collaboration.getAmICreator()) {
 											final Integer idx = new Integer(i);
 											final ChartMember member = new ChartMember(key, steps);
@@ -1413,6 +1419,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									group_members.get(i).setClickable(true);
 									group_members.get(i).setText("  +");
 									group_members.get(i).setVisibility(View.VISIBLE);
+									group_members.get(i).setBackgroundColor(getResources().getColor(R.color.light_teal));
+									group_members.get(i).setTextAppearance(getApplicationContext(), R.style.chartButton);
 									group_members.get(i).setOnClickListener(new OnClickListener() {
 
 										@Override
@@ -1469,6 +1477,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									// this building, but I didn't pass the
 									// threshold
 									current_win = true;
+									timer.cancel();
 									socialPenalty();
 									if (microgoal != null && (isUpdate || isOpening))
 										deleteMicrogoalInParse(microgoal);
@@ -1484,11 +1493,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										// saveBadges(true);
 										saveCollaborationData();
 									}
-
+									timer.cancel();
 								}
 
 							} else {
 								showMessage(getString(R.string.kicked_out));
+								timer.cancel();
 								ClimbApplication.collaborationDao.delete(collaboration);
 								apply_removed_from_collaboration();
 								// reset graphics
@@ -1508,7 +1518,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 						Log.e("loadCollaboration", e.getMessage());
 					}
 					if (isUpdate) {
-						resetUpdating();
+						//resetUpdating();
 					}
 
 					synchronized (ClimbApplication.lock) {
@@ -1522,7 +1532,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			showMessage(getString(R.string.check_connection));
 			showOfflineSocialMember();
 			if (isUpdate) {
-				resetUpdating();
+				//resetUpdating();
 			}
 			synchronized (ClimbApplication.lock) {
 				in_progress = false;
@@ -1908,9 +1918,42 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			findViewById(R.id.lblReadyToClimb).startAnimation(anim);
 			findViewById(R.id.imgArrow).startAnimation(arrowAnim);
 			findViewById(R.id.lblReadyToClimb).setVisibility(View.VISIBLE);
+			
+			
 
 		}
 	}
+	
+	final Handler handler = new Handler();
+    Timer timer = new Timer();
+    TimerTask updates = new TimerTask() {       
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                public void run() {       
+                    try {
+                    	switch (climbing.getGame_mode()) {
+						case 1:
+							updateOthers(true, false);
+							break;
+						case 2:
+							updateChart(true, false);
+							break;
+						case 3:
+							updateTeams(true, false);
+							break;
+						}
+                        updateTeams(true, false);                     
+                        //yout method here
+                    } catch (Exception e) {
+                    }
+                }
+            });
+        }
+    };
+    
+   
+    
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -2020,15 +2063,15 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		case R.id.itemMicroGoal:
 			onMicroGoalClicked();
 			return true;
-		case R.id.itemUpdate:
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			ImageView iv = (ImageView) inflater.inflate(R.layout.refresh, null);
-			Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
-			rotation.setRepeatCount(Animation.INFINITE);
-			iv.startAnimation(rotation);
-			MenuItemCompat.setActionView(item, iv);
-			onUpdate();
-			return true;
+//		case R.id.itemUpdate:
+//			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			ImageView iv = (ImageView) inflater.inflate(R.layout.refresh, null);
+//			Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+//			rotation.setRepeatCount(Animation.INFINITE);
+//			iv.startAnimation(rotation);
+//			MenuItemCompat.setActionView(item, iv);
+//			onUpdate();
+//			return true;
 		case android.R.id.home:
 			// This ID represents the Home or Up button. In the case of this
 			// activity, the Up button is shown. Use NavUtils to allow users
@@ -2808,86 +2851,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			
 	}
 
-	private void saveBeforeQuit(boolean changes) {
-		if (isCounterMode)
-			updateUserStats(true);
-		else
-			updateUserStats(false);
-		if (!isCounterMode && changes) {
-			// update db
-			if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty"))
-				updateMicrogoalInParse();
-
-			climbing.setModified(new Date().getTime()); // update climbing last
-														// edit
-														// date
-			climbing.setCompleted_steps(num_steps); // update completed steps
-			climbing.setPercentage(percentage); // update progress percentage
-			climbing.setRemaining_steps(building.getSteps() - num_steps); // update
-																			// remaining
-																			// steps
-			if (percentage >= 1.00 && (mode != GameModeType.SOCIAL_CHALLENGE) && (mode != GameModeType.TEAM_VS_TEAM))
-				climbing.setCompleted(new Date().getTime());
-			if (percentage >= 1.00) {
-				switch (mode) {
-				case SOCIAL_CLIMB: // come back in Solo Climb
-					updateOthers(false, false);
-					climbing.setGame_mode(0);
-					climbing.setId_mode("");
-					ClimbApplication.climbingDao.update(climbing); // save to db
-					if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty"))
-						updateClimbingInParse(climbing, false);
-					break;
-				case SOCIAL_CHALLENGE:
-					updateChart(false, false);
-					break;
-				case TEAM_VS_TEAM:
-					updateTeams(false, false);
-					break;
-				case SOLO_CLIMB:
-					if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty")) {
-						ClimbApplication.climbingDao.update(climbing); // save
-																		// to db
-						updateClimbingInParse(climbing, false);
-					} else {
-						climbing.setSaved(true);
-						ClimbApplication.climbingDao.update(climbing); // save
-																		// to db
-					}
-					break;
-				}
-				/*
-				 * climbing.setGame_mode(0); climbing.setId_mode("");
-				 */
-			} else {
-				System.out.println(pref.getString("FBid", "none"));
-				if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty")) {
-					ClimbApplication.climbingDao.update(climbing); // save to db
-					updateClimbingInParse(climbing, false);
-				} else {
-					climbing.setSaved(true);
-					ClimbApplication.climbingDao.update(climbing); // save to db
-				}
-			}
-
-			Log.i(MainActivity.AppName, "Updated climbing #" + climbing.get_id());
-			// button
-			// icon
-			// to
-			// play
-			// again
-
-			if (mode == GameModeType.SOCIAL_CLIMB && collaboration != null && !pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty"))
-				saveCollaborationData();
-			// else if (mode == GameModeType.SOCIAL_CHALLENGE && competition != null)
-			// saveCompetitionData();
-			else if (mode == GameModeType.TEAM_VS_TEAM && teamDuel != null && !pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty"))
-				saveTeamDuelData();
-
-			updatePoints(false, true);
-			// saveBadges(true);
-		}
-	}
+	
 
 	//TODO Alarm controllare
 	@Override
@@ -2896,6 +2860,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		stopAllServices(); // make sure to stop all background services
 		super.onDestroy();
 		uiHelper.onDestroy();
+		timer.cancel();
 		if (samplingEnabled) {
 			
 			//si recupera il prossimo alarm impostato
@@ -2944,7 +2909,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	protected void onStop() {
 		super.onStop();
 		Log.d("Stopping...", "Stopping the activity");
-
+		
 	}
 
 	/*
@@ -2985,7 +2950,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	public void onUpdate(/* MenuItem v */) {
 		switch (climbing.getGame_mode()) {
 		case 0:
-			resetUpdating();
+			//resetUpdating();
 			break;
 		case 1:
 			updateOthers(true, false);
@@ -3015,6 +2980,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	}
 
 	private void endCompetition(boolean saveOnline) {
+		timer.cancel();
 		Log.d("END COMPETITION", "fineeee");
 		updatePoints(false, saveOnline);
 		saveCompetitionData();
@@ -3048,6 +3014,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 	private void endTeamCompetition(/* boolean penalty, */boolean saveOnline) {
 		// updatePoints(penalty, saveOnline);
+		timer.cancel();
 		saveTeamDuelData();
 		if (soloClimb != null) {
 			deleteClimbingInParse(climbing);
@@ -3087,6 +3054,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					if (e == null) {
 						if (tds == null || tds.size() == 0) {
 							showMessage(getString(R.string.team_duel_no_available));
+							timer.cancel();
 							// Toast.makeText(getApplicationContext(), getString(R.string.team_duel_no_available), Toast.LENGTH_SHORT).show();
 							Log.e("updateTeams", "TeamDuel not present in Parse");
 						} else {
@@ -3239,6 +3207,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							if (/* myGroupScore >= building.getSteps() */teamDuel.isCompleted() && Integer.valueOf(teamDuel.getWinner_id()) == teamDuel.getMygroup().ordinal()) {
 								showMessage(getString(R.string.your_team_won));
+								chartHelpText.setText(getString(R.string.your_team_won));
+								chartHelpText.setVisibility(View.VISIBLE);
 								current_win = true;
 								// Toast.makeText(getApplicationContext(), getString(R.string.your_team_won), Toast.LENGTH_SHORT).show();
 								boolean penalty = false;
@@ -3258,6 +3228,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							} else if (/* otherGroupScore >= building.getSteps() */teamDuel.isCompleted() && Integer.valueOf(teamDuel.getWinner_id()) != teamDuel.getMygroup().ordinal()) {
 								showMessage(getString(R.string.other_team_won));
+								chartHelpText.setText(getString(R.string.other_team_won));
+								chartHelpText.setVisibility(View.VISIBLE);
 								current_win = true;
 								// Toast.makeText(getApplicationContext(), getString(R.string.other_team_won), Toast.LENGTH_SHORT).show();
 								boolean penalty = false;
@@ -3282,7 +3254,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 						Log.e("updateTeams", e.getMessage());
 					}
 					if (isUpdate) {
-						resetUpdating();
+						//resetUpdating();
 					}
 					synchronized (ClimbApplication.lock) {
 						in_progress = false;
@@ -3298,7 +3270,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 			// Toast.makeText(getApplicationContext(), getString(R.string.check_connection), Toast.LENGTH_SHORT).show();
 			if (isUpdate) {
-				resetUpdating();
+				//resetUpdating();
 			}
 			synchronized (ClimbApplication.lock) {
 				in_progress = false;
@@ -3323,6 +3295,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							Log.e("updatechart", "Competition not present in Parse");
 							// delete this collaboration
 							ClimbApplication.competitionDao.delete(competition);
+							timer.cancel();
 						} else {
 							SharedPreferences pref = getApplicationContext().getSharedPreferences("UserSession", 0);
 							compet_parse = compets.get(0);
@@ -3442,7 +3415,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									group_members.get(i).setVisibility(View.VISIBLE);
 									group_members.get(i).setBackgroundColor(Color.parseColor("#dcdcdc"));
 									group_steps.get(i).setBackgroundColor(Color.parseColor("#dcdcdc"));
-
+									group_members.get(i).setTextAppearance(getApplicationContext(), R.style.chartNormal);
 									final TextView currentName = group_members.get(i);
 									final TextView currentSteps = group_steps.get(i);
 									final TextView currentMinus = group_minus.get(i);
@@ -3464,7 +3437,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										});
 
 									} else {
-										group_minus.get(i).setVisibility(View.GONE);
+										group_minus.get(i).setVisibility(View.INVISIBLE);
 									}
 
 									if (key.equalsIgnoreCase(pref.getString("FBid", ""))) {
@@ -3483,6 +3456,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 											updatePoints(false, true);
 											// saveBadges(true);
 											// }
+											chartHelpText.setText(getString(R.string.competition_win));
+											chartHelpText.setVisibility(View.VISIBLE);
 											showMessage(getString(R.string.competition_win));
 											// Toast.makeText(getApplicationContext(), getString(R.string.competition_win), Toast.LENGTH_SHORT).show();
 										}
@@ -3497,6 +3472,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 											// if(isUpdate || isOpening)
 											updatePoints(true, true);
 											endCompetition(true);
+											chartHelpText.setText(getString(R.string.competition_lose, name));
+											chartHelpText.setVisibility(View.VISIBLE);
 											showMessage(getString(R.string.competition_lose, name));
 											// Toast.makeText(getApplicationContext(), getString(R.string.competition_lose, name), Toast.LENGTH_SHORT).show();
 										}
@@ -3510,7 +3487,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									group_members.get(i).setClickable(true);
 									group_members.get(i).setText("  +");
 									group_members.get(i).setVisibility(View.VISIBLE);
-									group_members.get(i).setBackgroundColor(Color.parseColor("#dcdcdc"));
+									//group_members.get(i).setBackgroundColor(Color.parseColor("#dcdcdc"));
+									group_members.get(i).setBackgroundColor(getResources().getColor(R.color.light_teal));
+									group_members.get(i).setTextAppearance(getApplicationContext(), R.style.chartButton);
 									group_members.get(i).setOnClickListener(new OnClickListener() {
 
 										@Override
@@ -3570,6 +3549,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								// Toast.makeText(getApplicationContext(), getString(R.string.kicked_out), Toast.LENGTH_SHORT).show();
 								ClimbApplication.competitionDao.delete(competition);
 								apply_removed_from_competition();
+								timer.cancel();
 								// reset graphics
 								current.setVisibility(View.GONE);
 								for (int i = 0; i < group_members.size(); i++) {
@@ -3587,7 +3567,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 						Log.e("updateChart", e.getMessage());
 					}
 					if (isUpdate) {
-						resetUpdating();
+						//resetUpdating();
 					}
 					synchronized (ClimbApplication.lock) {
 						in_progress = false;
@@ -3600,7 +3580,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			showOfflineSocialMember();
 
 			if (isUpdate) {
-				resetUpdating();
+				//resetUpdating();
 			}
 			synchronized (ClimbApplication.lock) {
 				in_progress = false;
@@ -4376,4 +4356,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	public static boolean isGameActive(){
 		return samplingEnabled;
 	}
+	
+	
 }

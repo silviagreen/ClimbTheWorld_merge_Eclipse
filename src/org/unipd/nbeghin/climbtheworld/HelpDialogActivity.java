@@ -200,8 +200,8 @@ public class HelpDialogActivity extends Dialog {
 						
 					if(mode != GameModeType.SOLO_CLIMB){
 						textUpdate.setText(ClimbApplication.getContext().getString(R.string.update_help));
-						imageUpdate.setVisibility(View.VISIBLE);
-						textUpdate.setVisibility(View.VISIBLE);
+						imageUpdate.setVisibility(View.INVISIBLE);
+						textUpdate.setVisibility(View.INVISIBLE);
 						if(mode != GameModeType.TEAM_VS_TEAM){
 							imageRow1.setVisibility(View.VISIBLE);
 							imageRow2.setVisibility(View.VISIBLE);

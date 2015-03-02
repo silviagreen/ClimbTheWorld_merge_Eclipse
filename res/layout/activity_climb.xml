@@ -284,10 +284,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
+                        android:layout_marginRight="1dp"
                         android:gravity="center_horizontal"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="#FFFFFF" />
 
                     <TextView
                         android:id="@+id/nome1"
@@ -307,13 +310,7 @@
                         android:gravity="center_horizontal"
                         android:textColor="#000000" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBar1"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
-                        android:visibility="gone" />
+                    
                 </TableRow>
 
                 <TableRow
@@ -327,10 +324,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
                         android:gravity="center_horizontal"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="@color/white"
+                         android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="1dp" />
 
                     <TextView
                         android:id="@+id/nome2"
@@ -362,10 +362,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
                         android:gravity="center_horizontal"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="@color/white"
+                         android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="1dp" />
 
                     <TextView
                         android:id="@+id/nome3"
@@ -397,10 +400,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
                         android:gravity="center_horizontal"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="@color/white"
+                         android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="1dp"  />
 
                     <TextView
                         android:id="@+id/nome4"
@@ -432,10 +438,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
                         android:gravity="center_horizontal"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="@color/white"
+                         android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="1dp"  />
 
                     <TextView
                         android:id="@+id/nome5"
@@ -467,10 +476,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.2"
-                        android:background="#dcdcdc"
+                        android:background="@color/light_teal"
                         android:gravity="center_horizontal"
                         android:text=" - "
-                        android:textColor="#000000" />
+                        android:textColor="@color/white"
+                         android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="1dp"  />
 
                     <TextView
                         android:id="@+id/nome6"

@@ -149,11 +149,11 @@
     <string name="sampling_enabled">In campionamento - Disattivarlo prima di uscire</string>
     <string name="social_penalty">Un piccolo sforzo in più dai!</string>
     <string name="team_duel_no_available">Questo duello tra team non è ancora disponbile</string>
-    <string name="your_team_won">Il tuo team ha vinto!!!!</string>
-    <string name="other_team_won">Il team dello sfidante ha vinto</string>
+    <string name="your_team_won">Il tuo team ha vinto!\nComplimenti :)</string>
+    <string name="other_team_won">Oh no:(\nIl team dello sfidante ha vinto</string>
     <string name="competition_no_available">tQuesta competizione non è ancora disponibile</string>
     <string name="competition_win">Yeah!!!! Hai vinto la sfida</string>
-    <string name="competition_lose">%s ha vinto questa sfida</string>
+    <string name="competition_lose">Hai perso :(\n%s ha vinto questa sfida</string>
     <string name="bonus_collaboration">Hai vinto %d" XP bonus per il tuo aiuto!!!!</string>
     <string name="bonus_competition">Hai vinto %d XP bonus per la tua vittoria!!!!</string>
     <string name="bonus_team_duel">Hai vinto %d XP bonus per il tuo aiuto e per la vittoria!!!!</string>
@@ -177,7 +177,7 @@
     <string name="team_one">Team n1</string>
     <string name="team_two">Team n2</string>
     <string name="creator">Leader: </string>
-    <string name="offline_team">Vai online e premi Aggiorna per vedere i team attuali o per ritirarti</string>
+    <string name="offline_team">Vai online per vedere i team attuali o per ritirarti</string>
     
   
     <!-- SettingsActivity -->
@@ -420,7 +420,7 @@
 	<string name="team_vs_team_overtake_opengraph_title">Siamo in pole position!</string>
 	<string name="team_vs_team_overtake_opengraph_descr">Ho fatto %1$d nuovi scalini in %2$s e ora siamo in testa!</string>
 
-	<string name="help_chart">Premi aggiorna per scoprire il vincitore\n %d amici devono caricare il proprio risultato.</string>
+	<string name="help_chart">Attendi per scoprire il vincitore\n %d amici devono caricare il proprio risultato.</string>
 	<string name="creating_mode">Sto cambiando la modalità di gioco...</string>
 	<string name="gallery_no_connection">Connettiti per vedere la galleria</string>
 	<string name="gallery_empty">Nessuna foto disponibile</string>
