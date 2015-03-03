@@ -806,7 +806,10 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 					editor.commit();    				
 				}	
 				
-				if(pref.getBoolean("next_is_far_enough", false)){
+				Alarm this_alarm = AlarmUtils.getAlarm(context, this_alarm_id);
+								
+				if(pref.getBoolean("next_is_far_enough", false) 
+						&& this_alarm.getRepeatingDay(current_day_index)){
 					//si resetta il numero totale di attività rilevate, il numero di valori che
 					//indicano un'attività fisica e le variabili per la somma dei pesi e per la somma
 					//dei prodotti confidenze-pesi
@@ -835,7 +838,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						//si controlla se questo alarm definisce un "intervallo con scalini";
 						//se è un "intervallo con scalini", allora non si attiva il servizio di 
 						//activity recognition, ma il classificatore scalini/non_scalini
-						if(!AlarmUtils.getAlarm(context, this_alarm_id).isStepsInterval(current_day_index)){
+						if(!this_alarm.isStepsInterval(current_day_index)){
 							
 							//non è un "intervallo con scalini"
 							

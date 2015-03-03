@@ -512,107 +512,150 @@ public final class AlarmUtils {
 				boolean last_evaluated_far_enough =  isLastListenedIntervalFarEnough(context, nextAlarm, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
 				prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
 				
-				if(hasTrigger(prefs, id_this_alarm) || last_evaluated_far_enough){
+				//se in questo intervallo c'è da visualizzare un trigger, allora si mantiene
+				//l'alarm impostandolo; se non ha un trigger da mostrare, si applica all'intervallo
+				//il filtro del bilanciamento energetico e, se può essere considerato, si controlla
+				//se è attivo o meno: se è attivo lo si considera, altrimenti prima si prova a mutarlo
+				if(!hasTrigger(prefs, id_this_alarm)){
 					
-					//se l'alarm non è attivato per questo giorno e se esso è di start, vuol dire
-					//che il relativo intervallo non è stato attivato per questo giorno					
-					if(!nextAlarm.getRepeatingDay(artificialIndex)){
+					if(last_evaluated_far_enough){
 						
-						////////////////////////////
-						//utile per scrivere il LOG					
-						String status="";							
-						if(nextAlarm.isStepsInterval(artificialIndex)){
-							//status="Intervallo con scalini non attivo";
-							status="S,0";
-						}
-						else{
-							//status="Intervallo di esplorazione non attivo";
-							status="E,0";
-						}			
-												
-						////////////////////////////
-						//int id_this_alarm=nextAlarm.get_id();				
-						
-						//se è un alarm di start
-						if(nextAlarm.get_actionType()){
+						//se l'alarm non è attivato per questo giorno e se esso è di start, vuol dire
+						//che il relativo intervallo non è stato attivato per questo giorno					
+						if(!nextAlarm.getRepeatingDay(artificialIndex)){
 							
-							System.out.println("next alarm non attivo e di start");
+							////////////////////////////
+							//utile per scrivere il LOG					
+							String status="";							
+							if(nextAlarm.isStepsInterval(artificialIndex)){
+								//status="Intervallo con scalini non attivo";
+								status="S,0";
+							}
+							else{
+								//status="Intervallo di esplorazione non attivo";
+								status="E,0";
+							}			
 													
-							//si prova ad effettuare la mutazione, attivando l'intervallo
-							if(!intervalMutated(nextAlarm, artificialIndex, alarmDao,context)){
+							////////////////////////////
+							//int id_this_alarm=nextAlarm.get_id();				
+							
+							//se è un alarm di start
+							if(nextAlarm.get_actionType()){
 								
-								//si scrive nel file di log che questo intervallo non è stato
-								//mutato e, quindi, non viene valutato
+								System.out.println("next alarm non attivo e di start");
+														
+								//si prova ad effettuare la mutazione, attivando l'intervallo
+								if(!intervalMutated(nextAlarm, artificialIndex, alarmDao,context)){
+									
+									//si scrive nel file di log che questo intervallo non è stato
+									//mutato e, quindi, non viene valutato
+									
+									////////////////////////////
+									//utile per scrivere il LOG	
+									/*if(id_this_alarm==1){
+										int month = alarmTime.get(Calendar.MONTH)+1;
+										LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
+									}*/
+									
+									//si ottiene il relativo alarm di stop (esiste sicuramente)
+									Alarm next_stop= getAlarm(context, id_this_alarm+1); 							
+									
+									/*
+									LogUtils.writeLogFile(context,status+": " + nextAlarm.get_hour()+":"+nextAlarm.get_minute()+
+											":"+nextAlarm.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
+											":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
+											status+" la prossima settimana");
+									*/
+									LogUtils.writeIntervalStatus(context, artificialIndex, nextAlarm, next_stop, "|"+status+";NM;-;"+status);
+									
+									////////////////////////////
+									
+									nextAlarm=null;							
+								}
+							}
+							else{ //se l'alarm non è attivo ed è di stop, si deve cercare un
+								  //altro intervallo
+								
+								//si scrive nel file di log che questo intervallo non è stato mutato
+								//(in quanto l'inizio dell'intervallo è avvenuto a device spento o
+								//prima della configurazione dell'algoritmo) e, quindi, non viene
+								//valutato
 								
 								////////////////////////////
 								//utile per scrivere il LOG	
-								/*if(id_this_alarm==1){
+								/*if(id_this_alarm==2){
 									int month = alarmTime.get(Calendar.MONTH)+1;
 									LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
 								}*/
 								
-								//si ottiene il relativo alarm di stop (esiste sicuramente)
-								Alarm next_stop= getAlarm(context, id_this_alarm+1); 							
+								//si ottiene il relativo alarm di start (esiste sicuramente)
+								Alarm prev_start= getAlarm(context, id_this_alarm-1); 
 								
+								//String extra_str="a device spento)"; //ad algoritmo non attivo
+								String extra_str="NA";
+								if(!prevAlarmNotAvailable){
+									//extra_str="ad algoritmo non ancora configurato)";
+									extra_str="NC";
+								}
 								/*
-								LogUtils.writeLogFile(context,status+": " + nextAlarm.get_hour()+":"+nextAlarm.get_minute()+
-										":"+nextAlarm.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
-										":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
-										status+" la prossima settimana");
+								LogUtils.writeLogFile(context,status+": " + prev_start.get_hour()+":"+prev_start.get_minute()+
+										":"+prev_start.get_second()+" - "+nextAlarm.get_hour()+":"+nextAlarm.get_minute()+
+										":"+nextAlarm.get_second()+ " | Non valutato (mutazione non tentata a causa di inizio intervallo "+
+										extra_str+ " | "+ status+" la prossima settimana");
 								*/
-								LogUtils.writeIntervalStatus(context, artificialIndex, nextAlarm, next_stop, "|"+status+";NM;-;"+status);
+								LogUtils.writeIntervalStatus(context, artificialIndex, prev_start, nextAlarm, "|"+status+";-("+extra_str+");-;"+status);
 								
 								////////////////////////////
 								
-								nextAlarm=null;							
+								nextAlarm=null;
 							}
-						}
-						else{ //se l'alarm non è attivo ed è di stop, si deve cercare un
-							  //altro intervallo
-							
-							//si scrive nel file di log che questo intervallo non è stato mutato
-							//(in quanto l'inizio dell'intervallo è avvenuto a device spento o
-							//prima della configurazione dell'algoritmo) e, quindi, non viene
-							//valutato
-							
-							////////////////////////////
-							//utile per scrivere il LOG	
-							/*if(id_this_alarm==2){
-								int month = alarmTime.get(Calendar.MONTH)+1;
-								LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
-							}*/
-							
-							//si ottiene il relativo alarm di start (esiste sicuramente)
-							Alarm prev_start= getAlarm(context, id_this_alarm-1); 
-							
-							//String extra_str="a device spento)"; //ad algoritmo non attivo
-							String extra_str="NA";
-							if(!prevAlarmNotAvailable){
-								//extra_str="ad algoritmo non ancora configurato)";
-								extra_str="NC";
-							}
-							/*
-							LogUtils.writeLogFile(context,status+": " + prev_start.get_hour()+":"+prev_start.get_minute()+
-									":"+prev_start.get_second()+" - "+nextAlarm.get_hour()+":"+nextAlarm.get_minute()+
-									":"+nextAlarm.get_second()+ " | Non valutato (mutazione non tentata a causa di inizio intervallo "+
-									extra_str+ " | "+ status+" la prossima settimana");
-							*/
-							LogUtils.writeIntervalStatus(context, artificialIndex, prev_start, nextAlarm, "|"+status+";-("+extra_str+");-;"+status);
-							
-							////////////////////////////
-							
-							nextAlarm=null;
 						}
 					}
-				}
-				else{					
-					////////////////////////////
-					//utile per scrivere il LOG					
-					writeSkippedInterval(context, nextAlarm, artificialIndex, 0);
-					////////////////////////////
-					
-					nextAlarm=null;
-				}
+					else{					
+						////////////////////////////
+						//utile per scrivere il LOG					
+						writeSkippedInterval(context, nextAlarm, artificialIndex, 0);
+						////////////////////////////
+						
+						nextAlarm=null;
+					}
+				}				
+				else{ //in questo intervallo c'è da visualizzare un trigger, lo si mantiene
+										
+					//un trigger è posto ad inizio intervallo (quindi action di start); si
+					//controlla se l'intervallo è attivo, altrimenti si prova a mutarlo; se
+					//non è attivo e non viene mutato, viene comunque mantenuto perché c'è
+					//da visualizzare il trigger										
+					if(!nextAlarm.getRepeatingDay(artificialIndex)){
+						
+						//si prova ad effettuare la mutazione, attivando l'intervallo
+						if(!intervalMutated(nextAlarm, artificialIndex, alarmDao,context)){
+							
+							////////////////////////////
+							//utile solo per scrivere il log
+							
+							String status="";							
+							if(nextAlarm.isStepsInterval(artificialIndex)){
+								//status="Intervallo con scalini non attivo";
+								status="S,0";
+							}
+							else{
+								//status="Intervallo di esplorazione non attivo";
+								status="E,0";
+							}	
+							
+							//si scrive nel file di log che questo intervallo non è stato
+							//mutato e, quindi, non viene valutato
+							
+							//si ottiene il relativo alarm di stop (esiste sicuramente)
+							Alarm next_stop= getAlarm(context, id_this_alarm+1); 							
+							
+							LogUtils.writeIntervalStatus(context, artificialIndex, nextAlarm, next_stop, "|"+status+";NM;-;"+status);									
+						
+							////////////////////////////
+						}
+					}
+				}				
 			}
 			//se l'alarm trovato non è attivo per il giorno corrente, allora si prova a
 			//cercarne un altro partendo dall'alarm successivo; gli alarm che nella lista
@@ -635,72 +678,91 @@ public final class AlarmUtils {
 					
 					boolean last_evaluated_far_enough =  isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
 					prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
-					
-					if(hasTrigger(prefs, e_id) || last_evaluated_far_enough){
-						
-						if(e.getRepeatingDay(artificialIndex)){
-							//l'alarm è attivato per questo giorno
-							//cio' significa che è attivato anche l'altro alarm a lui associato (perchè una
-							//coppia di alarm (start,stop) definisce un intervallo: quando un alarm di start
-							//viene attivato (disattivato) viene attivato (disattivato) anche l'alarm di stop
-							//successivo)
-							nextAlarm=e;
-							stop=true;
-						}
-						else{//l'alarm non è attivato per questo giorno;
-							//se questo è un alarm di start vuol dire che il relativo intervallo 
-							//non è stato attivato per questo giorno	
-							if(e.get_actionType()){					
-								//è un alarm di start
 										
-								//si prova ad effettuare la mutazione, attivando l'intervallo
-								stop=intervalMutated(e, artificialIndex, alarmDao,context);
-								if(stop){
-									nextAlarm=e;
-								}
-								////////////////////////////
-								//LOG
-								else{ //l'intervallo non è mutato
-									
-									//si scrive nel file di log che questo intervallo non è mutato
-									//e, quindi, non viene valutato
-									String status="";							
-									if(e.isStepsInterval(artificialIndex)){
-										//status="Intervallo con scalini non attivo";
-										status="S,0";
+					//se l'alarm presenta un trigger da visualizzare, allora lo si imposta
+					//nell'alarm manager
+					if(hasTrigger(prefs, e_id)){
+						nextAlarm=e;
+						stop=true;
+						
+						//nel momento del set, un trigger è posto sempre all'inizio di un
+						//intervallo attivo; 
+						//il trigger può essere visualizzato all'inizio di un intervallo
+						//non attivo solo nel caso in cui in quest'ultimo è stata propagata 
+						//dal precedente una valutazione che lo ha fatto diventare non attivo; 
+						//in tal caso, non si prova neanche a mutare l'intervallo perché non
+						//verrebbe comunque considerato dal filtro del bilanciamento energetico						
+					}
+					else{ //se non ha un trigger da mostrare, si applica all'intervallo il filtro
+						  //del bilanciamento energetico e, se può essere considerato, si controlla
+						  //se è attivo o meno: se è attivo lo si considera, altrimenti prima si prova a mutarlo
+						
+						if(last_evaluated_far_enough){
+							
+							if(e.getRepeatingDay(artificialIndex)){
+								//l'alarm è attivato per questo giorno
+								//cio' significa che è attivato anche l'altro alarm a lui associato (perchè una
+								//coppia di alarm (start,stop) definisce un intervallo: quando un alarm di start
+								//viene attivato (disattivato) viene attivato (disattivato) anche l'alarm di stop
+								//successivo)
+								nextAlarm=e;
+								stop=true;
+							}
+							else{//l'alarm non è attivato per questo giorno;
+								//se questo è un alarm di start vuol dire che il relativo intervallo 
+								//non è stato attivato per questo giorno	
+								if(e.get_actionType()){					
+									//è un alarm di start
+											
+									//si prova ad effettuare la mutazione, attivando l'intervallo
+									stop=intervalMutated(e, artificialIndex, alarmDao,context);
+									if(stop){
+										nextAlarm=e;
 									}
-									else{
-										//status="Intervallo di esplorazione non attivo";
-										status="E,0";
-									}			
-									
-									//int id_start=e.get_id();
-									
-									/*if(id_start==1){
-										int month = alarmTime.get(Calendar.MONTH)+1;
-										LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
-									}*/
-									
-									//si ottiene il relativo alarm di stop (esiste sicuramente)
-									Alarm next_stop= getAlarm(context, e_id+1); 							
-									/*
-									LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
-											":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
-											":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
-											status+" la prossima settimana");
-									*/
-									LogUtils.writeIntervalStatus(context, artificialIndex, e, next_stop, "|"+status+";NM;-;"+status);								
-									
+									////////////////////////////
+									//LOG
+									else{ //l'intervallo non è mutato
+										
+										//si scrive nel file di log che questo intervallo non è mutato
+										//e, quindi, non viene valutato
+										String status="";							
+										if(e.isStepsInterval(artificialIndex)){
+											//status="Intervallo con scalini non attivo";
+											status="S,0";
+										}
+										else{
+											//status="Intervallo di esplorazione non attivo";
+											status="E,0";
+										}			
+										
+										//int id_start=e.get_id();
+										
+										/*if(id_start==1){
+											int month = alarmTime.get(Calendar.MONTH)+1;
+											LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
+										}*/
+										
+										//si ottiene il relativo alarm di stop (esiste sicuramente)
+										Alarm next_stop= getAlarm(context, e_id+1); 							
+										/*
+										LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
+												":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
+												":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
+												status+" la prossima settimana");
+										*/
+										LogUtils.writeIntervalStatus(context, artificialIndex, e, next_stop, "|"+status+";NM;-;"+status);								
+										
+									}
+									////////////////////////////
 								}
-								////////////////////////////
 							}
 						}
-					}
-					else{
-						////////////////////////////
-						//utile per scrivere il LOG					
-						writeSkippedInterval(context, e, artificialIndex, 0);
-						////////////////////////////
+						else{
+							////////////////////////////
+							//utile per scrivere il LOG					
+							writeSkippedInterval(context, e, artificialIndex, 0);
+							////////////////////////////
+						}
 					}
 				}
 			}				
@@ -774,65 +836,83 @@ public final class AlarmUtils {
 				
 				boolean last_evaluated_far_enough = isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
 				prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
-												
-				if(hasTrigger(prefs, i) || last_evaluated_far_enough){
+											
+				//se l'alarm presenta un trigger da visualizzare, allora lo si imposta
+				//nell'alarm manager
+				if(hasTrigger(prefs, i)){
+					nextAlarm=e;
+					stop=true;
 					
-					if(e.getRepeatingDay(artificialIndex)){
-						nextAlarm=e;
-						stop=true;
+					//nel momento del set, un trigger è posto sempre all'inizio di un
+					//intervallo attivo; 
+					//il trigger può essere visualizzato all'inizio di un intervallo
+					//non attivo solo nel caso in cui in quest'ultimo è stata propagata 
+					//dal precedente una valutazione che lo ha fatto diventare non attivo; 
+					//in tal caso, non si prova neanche a mutare l'intervallo perché non
+					//verrebbe comunque considerato dal filtro del bilanciamento energetico	
+				}
+				else{ //se non ha un trigger da mostrare, si applica all'intervallo il filtro
+					  //del bilanciamento energetico e, se può essere considerato, si controlla
+					  //se è attivo o meno: se è attivo lo si considera, altrimenti prima si prova a mutarlo
+										
+					if(last_evaluated_far_enough){
+						
+						if(e.getRepeatingDay(artificialIndex)){
+							nextAlarm=e;
+							stop=true;
+						}
+						else{
+							if(e.get_actionType()){
+								//è un alarm di start						
+								//si prova ad effettuare la mutazione, attivando l'intervallo
+								stop=intervalMutated(e, artificialIndex, alarmDao, context);
+								if(stop){
+									nextAlarm=e;
+								}
+								///////////////////////////
+								//LOG
+								else{ //l'intervallo non è mutato
+									  //si scrive nel file di log che questo intervallo non è mutato
+									  //e, quindi, non viene valutato
+									String status="";							
+									if(e.isStepsInterval(artificialIndex)){
+										//status="Intervallo con scalini non attivo";
+										status="S,0";
+									}
+									else{
+										//status="Intervallo di esplorazione non attivo";
+										status="E,0";
+									}			
+									
+									//int id_start=e.get_id();
+									
+									/*if(id_start==1){
+										int month = alarmTime.get(Calendar.MONTH)+1;
+										LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
+									}*/
+									
+									//si ottiene il relativo alarm di stop (esiste sicuramente)
+									Alarm next_stop= getAlarm(context, i+1); 							
+									/*
+									LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
+											":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
+											":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
+											status+" la prossima settimana");
+									*/
+									LogUtils.writeIntervalStatus(context, artificialIndex, e, next_stop, "|"+status+";NM;-;"+status);						
+									
+								}
+								////////////////////////////
+							}							
+						}					
 					}
 					else{
-						if(e.get_actionType()){
-							//è un alarm di start						
-							//si prova ad effettuare la mutazione, attivando l'intervallo
-							stop=intervalMutated(e, artificialIndex, alarmDao, context);
-							if(stop){
-								nextAlarm=e;
-							}
-							///////////////////////////
-							//LOG
-							else{ //l'intervallo non è mutato
-								  //si scrive nel file di log che questo intervallo non è mutato
-								  //e, quindi, non viene valutato
-								String status="";							
-								if(e.isStepsInterval(artificialIndex)){
-									//status="Intervallo con scalini non attivo";
-									status="S,0";
-								}
-								else{
-									//status="Intervallo di esplorazione non attivo";
-									status="E,0";
-								}			
-								
-								//int id_start=e.get_id();
-								
-								/*if(id_start==1){
-									int month = alarmTime.get(Calendar.MONTH)+1;
-									LogUtils.writeLogFile(context,"Indice giorno: "+artificialIndex+" - "+alarmTime.get(Calendar.DATE)+"/"+month+"/"+alarmTime.get(Calendar.YEAR));
-								}*/
-								
-								//si ottiene il relativo alarm di stop (esiste sicuramente)
-								Alarm next_stop= getAlarm(context, i+1); 							
-								/*
-								LogUtils.writeLogFile(context,status+": " + e.get_hour()+":"+e.get_minute()+
-										":"+e.get_second()+" - "+next_stop.get_hour()+":"+next_stop.get_minute()+
-										":"+next_stop.get_second()+ " | Non valutato perche' non mutato | "+
-										status+" la prossima settimana");
-								*/
-								LogUtils.writeIntervalStatus(context, artificialIndex, e, next_stop, "|"+status+";NM;-;"+status);						
-								
-							}
-							////////////////////////////
-						}							
-					}					
+						////////////////////////////
+						//utile per scrivere il LOG					
+						writeSkippedInterval(context, e, artificialIndex, 0);
+						////////////////////////////
+					}
 				}
-				else{
-					////////////////////////////
-					//utile per scrivere il LOG					
-					writeSkippedInterval(context, e, artificialIndex, 0);
-					////////////////////////////
-				}
-				
 			}			
 		}
 		
@@ -900,8 +980,13 @@ public final class AlarmUtils {
 					boolean last_evaluated_far_enough = isLastListenedIntervalFarEnough(context, e, alarmTime, last_evaluated_interval_time, prevAlarmNotAvailable);
 					prefs.edit().putBoolean("next_is_far_enough", last_evaluated_far_enough).commit();
 					
+					//in questo caso non si controlla se l'intervallo presenta un trigger 
+					//in quanto si sta cercando un prossimo alarm in un giorno successivo
+					//a quello corrente e i trigger per un certo giorno vengono impostati 
+					//all'inizio dello stesso (o comunque la prima volta che l'utente accende
+					//il device in quel giorno)					
 					
-					if(hasTrigger(prefs, i) || last_evaluated_far_enough){
+					if(last_evaluated_far_enough){
 						
 						//gli alarm hanno un istante di inizio sicuramente > di ora in quanto
 						//si stanno cercando in un giorno successivo a quello corrente
@@ -1008,7 +1093,8 @@ public final class AlarmUtils {
 		//questo metodo è stato invocato subito dopo la configurazione iniziale dell'algoritmo; dopo
 		//aver trovato un nuovo alarm, se quest'ultimo è di stop significa che si è all'interno di
 		//un nuovo intervallo attivo: si fa ripartire il classificatore Google/scalini
-		if((prevAlarmNotAvailable || current_alarm_id==-1) && !nextAlarm.get_actionType()){
+		if((prevAlarmNotAvailable || current_alarm_id==-1) 
+				&& nextAlarm.getRepeatingDay(artificialIndex) && !nextAlarm.get_actionType()){
 						 
 			//si resettano i valori relativi alle attività/scalini rilevati in precedenza			
 			ActivityRecognitionIntentService.clearValuesCount(prefs);
@@ -1088,7 +1174,7 @@ public final class AlarmUtils {
 		Intent intent = new Intent();
 	 	    
 		//si imposta il tipo di action dell'intent a seconda se è un alarm per far iniziare o
-		//finire l'intervallo
+		//finire l'intervallo (se l'alarm presenta un trigger è un'action di start)
 		if(alarm.get_actionType()){
 			intent.setAction("org.unipd.nbeghin.climbtheworld.INTERVAL_START");
 		}
