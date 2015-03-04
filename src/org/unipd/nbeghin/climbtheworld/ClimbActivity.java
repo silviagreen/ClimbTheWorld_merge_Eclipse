@@ -2220,68 +2220,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					changes = true;
 				new SaveProgressTask(next_alarm,current_day_index, changes, true).execute(); // stopClassify();
 				
-				//l'utente ferma il gioco, ponendo fine al "periodo di gioco" iniziato
-				//in precedenza
-				
-				//se il prossimo alarm è di stop significa che si è all'interno di un
-				//intervallo di esplorazione/intervallo con scalini attivo
-				if(next_alarm!=null && !next_alarm.get_actionType()){
-				
-					//nel periodo di gioco corrente l'utente ha fatto scalini (utile per un
-					//intervallo di esplorazione)
-					if(stepsInGamePeriod){
-						
-						Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - with steps");
-						
-						//si associa il fatto che nell'intervallo di esplorazione corrente
-						//l'utente ha fatto almeno uno scalino (salvataggio nelle preferences:
-						//utile per memorizzare questo fatto in caso di vari periodi di gioco 
-						//all'interno dell'intervallo, mantenendo l'informazione anche se  
-						//l'utente spegne il device)
-						settings.edit().putBoolean("last_interval_with_steps", true).commit();
-					
-						//si resetta a 'false' il booleano che indica se l'utente ha fatto
-						//almeno 1 scalino nel periodo di gioco corrente
-						stepsInGamePeriod=false;
-					}
-					else{ 
-						//nel periodo di gioco corrente l'utente non ha fatto scalini
-						
-						//se l'intervallo definito dall'alarm di stop è un semplice 
-						//"intervallo di esplorazione" (quindi non è un "intervallo con scalini") e
-						//se in nessuno dei periodi di gioco all'interno di questo intervallo
-						//l'utente non ha fatto scalini, allora si ri-attiva il servizio di activity
-						//recognition
-						//TODO controllo livello batteria 
-						
-						//System.out.println("last interval with steps (default next alarm id): " + settings.getInt("last_interval_with_steps", next_alarm_id));
-						//System.out.println("next alarm id: " + next_alarm_id);
-						
-						if(!next_alarm.isStepsInterval(current_day_index) && 
-							!settings.getBoolean("last_interval_with_steps", false)){
-														
-							Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - START ACTIVITY REC");
-							appContext.startService(new Intent(appContext, ActivityRecognitionRecordService.class));
-							
-						}
-						//se si tratta di un "intervallo con scalini" si continua
-						//l'esecuzione del classificatore scalini/non_scalini
-					}
-										
-				/*						
-					if(!next_alarm.isStepsInterval(current_day_index)){
-						Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - START ACTIVITY REC");
-						appContext.startService(new Intent(appContext, ActivityRecognitionRecordService.class));
-					}*/
-				}
-				else{
-					//se il prossimo alarm è di start significa che non si è all'interno di un
-					//intervallo di esplorazione/intervallo con scalini attivo; quindi, in tal caso,
-					//se l'utente ferma il gioco si resetta a 'false' il booleano che indica se 
-					//l'utente ha fatto almeno 1 scalino nel periodo di gioco corrente
-					stepsInGamePeriod=false;					
-				}
-
 				((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.av_play); // set
 				findViewById(R.id.progressBarClimbing).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_out)); // hide progress bar
 				findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
@@ -2433,6 +2371,71 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				StairsClassifierReceiver.setClimb(null);
 				samplingEnabled = false;
 		
+				
+				//l'utente ferma il gioco, ponendo fine al "periodo di gioco" iniziato
+				//in precedenza
+				
+				//se il prossimo alarm è di stop significa che si è all'interno di un
+				//intervallo di esplorazione/intervallo con scalini attivo
+				if(next_alarm!=null && !next_alarm.get_actionType()){
+				
+					//nel periodo di gioco corrente l'utente ha fatto scalini (utile per un
+					//intervallo di esplorazione)
+					if(stepsInGamePeriod){
+						
+						Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - with steps");
+						
+						//si associa il fatto che nell'intervallo di esplorazione corrente
+						//l'utente ha fatto almeno uno scalino (salvataggio nelle preferences:
+						//utile per memorizzare questo fatto in caso di vari periodi di gioco 
+						//all'interno dell'intervallo, mantenendo l'informazione anche se  
+						//l'utente spegne il device)
+						settings.edit().putBoolean("last_interval_with_steps", true).commit();
+					
+						//si resetta a 'false' il booleano che indica se l'utente ha fatto
+						//almeno 1 scalino nel periodo di gioco corrente
+						stepsInGamePeriod=false;
+					}
+					else{ 
+						//nel periodo di gioco corrente l'utente non ha fatto scalini
+						
+						//se l'intervallo definito dall'alarm di stop è un semplice 
+						//"intervallo di esplorazione" (quindi non è un "intervallo con scalini") e
+						//se in nessuno dei periodi di gioco all'interno di questo intervallo
+						//l'utente non ha fatto scalini, allora si ri-attiva il servizio di activity
+						//recognition
+						//TODO controllo livello batteria 
+						
+						//System.out.println("last interval with steps (default next alarm id): " + settings.getInt("last_interval_with_steps", next_alarm_id));
+						//System.out.println("next alarm id: " + next_alarm_id);
+						
+						if(!next_alarm.isStepsInterval(day_index) && 
+							!settings.getBoolean("last_interval_with_steps", false)){
+														
+							Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - START ACTIVITY REC");
+							appContext.startService(new Intent(appContext, ActivityRecognitionRecordService.class));
+							
+						}
+						//se si tratta di un "intervallo con scalini" si continua
+						//l'esecuzione del classificatore scalini/non_scalini
+					}
+										
+				/*						
+					if(!next_alarm.isStepsInterval(current_day_index)){
+						Log.d(MainActivity.AppName,"STOP GAME IN ACTIVE INTERVAL - START ACTIVITY REC");
+						appContext.startService(new Intent(appContext, ActivityRecognitionRecordService.class));
+					}*/
+				}
+				else{
+					//se il prossimo alarm è di start significa che non si è all'interno di un
+					//intervallo di esplorazione/intervallo con scalini attivo; quindi, in tal caso,
+					//se l'utente ferma il gioco si resetta a 'false' il booleano che indica se 
+					//l'utente ha fatto almeno 1 scalino nel periodo di gioco corrente
+					stepsInGamePeriod=false;					
+				}
+				
+				
+				
 		if (isCounterMode)
 			updateUserStats(true);
 		else
