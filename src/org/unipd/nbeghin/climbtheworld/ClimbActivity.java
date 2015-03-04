@@ -369,6 +369,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	
 	public void refreshOnStep(){
 		
+		//l'utente ha fatto almeno uno scalino nel periodo di gioco corrente
+		stepsInGamePeriod=true;
+		Log.d(MainActivity.AppName,"ClimbActivity - STEP");
+		
 		if (climbedYesterday && percentage > 0.25f && percentage < 0.50f && used_bonus == false && building.get_id() != 6) {
 			// bonus at 25%
 			int rest = apply_percentage_bonus();
@@ -443,9 +447,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 		}
 		
-		//l'utente ha fatto almeno uno scalino nel periodo di gioco corrente
-		stepsInGamePeriod=true;
-		Log.d(MainActivity.AppName,"ClimbActivity - STEP");
 	}
 	
 	
