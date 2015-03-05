@@ -3164,8 +3164,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								e1.printStackTrace();
 							}
 							teamDuel_parse.put("winner_id", teamDuel.getWinner_id());
-							if(updateChecks)
-								teamDuel_parse.put("checks", teamDuel.getChecks());
+							
 							teamDuel_parse.put("completed", teamDuel.isCompleted());
 
 							ParseUtils.saveTeamDuel(teamDuel_parse, teamDuel);
@@ -3398,8 +3397,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									e1.printStackTrace();
 								}
 								compet_parse.put("winner_id", competition.getWinner_id());
-								if(updateChecks)
-									compet_parse.put("checks", competition.getChecks());
+								
 								compet_parse.put("completed", competition.isCompleted());
 
 								// compet_parse.saveEventually();
