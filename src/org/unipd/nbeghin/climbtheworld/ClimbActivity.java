@@ -3116,7 +3116,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							ClimbApplication.teamDuelDao.update(teamDuel);
 
 							boolean foundWinner = ModelsUtil.hasSomeoneWon(myGroupScore, otherGroupScore, building.getSteps());
-
+							boolean updateChecks = false;
 							System.out.println(foundWinner);
 
 							if (foundWinner && !climbing.isChecked()) { // !victory_time.after(new Date(victory_time.getTime() - 5 * 24 * 3600 * 1000 )
@@ -3133,9 +3133,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								}
 
 								teamDuel.setChecks(teamDuel.getChecks() + 1);
-								System.out.println("local checks " + teamDuel.getChecks());
+								teamDuel_parse.increment("checks", 1);
 								climbing.setChecked(true);
 								updateClimbingInParse(climbing, true);
+							}else{
+								updateChecks = true;
 							}
 
 							if (teamDuel.getChecks() >= (teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length())
@@ -3162,7 +3164,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								e1.printStackTrace();
 							}
 							teamDuel_parse.put("winner_id", teamDuel.getWinner_id());
-							teamDuel_parse.put("checks", teamDuel.getChecks());
+							if(updateChecks)
+								teamDuel_parse.put("checks", teamDuel.getChecks());
 							teamDuel_parse.put("completed", teamDuel.isCompleted());
 
 							ParseUtils.saveTeamDuel(teamDuel_parse, teamDuel);
@@ -3340,7 +3343,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								}
 								compet_parse.put("stairs", others);
 								competition.setMy_stairs(num_steps);
-								competition.setChecks(checks);
+								competition.setChecks(checks); System.out.println("tiro giu checks online: " + competition.getChecks());
 
 								chart = ModelsUtil.fromJsonToChart(others);
 								old_chart_position = competition.getCurrent_position();
@@ -3353,7 +3356,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								ClimbApplication.competitionDao.update(competition);
 
 								boolean foundWinner = ModelsUtil.hasSomeoneWon(chart, building.getSteps());
-
+								boolean updateChecks = false;
+								
+								System.out.println("checked climb????" + climbing.isChecked());
 								if (foundWinner && !climbing.isChecked()) {
 									current_win = true;
 									try {
@@ -3370,10 +3375,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									}
 
 									competition.setChecks(competition.getChecks() + 1);
-
-									climbing.setChecked(true);
+									compet_parse.increment("checks", 1);
+									climbing.setChecked(true); System.out.println("nuovi check " + competition.getChecks());
 									updateClimbingInParse(climbing, true);
 
+								}else{
+									updateChecks = true;
 								}
 								if (competition.getChecks() >= others.length() || last_update.after(new Date(last_update.getTime() + 5 * 24 * 3600 * 1000))) {
 									competition.setCompleted(true);
@@ -3391,7 +3398,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									e1.printStackTrace();
 								}
 								compet_parse.put("winner_id", competition.getWinner_id());
-								compet_parse.put("checks", competition.getChecks());
+								if(updateChecks)
+									compet_parse.put("checks", competition.getChecks());
 								compet_parse.put("completed", competition.isCompleted());
 
 								// compet_parse.saveEventually();

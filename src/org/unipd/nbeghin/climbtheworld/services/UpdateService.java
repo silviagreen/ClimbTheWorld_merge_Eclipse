@@ -475,7 +475,7 @@ public class UpdateService extends IntentService {
 									e1.printStackTrace();
 								}
 							}
-							comp.put("creator", creator);
+							comp.put("creator", creator); System.out.println("FROM SERVICE");
 							comp.saveInBackground(new SaveCallback() {
 
 								@Override
@@ -511,7 +511,7 @@ public class UpdateService extends IntentService {
 								collaborators.remove(competition.getUser().getFBid());
 								stairs.remove(competition.getUser().getFBid());
 								collabParse.put("competitors", collaborators);
-								collabParse.put("stairs", stairs);
+								collabParse.put("stairs", stairs); System.out.println("FROM SERVICE");
 								ParseUtils.saveCompetition(collabParse, competition);
 								// collabParse.saveEventually();
 								// competition.setSaved(true);
@@ -522,10 +522,11 @@ public class UpdateService extends IntentService {
 										stairs.put(competition.getUser().getFBid(), competition.getMy_stairs());
 										collabParse.put("stairs", stairs);
 										collabParse.put("completed", competition.isCompleted());
-										// collabParse.saveEventually();
+										// collabParse.saveEventually(); 
+										System.out.println("FROM SERVICE");
 										ParseUtils.saveCompetition(collabParse, competition);
 										competition.setId_online(collabParse.getObjectId());
-										competition.setSaved(true);
+										competition.setSaved(true); 
 										ClimbApplication.competitionDao.update(competition);
 										if (competitions.indexOf(competition) == (competitions.size() - 1)) {
 											try {
