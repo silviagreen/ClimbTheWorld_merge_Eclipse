@@ -234,8 +234,6 @@
          <receiver android:name="org.unipd.nbeghin.climbtheworld.receivers.TimeBatteryWatcher" 
             android:exported="false" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
   	      <intent-filter>
-  	        <action android:name="android.intent.action.BATTERY_LOW" />
-  	        <action android:name="android.intent.action.BATTERY_OKAY" />
       	    <action android:name="android.intent.action.BOOT_COMPLETED" />
       	    <action android:name="org.unipd.nbeghin.climbtheworld.INTERVAL_START"/>   
       	    <action android:name="org.unipd.nbeghin.climbtheworld.INTERVAL_STOP"/> 
