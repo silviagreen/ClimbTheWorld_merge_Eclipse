@@ -455,7 +455,7 @@
     
     <!-- Algorithm Configuration -->      
     <string name="lab_dialog_config">Hi!\n\nWe kindly ask you to take a few minutes to configure this app.</string>  
-    <string name="btt_cancel_dialog_config">Not right now</string>  
+    <string name="btt_cancel_dialog_config">Not now</string>  
     <string name="lab_google_play_services_missing_invalid">To run the app, you need to install the Google Play Services component from Google Play Store.\n\nPlease, click the button below to install it. Once you have installed this component, you will be able to continue with the configuration. Thank you!</string>
     <string name="lab_google_play_services_update_required">To correctly run the app, you need to update the Google Play Services component from Google Play Store.\n\nPlease, click the button below to update it. Once you have updated this component, you will be able to continue with the configuration. Thank you!</string>
     <string name="lab_google_play_services_disabled">To run the app, you need to enable the Google Play Services component.\n\nPlease, click the button below to go to device\'s settings and enable it. Once you have enabled this component, you will be able to continue with the configuration. Thank you!</string>
