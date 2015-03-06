@@ -1265,7 +1265,7 @@ public class NotificationCard extends Card {
 			public void onCompleted(Response response) {
 				// Show a confirmation of the deletion
 				// when the API call completes successfully.
-				Toast.makeText(ClimbApplication.getContext(), ClimbApplication.getContext().getString(R.string.delete_req), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(ClimbApplication.getContext(), ClimbApplication.getContext().getString(R.string.delete_req), Toast.LENGTH_SHORT).show();
 			}
 		});
 		// Execute the request asynchronously.

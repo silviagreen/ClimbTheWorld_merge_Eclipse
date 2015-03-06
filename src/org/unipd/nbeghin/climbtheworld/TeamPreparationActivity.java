@@ -429,6 +429,8 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			exitTeam.setEnabled(false);
 			exitTeam.setVisibility(View.GONE);
 			duel.setReadyToPlay(true);
+			offline.setText(getString(R.string.completed_teams));
+			offline.setVisibility(View.VISIBLE);
 			ClimbApplication.teamDuelDao.update(duel);
 		} else {
 			startPlay.setEnabled(false);
@@ -436,6 +438,8 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			duel.setReadyToPlay(false);
 			exitTeam.setEnabled(true);
 			exitTeam.setVisibility(View.VISIBLE);
+			offline.setText(getString(R.string.wait_team));
+			offline.setVisibility(View.VISIBLE);
 			ClimbApplication.teamDuelDao.update(duel);
 		}
 

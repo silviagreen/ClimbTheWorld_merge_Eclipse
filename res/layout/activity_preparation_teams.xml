@@ -233,12 +233,15 @@
               android:layout_weight="0.50"
               android:src="@drawable/av_play" />
           
-          <ImageButton
+          <Button
+              style="?android:attr/borderlessButtonStyle"
               android:id="@+id/btnExitClimbing"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_weight="0.5"
-              android:src="@drawable/ic_exit" />
+              android:src="@drawable/ic_exit" 
+              android:text="@string/exit_team_btn"
+              android:textAllCaps="true"/>
           
           
       </LinearLayout>

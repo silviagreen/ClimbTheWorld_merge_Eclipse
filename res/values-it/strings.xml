@@ -178,7 +178,9 @@
     <string name="team_two">Team n2</string>
     <string name="creator">Leader: </string>
     <string name="offline_team">Vai online per vedere i team attuali o per ritirarti</string>
-    
+    <string name="wait_team">Attendi che i team siano completi</string>
+    <string name="completed_teams">I team sono completi\nPremy play per giocare</string>
+    <string name="exit_team_btn">Esci dal gruppo</string>
   
     <!-- SettingsActivity -->
     <string name="settings_title">Impostazioni</string>
