@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -45,6 +44,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -89,12 +89,16 @@ import com.parse.SignUpCallback;
  * service, or receiver in a process. If you override this method, be sure to call super.onCreate().
  */
 public class ClimbApplication extends Application {
+	
+	private static HashMap<Integer, Bitmap> bitmaps = new HashMap<Integer, Bitmap>();
+	
 	public static final boolean DEBUG = true;
 	public static boolean logEnabled = true; 
 	
 	public static final List<String> PERMISSIONS = Arrays.asList("user_friends,public_profile");
 
-	public static final int N_MEMBERS_PER_GROUP = 6;  // 5 friends + me
+	public static final int N_MEMBERS_PER_GROUP = 3;  // REAL: 5 friends + me = 6
+														// TEST: 2 frends + me = 3
 	public static int PERCENTAGE_MICROGOAL = 25;
 	public static boolean BUSY = false;
 	public static Object lock = new Object();
@@ -163,6 +167,14 @@ public class ClimbApplication extends Application {
 
 	public ClimbApplication getInstance() {
 		return singleton;
+	}
+	
+	public static void addBitmap(int id, Bitmap bitmap){
+		bitmaps.put(id, bitmap);
+	}
+	
+	public static Bitmap getBitmap(int id){
+		return bitmaps.get(id);
 	}
 
 	public static Context getContext() {

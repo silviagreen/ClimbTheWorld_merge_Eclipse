@@ -52,6 +52,7 @@ import org.unipd.nbeghin.climbtheworld.services.SamplingClassifyService;
 import org.unipd.nbeghin.climbtheworld.util.AlarmUtils;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GeneralUtils;
+import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
 import org.unipd.nbeghin.climbtheworld.util.ModelsUtil;
 import org.unipd.nbeghin.climbtheworld.util.ParseUtils;
 import org.unipd.nbeghin.climbtheworld.util.StatUtils;
@@ -73,6 +74,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.SensorManager;
@@ -130,6 +132,13 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -1152,8 +1161,46 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 																																						// photo
 																																						// resource
 																																						// ID
-		if (imageId > 0)
-			((ImageView) findViewById(R.id.buildingPhoto)).setImageResource(imageId);
+		if (imageId > 0){
+			
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+			.showImageForEmptyUri(R.drawable.ic_action_help_dark)
+			.showImageOnFail(R.drawable.ic_action_cancel)
+			.resetViewBeforeLoading(true)
+			.imageScaleType(ImageScaleType.EXACTLY)
+			.bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new FadeInBitmapDisplayer(300))
+			.cacheInMemory(true)
+			.cacheOnDisc(true)
+			.build();
+			
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).threadPoolSize(3).defaultDisplayImageOptions(options).build();
+			ImageLoader.getInstance().init(config);
+			
+			ImageLoader.getInstance().displayImage("drawable://"+imageId, ((ImageView)findViewById(R.id.buildingPhoto)), options, new ImageLoadingListener() {
+				
+				@Override
+				public void onLoadingStarted(String arg0, View arg1) {
+					
+				}
+				
+				@Override
+				public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
+					
+				}
+				
+				@Override
+				public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
+										
+				}
+				
+				@Override
+				public void onLoadingCancelled(String arg0, View arg1) {
+										
+				}
+			});
+		
+		}
 		// set building info
 		((TextView) findViewById(R.id.lblBuildingName)).setText(buildingText.getName() + "\n (" + buildingText.getLocation() + ")"); // building's
 		// location
@@ -2971,15 +3018,15 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 	public void resetUpdating() {
 		// Get our refresh item from the menu
-		MenuItem m = mymenu.findItem(R.id.itemUpdate);
-		if (MenuItemCompat.getActionView(m) != null) {
-			// Remove the animation.
-			System.out.println("remove animation");
-
-			MenuItemCompat.getActionView(m).clearAnimation();
-			MenuItemCompat.setActionView(m, null);
-
-		}
+//		MenuItem m = mymenu.findItem(R.id.itemUpdate);
+//		if (MenuItemCompat.getActionView(m) != null) {
+//			// Remove the animation.
+//			System.out.println("remove animation");
+//
+//			MenuItemCompat.getActionView(m).clearAnimation();
+//			MenuItemCompat.setActionView(m, null);
+//
+//		}
 		supportInvalidateOptionsMenu();
 	}
 

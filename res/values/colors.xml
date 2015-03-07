@@ -26,5 +26,5 @@
     <color name="accent">#00796B</color>
     <color name="highlight">#ff9ecfbf</color>
     <color name="secondary_text">#54000000</color>
-
+	<color name="background_enabled_false">#12000000</color>
 </resources>

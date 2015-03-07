@@ -3,6 +3,8 @@ package org.unipd.nbeghin.climbtheworld;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -28,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -49,11 +53,11 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	// Our created menu to use
 	private Menu mymenu;
 
-	ImageButton addMyMembersBtn;
-	ImageButton addChallengerBtn;
+	Button addMyMembersBtn;
+	Button addChallengerBtn;
 	ImageButton startPlay;
-	ImageButton addChallengerTeamBtn;
-	ImageButton exitTeam;
+	Button addChallengerTeamBtn;
+	Button exitTeam;
 	ProgressBar progressbar;
 	List<TextView> myMembers = new ArrayList<TextView>();
 	List<TextView> theirMembers = new ArrayList<TextView>();
@@ -73,11 +77,11 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		SharedPreferences pref = getSharedPreferences("UserSession", 0);
 		building_id = getIntent().getIntExtra(ClimbApplication.building_text_intent_object, 0);
 		building = ClimbApplication.getBuildingById(building_id);
-		addMyMembersBtn = (ImageButton) findViewById(R.id.addMyTeamBtn);
-		addChallengerBtn = (ImageButton) findViewById(R.id.addChallengerBtn);
+		addMyMembersBtn = (Button) findViewById(R.id.addMyTeamBtn);
+		addChallengerBtn = (Button) findViewById(R.id.addChallengerBtn);
 		startPlay = (ImageButton) findViewById(R.id.btnStartClimbing);
-		exitTeam = (ImageButton) findViewById(R.id.btnExitClimbing);
-		addChallengerTeamBtn = (ImageButton) findViewById(R.id.addChallengerTeam);
+		exitTeam = (Button) findViewById(R.id.btnExitClimbing);
+		addChallengerTeamBtn = (Button) findViewById(R.id.addChallengerTeam);
 		challengerName = (TextView) findViewById(R.id.textChallenger);
 		creatorName = (TextView) findViewById(R.id.textCreator);
 		offline = (TextView) findViewById(R.id.textOffline);
@@ -156,7 +160,8 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		}
 
 		
-		getTeams(false);
+		//getTeams(false);
+		timer.schedule(updates, 1500, 3000);
 
 	}
 
@@ -174,15 +179,15 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.itemUpdate:
-			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_dark, null);
-			Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
-			rotation.setRepeatCount(Animation.INFINITE);
-			iv.startAnimation(rotation);
-			MenuItemCompat.setActionView(item, iv);
-			onUpdate();
-			return true;
+//		case R.id.itemUpdate:
+//			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//			ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_dark, null);
+//			Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+//			rotation.setRepeatCount(Animation.INFINITE);
+//			iv.startAnimation(rotation);
+//			MenuItemCompat.setActionView(item, iv);
+//			onUpdate();
+//			return true;
 		case R.id.itemHelp:
 			new HelpDialogActivity(this, R.style.Transparent, duel).show();
 			return true;
@@ -190,15 +195,15 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void resetUpdating() {
-		// Get our refresh item from the menu
-		MenuItem m = mymenu.findItem(R.id.itemUpdate);
-		if (MenuItemCompat.getActionView(m) != null) {
-			// Remove the animation.
-			MenuItemCompat.getActionView(m).clearAnimation();
-			MenuItemCompat.setActionView(m, null);
-		}
-	}
+//	public void resetUpdating() {
+//		// Get our refresh item from the menu
+//		MenuItem m = mymenu.findItem(R.id.itemUpdate);
+//		if (MenuItemCompat.getActionView(m) != null) {
+//			// Remove the animation.
+//			MenuItemCompat.getActionView(m).clearAnimation();
+//			MenuItemCompat.setActionView(m, null);
+//		}
+//	}
 
 	/**
 	 * Get the team from Parse and shows its data in current activity
@@ -342,21 +347,21 @@ public class TeamPreparationActivity extends ActionBarActivity {
 						Toast.makeText(getApplicationContext(), getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
 					}
 					Log.e("onUpdate", e.getCode() + e.getMessage());
-					if (isUpdate)
+					//if (isUpdate)
 						// Change the menu back
-						resetUpdating();
+						//resetUpdating();
 				}
 				progressbar.setVisibility(View.GONE);
-				offline.setVisibility(View.INVISIBLE);
+				offline.setVisibility(View.VISIBLE);
 				exitTeam.setEnabled(true);
 			}
 		});
 	}else{
 		offline.setVisibility(View.VISIBLE);
 		exitTeam.setEnabled(false);
-		if (isUpdate)
+		//if (isUpdate)
 			// Change the menu back
-			resetUpdating();
+			//resetUpdating();
 	}
 	}
 	/**
@@ -399,7 +404,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				if(FacebookUtils.isOnline(getApplicationContext())){
-					offline.setVisibility(View.INVISIBLE);
+					offline.setVisibility(View.VISIBLE);
 					backToSoloClimb(duelParse);
 				}else{
 					offline.setVisibility(View.VISIBLE);
@@ -409,12 +414,12 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		});
 
 		if (duel.isCreator()) {
-			if (myTeam.length() < 5)
+			if (myTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP - 1))
 				addMyMembersBtn.setEnabled(true);
 			else
 				addMyMembersBtn.setEnabled(false);
 		} else if (duel.isChallenger()) {
-			if (challengerTeam.length() < 5)
+			if (challengerTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP - 1))
 				addChallengerTeamBtn.setEnabled(true);
 			else
 				addChallengerTeamBtn.setEnabled(false);
@@ -423,7 +428,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			addMyMembersBtn.setEnabled(false);
 			addChallengerBtn.setEnabled(false);
 		}
-		if (myTeam.length() == 5 && challengerTeam.length() == 5) {
+		if (myTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP - 1) && challengerTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP - 1)) {
 			startPlay.setEnabled(true);
 			startPlay.setVisibility(View.VISIBLE);
 			exitTeam.setEnabled(false);
@@ -432,6 +437,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			offline.setText(getString(R.string.completed_teams));
 			offline.setVisibility(View.VISIBLE);
 			ClimbApplication.teamDuelDao.update(duel);
+			timer.cancel();
 		} else {
 			startPlay.setEnabled(false);
 			startPlay.setVisibility(View.GONE);
@@ -441,11 +447,12 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			offline.setText(getString(R.string.wait_team));
 			offline.setVisibility(View.VISIBLE);
 			ClimbApplication.teamDuelDao.update(duel);
+			
 		}
 
-		if (isUpdate)
-			// Change the menu back
-			resetUpdating();
+//		if (isUpdate)
+//			// Change the menu back
+//			resetUpdating();
 
 	}
 
@@ -464,6 +471,19 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	public void onUpdate() {
 		getTeams(true);
 	}
+	
+	final Handler handler = new Handler();
+    Timer timer = new Timer();
+    TimerTask updates = new TimerTask() {       
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                public void run() {       
+                	getTeams(true);
+                }
+            });
+        }
+    };
 
 	/**
 	 * Opens ClimbActivity to start the game
@@ -715,5 +735,11 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	protected void onPause() {
 		super.onPause();
 		ClimbApplication.activityPaused();
+	}
+	
+	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		timer.cancel();
 	}
 }

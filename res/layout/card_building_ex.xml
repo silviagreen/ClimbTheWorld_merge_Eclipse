@@ -101,16 +101,16 @@
 
         <ImageView
             android:id="@+id/photo"
-            android:layout_width="113dp"
-            android:layout_height="wrap_content"
+            android:layout_width="104dp"
+            android:layout_height="120dp"
             android:adjustViewBounds="true"
             android:baselineAlignBottom="true"
             android:scaleType="centerCrop"
             android:src="@drawable/url1" />
         <ImageView
             android:id="@+id/photoLock"
-            android:layout_width="113dp"
-            android:layout_height="wrap_content"
+            android:layout_width="104dp"
+            android:layout_height="120dp"
             android:adjustViewBounds="true"
             android:baselineAlignBottom="true"
             android:scaleType="centerCrop"

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/white" >
 
     <TextView
         android:id="@+id/textOffline"
@@ -106,24 +107,6 @@
         android:paddingTop="20dp"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ImageButton
-        android:id="@+id/addChallengerBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/tableLayout1"
-        android:layout_alignTop="@+id/textOtherTeam"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/social_person" />
-    
-     <ImageButton
-        android:id="@+id/addChallengerTeam"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/tableLayout1"
-        android:layout_alignTop="@+id/textOtherTeam"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/ic_action_add_group" />
-
       <TextView
           android:id="@+id/textChallenger"
           android:layout_width="wrap_content"
@@ -135,7 +118,8 @@
           android:paddingBottom="10dp"
           android:paddingTop="10dp"
           android:text="@string/creator"
-          android:textAppearance="?android:attr/textAppearanceMedium" />
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:minLines="2" />
 
       <TableLayout
           android:id="@+id/table2Layout1"
@@ -217,7 +201,8 @@
           android:paddingBottom="10dp"
           android:paddingTop="10dp"
           android:text="@string/creator"
-          android:textAppearance="?android:attr/textAppearanceMedium" />
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:minLines="2" />
 
       <LinearLayout
           android:layout_width="wrap_content"
@@ -227,15 +212,19 @@
           android:layout_alignParentRight="true" >
 
           <ImageButton
+              style="?android:attr/borderlessButtonStyle"
               android:id="@+id/btnStartClimbing"
               android:layout_width="wrap_content"
               android:layout_height="match_parent"
               android:layout_weight="0.50"
-              android:src="@drawable/av_play" />
+              android:src="@drawable/av_play"
+              android:background="@color/accent" />
           
           <Button
               style="?android:attr/borderlessButtonStyle"
               android:id="@+id/btnExitClimbing"
+              android:background="@color/accent"
+              android:textColor="@color/white"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_weight="0.5"
@@ -245,15 +234,6 @@
           
           
       </LinearLayout>
-
-      <ImageButton
-          android:id="@+id/addMyTeamBtn"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignRight="@+id/tableLayout1"
-          android:layout_alignTop="@+id/textMyTeam"
-          android:scaleType="fitXY"
-          android:background="@drawable/ic_action_add_group" />
 
       <TextView
           android:id="@+id/textMyTeam"
@@ -271,5 +251,56 @@
           android:layout_height="wrap_content"
           android:layout_alignParentTop="true"
           android:layout_centerHorizontal="true" />
+
+      <Button
+          android:id="@+id/addChallengerTeam"
+          style="?android:attr/borderlessButtonStyle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/view1"
+          android:layout_alignBottom="@+id/textChallenger"
+          android:layout_alignLeft="@+id/addMyTeamBtn"
+          android:layout_alignRight="@+id/table2Layout1"
+          android:layout_below="@+id/textOtherTeam"
+          android:background="@drawable/selector_btn_background"
+          android:padding="12dp"
+          android:text="@string/add_members_btn"
+          android:textAllCaps="true"
+          android:textColor="@color/selector_btn_text"
+          android:textSize="14sp" />
+
+      <Button
+          android:id="@+id/addMyTeamBtn"
+          style="?android:attr/borderlessButtonStyle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@+id/tableLayout1"
+          android:layout_alignRight="@+id/tableLayout1"
+          android:layout_alignTop="@+id/textCreator"
+          android:background="@drawable/selector_btn_background"
+          android:padding="12dp"
+          android:scaleType="fitXY"
+          android:text="@string/add_members_btn"
+          android:textAllCaps="true"
+          android:textColor="@color/selector_btn_text"
+          android:textSize="14sp"
+          
+           />
+
+      <Button
+          android:id="@+id/addChallengerBtn"
+          style="?android:attr/borderlessButtonStyle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@+id/table2Layout1"
+          android:layout_alignRight="@+id/tableLayout1"
+          android:layout_alignTop="@+id/textChallenger"
+          android:background="@drawable/selector_btn_background"
+          android:padding="12dp"
+          android:text="@string/add_challenger_btn"
+          android:textAllCaps="true"
+          android:textColor="@color/selector_btn_text"
+          android:textSize="14sp" 
+          android:visibility="visible"/>
       
 </RelativeLayout>

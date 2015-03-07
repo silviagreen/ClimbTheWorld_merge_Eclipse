@@ -193,6 +193,8 @@
     <string name="wait_team">Wait for the teams to be completed</string>
     <string name="completed_teams">The teams are completed\nPress play to climb the building</string>
     <string name="exit_team_btn">Exit from group</string>
+    <string name="add_members_btn">Add members</string>
+    <string name="add_challenger_btn">Add challenger</string>
     
     <!-- string activity setting -->
     <string name="easy">Easy</string>

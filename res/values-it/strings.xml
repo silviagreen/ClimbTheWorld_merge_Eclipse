@@ -49,7 +49,7 @@
     <string name="message_group_invite">%1$s ti chiede di unirsi al suo nuovo gruppo: %2$s</string>
     <string name="message_collaboration">%1$s ti chiede aiuto per scalare l\'edificio %2$s</string>
     <string name="message_competition">%1$s ti sfida a scalare l\'edificio %2$s</string>    
-    <string name="message_team_challenge">%1$s ti sfida in un team duel a scalare l\'edificio %1$s</string>  
+    <string name="message_team_challenge">%1$s ti sfida in un team duel a scalare l\'edificio %2$s</string>  
     <string name="message_team_member">%1$s ti chiede aiuto per vincere il duello con il suo team scalando l\'edificio %2$s</string>
     <string name="group_not_exists">Il gruppo non esiste più</string>
     <string name="group_already_part">Fai già parte di %s</string>
@@ -181,6 +181,8 @@
     <string name="wait_team">Attendi che i team siano completi</string>
     <string name="completed_teams">I team sono completi\nPremy play per giocare</string>
     <string name="exit_team_btn">Esci dal gruppo</string>
+    <string name="add_members_btn">Aggiungi membri</string>
+    <string name="add_challenger_btn">Aggiungi sfidante</string>
   
     <!-- SettingsActivity -->
     <string name="settings_title">Impostazioni</string>
