@@ -493,7 +493,7 @@ public final class GeneralUtils {
 	public static String uploadGameLogFile(Context context) throws IOException{
     	
     	String log_file_name="";
-    	int log_file_id = PreferenceManager.getDefaultSharedPreferences(context).getInt("log_file_id", -1);
+    	int log_file_id = PreferenceManager.getDefaultSharedPreferences(context).getInt("log_game_file_id", -1);
     	    	
     	if(log_file_id==-1){
     		log_file_name="game_log";

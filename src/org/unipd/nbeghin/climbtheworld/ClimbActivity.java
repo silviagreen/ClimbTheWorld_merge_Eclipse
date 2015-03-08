@@ -415,6 +415,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			boolean winMicrogoal = false; // is current microgoal completed?
 			if (!isCounterMode) { // check win only if game mode is on
 				winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();
+				System.out.println("done_steps: " + microgoal.getDone_steps());
+				System.out.println("tot_steps: " + microgoal.getTot_steps());
 				if (winMicrogoal)
 					apply_win_microgoal();
 
@@ -555,7 +557,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		int unit = (int) Math.ceil((double) (building.getSteps()*percentage)/ (double) 100);
 		int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
 		if(num_steps == building.getSteps()) final_pos += 1;
-
+		System.out.println("unit " + unit);
+		System.out.println("num_steps " + num_steps);
+		System.out.println("final_pos " + final_pos);
 		seekbarIndicator.setGoldStar(final_pos);
 		/*
 		 * final TextView bonus_microgoal = (TextView) findViewById(R.id.bonusMicrogoal); bonus_microgoal.setText(getString(R.string.microgoal_terminated2, bonus)); Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_top); anim.setDuration(2000); anim.setAnimationListener(new AnimationListener() {
@@ -1303,7 +1307,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			loadTeamDuel();
 			break;
 		case SOLO_CLIMB:
-			if(percentage >= 1.0){
+			if(percentage < 1.0){
 				//LOG-------------------------------------------------
 				//LINE
 				line = "CURRENT SESSION GAME MODE: SOLO CLIMB";
@@ -1770,7 +1774,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 						myclimbing.setSaved(false);
 						ClimbApplication.climbingDao.update(myclimbing);
 						Toast.makeText(getApplicationContext(), getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
-						Log.e("updateClimbingInParse", e.getMessage());
+						if(e!=null)Log.e("updateClimbingInParse", e.getMessage());
+						else Log.e("updateClimbingInParse", "climbs.size = 0");
 					}
 				}
 			});
@@ -2295,12 +2300,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			///////// altrimenti l'indice del giorno è (Calendar.getInstance().get(Calendar.DAY_OF_WEEK))-1;
 			
 			if (samplingEnabled) { // if sampling is enabled stop the classifier
-				//LOG-------------------------------------------------
-				//LINE
-				String line = "USER MADE : " + (previous_progress/difficulty) + " STEPS";
-				LogUtils.writeGameUpdate(getApplicationContext(), line);
-				//
-				//---------------------------------------------------
+				
 				boolean changes = false;
 				if (new_steps != 0)
 					changes = true;
@@ -2659,6 +2659,13 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		if (isCounterMode)
 			difficulty = 1;
 		int real_steps = previous_progress / difficulty;
+		//LOG-------------------------------------------------
+		//LINE
+		String line = "USER MADE : " + real_steps + " STEPS";
+		LogUtils.writeGameUpdate(getApplicationContext(), line);
+		Log.d("LOG", line);
+		//
+		//---------------------------------------------------
 		currentUser.addObserver(this);
 		ParseUser user = ParseUser.getCurrentUser();
 		if (ClimbApplication.are24hPassed(currentUser.getBegin_date())) {
