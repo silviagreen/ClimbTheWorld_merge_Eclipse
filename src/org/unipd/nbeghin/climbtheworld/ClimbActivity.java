@@ -1734,7 +1734,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			 * 
 			 * System.out.println("CERCO: " + myclimbing.getId_mode());
 			 */
-			if (!(myclimbing.getId_online() == null) || !myclimbing.getId_online().equalsIgnoreCase(""))
+			System.out.println(myclimbing.getId_online() == null);
+			if (!(myclimbing.getId_online() == null) && !myclimbing.getId_online().equalsIgnoreCase(""))
 				query.whereEqualTo("objectId", myclimbing.getId_online());
 			else {
 				query.whereEqualTo("users_id", myclimbing.getUser().getFBid());
@@ -1922,6 +1923,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		SharedPreferences pref = getApplicationContext().getSharedPreferences("UserSession", 0);
 
 		List<Climbing> climbs = ClimbApplication.getClimbingListForBuildingAndUser(building.get_id(), pref.getInt("local_id", -1));
+		System.out.println(pref.getInt("local_id", -1));
+		System.out.println("climbs "+ climbs.size());
 		if (climbs.size() == 1) {
 			climbing = climbs.get(0);
 		} else if (climbs.size() == 2) {
@@ -1946,8 +1949,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			climbing.setCreated(new Date().getTime());
 			climbing.setModified(new Date().getTime());
 			climbing.setGame_mode(0);
-			String FBid = pref.getString("FBid", "");
-			if (FBid.equals(""))
+			String FBid = pref.getString("FBid", ""); System.out.println("FBid " + pref.getString("FBid", ""));
+			if (FBid.equals("") || FBid.equals("none") || FBid.equalsIgnoreCase("empty"))
 				climbing.setUser(ClimbApplication.getUserById(pref.getInt("local_id", -1)));
 			else
 				climbing.setUser(ClimbApplication.getUserByFBId(FBid));
@@ -2300,7 +2303,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			///////// altrimenti l'indice del giorno è (Calendar.getInstance().get(Calendar.DAY_OF_WEEK))-1;
 			
 			if (samplingEnabled) { // if sampling is enabled stop the classifier
-				
 				boolean changes = false;
 				if (new_steps != 0)
 					changes = true;
@@ -2526,7 +2528,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			updateUserStats(true);
 		else
 			updateUserStats(false);
-
 		if (!isCounterMode && changes) {
 			// update db
 

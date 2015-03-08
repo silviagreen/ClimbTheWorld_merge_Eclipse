@@ -21,7 +21,7 @@ public class NetworkBroadcasterReceiver extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		
 		pref = context.getSharedPreferences("UserSession", 0);
-		
+		System.out.println("Receiver");
 		if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 		    NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 		    if(networkInfo != null && networkInfo.isConnected()) {
@@ -31,6 +31,8 @@ public class NetworkBroadcasterReceiver extends BroadcastReceiver{
         	context.startService(filter);
 		}
 		}
+		
+		
         
         if(!FacebookUtils.isOnline(context) && ClimbApplication.isActivityVisible() && !pref.getString("FBid", "none").equals("none") && !pref.getString("FBid", "none").equals("empty") && !pref.getString("FBid", "none").isEmpty()){
 			Toast t = Toast.makeText(context, context.getString(R.string.offline), Toast.LENGTH_SHORT);

@@ -955,6 +955,7 @@ public class UpdateService extends IntentService {
 		// userDao = dbHelper.getUserDao();
 		// userBadgesDao = dbHelper.getUserBadgeDao();
 		// microgoalDao = dbHelper.getMicrogoalDao();
+		System.out.println("SERVICE");
 		if (isOnline(this)) {
 			saveUsersData(this);
 			saveCollaborations(this);

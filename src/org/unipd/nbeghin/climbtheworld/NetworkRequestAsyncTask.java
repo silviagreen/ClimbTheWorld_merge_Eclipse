@@ -74,7 +74,7 @@ public class NetworkRequestAsyncTask extends AsyncTask<Void, Void, Void>{
 		super.onPostExecute(result);
 		PD.dismiss();
 		if(activity instanceof MainActivity)
-			((MainActivity)activity).onUpdateNotifications(null);
+			((MainActivity)activity).onUpdateNotifications();
 		else if(activity instanceof ProfileActivity){
 			((ProfileActivity)activity).setProfileData(ClimbApplication.user, true);	
 		}

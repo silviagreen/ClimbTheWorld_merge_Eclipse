@@ -507,26 +507,30 @@ public void onWindowFocusChanged(boolean hasFocus) {
 	/**
 	 * Check for an incoming notifications. If there's any and if they're valid, then create the corresponding Notification object and add it to the Nofitication list.
 	 */
-	public void onUpdateNotifications(MenuItem v) {
+	public void onUpdateNotifications() {
+		System.out.println("UPDATE NOTIFICATION");
+		new NotificationAsyncTask().execute();
 		// Check for an incoming notification. Save the info if it is valid
-		Uri intentUri = getIntent().getData();
-		if (intentUri != null) {
-			String requestIdParam = intentUri.getQueryParameter("request_ids");
-			if (requestIdParam != null) {
-				String array[] = requestIdParam.split(",");
-				for (int i = 0; i < array.length; i++) {
-					requestId = array[i];
-					Log.i("onActivityCreated", "Request id: " + requestId);
-					getRequestData(requestId);
-				}
-				if (ClimbApplication.notifications.isEmpty())
-					Toast.makeText(this, getString(R.string.no_notification), Toast.LENGTH_SHORT).show();
-				else
-					Toast.makeText(this, getResources().getQuantityString(R.plurals.n_notification, ClimbApplication.notifications.size()), Toast.LENGTH_SHORT).show();
-
-			}
-
-		}
+//		Uri intentUri = getIntent().getData();
+//		if (intentUri != null) {
+//			String requestIdParam = intentUri.getQueryParameter("request_ids");
+//			if (requestIdParam != null) {
+//				String array[] = requestIdParam.split(","); System.out.println("array not size: " + array.length);
+//				if(array.length > 0)
+//					new NotificationAsyncTask().execute();
+//				//for (int i = 0; i < array.length; i++) {
+//					//requestId = array[i];
+//					//Log.i("onActivityCreated", "Request id: " + requestId);
+//					//getRequestData(requestId);
+//				//}
+////				if (ClimbApplication.notifications.isEmpty())
+////					Toast.makeText(this, getString(R.string.no_notification), Toast.LENGTH_SHORT).show();
+////				else
+////					Toast.makeText(this, getResources().getQuantityString(R.plurals.n_notification, ClimbApplication.notifications.size()), Toast.LENGTH_SHORT).show();
+//
+//			}
+//
+//		}
 	}
 
 	/**
@@ -961,6 +965,8 @@ public void onWindowFocusChanged(boolean hasFocus) {
 						Editor edit = pref.edit();
 						edit.putBoolean("openedFirst", false);
 						edit.commit();
+						
+						//onUpdateNotifications();
 
 					}
 				}
