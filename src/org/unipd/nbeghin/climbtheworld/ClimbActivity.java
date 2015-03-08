@@ -53,6 +53,7 @@ import org.unipd.nbeghin.climbtheworld.util.AlarmUtils;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GeneralUtils;
 import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
+import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 import org.unipd.nbeghin.climbtheworld.util.ModelsUtil;
 import org.unipd.nbeghin.climbtheworld.util.ParseUtils;
 import org.unipd.nbeghin.climbtheworld.util.StatUtils;
@@ -874,7 +875,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		secondSeekbar.setMax(building.getSteps());
 		secondSeekbar.hideStars();
 		current = (TextView) findViewById(R.id.textPosition);
-		for (int i = 1; i <= ClimbApplication.N_MEMBERS_PER_GROUP; i++) {
+		for (int i = 1; i <= 6; i++) { //ClimbApplication.N_MEMBERS_PER_GROUP
 			int idNome = getResources().getIdentifier("nome" + i, "id", getPackageName());
 			int idPassi = getResources().getIdentifier("passi" + i, "id", getPackageName());
 			int idMinus = getResources().getIdentifier("minus" + i, "id", getPackageName());
@@ -1094,6 +1095,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 			setGraphicsSocialMode();
 		} else { // game mode off (only engine to count user's steps)
+			//LOG-------------------------------------------------
+			//LINE
+			String line = "CURRENT GAME SESSION: COUNTER MODE";
+			LogUtils.writeGameUpdate(getApplicationContext(), line);
+			//
+			//---------------------------------------------------
 			backgroundClassifySampler = new Intent(this, SamplingClassifyService.class);
 			ImageView photo = ((ImageView) findViewById(R.id.buildingPhoto));
 			TextView name = ((TextView) findViewById(R.id.lblBuildingName));
@@ -1110,7 +1117,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 			current = (TextView) findViewById(R.id.textPosition);
 			current.setVisibility(View.INVISIBLE);
-			for (int i = 1; i <= ClimbApplication.N_MEMBERS_PER_GROUP; i++) {
+			for (int i = 1; i <= 6; i++) {//ClimbApplication.N_MEMBERS_PER_GROUP
 				int idNome = getResources().getIdentifier("nome" + i, "id", getPackageName());
 				int idPassi = getResources().getIdentifier("passi" + i, "id", getPackageName());
 				int idMinus = getResources().getIdentifier("minus" + i, "id", getPackageName());
@@ -1266,18 +1273,44 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	private void loadSocialMode() {
 		switch (mode) {
 		case SOCIAL_CHALLENGE:
+			//LOG-------------------------------------------------
+			//LINE
+			String line = "CURRENT SESSION GAME MODE: SOCIAL CHALLENGE";
+			LogUtils.writeGameUpdate(getApplicationContext(), line);
+			//
+			//---------------------------------------------------
 			mode = GameModeType.SOCIAL_CHALLENGE;
 			loadCompetition();
 			break;
 		case SOCIAL_CLIMB:
+			//LOG-------------------------------------------------
+			//LINE
+			line = "CURRENT SESSION GAME MODE: SOCIAL CLIMB";
+			LogUtils.writeGameUpdate(getApplicationContext(), line);
+			//
+			//---------------------------------------------------
 			mode = GameModeType.SOCIAL_CLIMB;
 			loadCollaboration();
 			break;
 		case TEAM_VS_TEAM:
+			//LOG-------------------------------------------------
+			//LINE
+			line = "CURRENT SESSION GAME MODE: TEAM VS TEAM";
+			LogUtils.writeGameUpdate(getApplicationContext(), line);
+			//
+			//---------------------------------------------------
 			mode = GameModeType.TEAM_VS_TEAM;
 			loadTeamDuel();
 			break;
 		case SOLO_CLIMB:
+			if(percentage >= 1.0){
+				//LOG-------------------------------------------------
+				//LINE
+				line = "CURRENT SESSION GAME MODE: SOLO CLIMB";
+				LogUtils.writeGameUpdate(getApplicationContext(), line);
+				//
+				//---------------------------------------------------
+			}
 			synchronized (ClimbApplication.lock) {
 				in_progress = false;
 				ClimbApplication.lock.notifyAll();
@@ -2262,7 +2295,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			///////// altrimenti l'indice del giorno è (Calendar.getInstance().get(Calendar.DAY_OF_WEEK))-1;
 			
 			if (samplingEnabled) { // if sampling is enabled stop the classifier
-
+				//LOG-------------------------------------------------
+				//LINE
+				String line = "USER MADE : " + (previous_progress/difficulty) + " STEPS";
+				LogUtils.writeGameUpdate(getApplicationContext(), line);
+				//
+				//---------------------------------------------------
 				boolean changes = false;
 				if (new_steps != 0)
 					changes = true;

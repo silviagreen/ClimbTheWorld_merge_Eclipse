@@ -40,20 +40,23 @@
                 android:layout_weight="1"
                 android:paddingTop="10dp"
                 android:text="-" />
-
+<!-- hidden during tests -->
             <TextView
                 android:id="@+id/textMyMember2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="-" />
+                android:text="-" 
+                android:visibility="invisible"
+                />
         </TableRow>
-
+<!-- hidden during tests -->
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="invisible" >
 
             <TextView
                 android:id="@+id/textMyMember3"
@@ -71,11 +74,12 @@
                 android:paddingTop="10dp"
                 android:text="-" />
         </TableRow>
-
+<!-- hidden during tests -->
         <TableRow
             android:id="@+id/tableRow3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="invisible" >
 
             <TextView
                 android:id="@+id/textMyMember5"
@@ -142,20 +146,22 @@
                   android:layout_weight="1"
                   android:paddingTop="10dp"
                   android:text="-" />
-
+<!-- hidden during tests -->
               <TextView
                   android:id="@+id/textOtherMember2"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:paddingTop="10dp"
-                  android:text="-" />
+                  android:text="-" 
+                  android:visibility="invisible"/>
           </TableRow>
-
+<!-- hidden during tests -->
           <TableRow
               android:id="@+id/table2Row2"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content" >
+              android:layout_height="wrap_content"
+              android:visibility="invisible" >
 
               <TextView
                   android:id="@+id/textOtherMember3"
@@ -173,11 +179,12 @@
                   android:paddingTop="10dp"
                   android:text="-" />
           </TableRow>
-
+<!-- hidden during tests -->
           <TableRow
               android:id="@+id/table2Row3"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content" >
+              android:layout_height="wrap_content"
+              android:visibility="invisible" >
 
               <TextView
                   android:id="@+id/textOtherMember5"

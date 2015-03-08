@@ -198,8 +198,8 @@ public class BuildingCard extends Card {
 			//DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory(true).bitmapConfig(Bitmap.Config.RGB_565).cacheOnDisc(true).build(); // enable image caching
 			
 			ImageLoaderConfiguration config_image = new ImageLoaderConfiguration.Builder(context)
-	        .memoryCacheSize(41943040)
-	        .discCacheSize(104857600)
+	        //.memoryCacheSize(41943040)
+	        //.discCacheSize(104857600)
 	        .threadPoolSize(10)
 	        .build();
 
@@ -213,6 +213,8 @@ public class BuildingCard extends Card {
 			.cacheInMemory(true)
 			.cacheOnDisc(true)
 			.build();
+			
+			
 			
 			//ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity.getApplicationContext()).threadPoolSize(3).defaultDisplayImageOptions(options).build();
 			ImageLoader.getInstance().init(config_image);

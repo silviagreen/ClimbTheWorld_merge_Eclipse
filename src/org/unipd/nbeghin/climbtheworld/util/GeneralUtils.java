@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -26,7 +25,7 @@ import org.unipd.nbeghin.climbtheworld.receivers.TimeBatteryWatcher;
 import org.unipd.nbeghin.climbtheworld.services.ActivityRecognitionRecordService;
 import org.unipd.nbeghin.climbtheworld.services.SamplingClassifyService;
 import org.unipd.nbeghin.climbtheworld.services.SetNextAlarmTriggersIntentService;
-
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
@@ -136,7 +135,8 @@ public final class GeneralUtils {
     	//readIntervalsFromFile(context);
 		
     	Thread thread = new Thread(){
-    		@Override
+    		@SuppressLint("NewApi")
+			@Override
     		public void run() {
     			
     			//si recupera il numero di alarm che sono presenti nel database (le API del 
@@ -486,6 +486,69 @@ public final class GeneralUtils {
        	
     	//si salva l'id nelle shared preferences
     	PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("log_file_id", log_file_id).commit();
+    }
+    
+    
+    @SuppressWarnings("deprecation")
+	public static String uploadGameLogFile(Context context) throws IOException{
+    	
+    	String log_file_name="";
+    	int log_file_id = PreferenceManager.getDefaultSharedPreferences(context).getInt("log_file_id", -1);
+    	    	
+    	if(log_file_id==-1){
+    		log_file_name="game_log";
+    	}
+    	else{
+    		log_file_name="game_log"+log_file_id;
+    	}    	
+    	
+    	final File logFile = new File(context.getDir("climbTheWorld_dir", Context.MODE_PRIVATE), log_file_name);
+    	
+    	
+    	if(logFile.exists()){
+    		
+    		//Php script path
+        	String uploadServerUri = "http://www.learningquiz.altervista.org/quiz_game_api/uploadGameLogFile.php";
+        	    		
+        	HttpClient client = new DefaultHttpClient();
+        	
+        	HttpPost post = new HttpPost(uploadServerUri);
+        	MultipartEntityBuilder builder = MultipartEntityBuilder.create();        
+        	builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+            FileBody fb = new FileBody(logFile);
+
+            builder.addPart("file", fb);  
+            builder.addTextBody("log_file_id", String.valueOf(log_file_id), ContentType.TEXT_PLAIN);
+        	
+            final HttpEntity entity = builder.build();
+        	 
+            post.setEntity(entity);
+            
+            HttpResponse response = null;
+            
+            try {
+    			response = client.execute(post);
+    		} catch (ClientProtocolException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}        
+            
+            
+            //response code from the server
+            int server_response_code = response.getStatusLine().getStatusCode();
+                    
+            if(server_response_code==200){ //ok        	
+            	return getContent(response);
+            }
+            else{        	
+            	return "server_error";
+            }
+    	}
+    	else{
+    		return "logfile_not_exists";
+    	}
     }
     
    

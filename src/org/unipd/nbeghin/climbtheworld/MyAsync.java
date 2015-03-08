@@ -459,7 +459,7 @@ public class MyAsync {
 						} catch (JSONException ex) {
 							ex.printStackTrace();
 						}
-						if (challenger_stairs.length() == ClimbApplication.N_MEMBERS_PER_GROUP && creator_stairs.length() == ClimbApplication.N_MEMBERS_PER_GROUP)
+						if (challenger_stairs.length() == ClimbApplication.N_MEMBERS_PER_GROUP_TEAM && creator_stairs.length() == ClimbApplication.N_MEMBERS_PER_GROUP_TEAM)
 							local_duel.setReadyToPlay(true);
 						else
 							local_duel.setReadyToPlay(false);

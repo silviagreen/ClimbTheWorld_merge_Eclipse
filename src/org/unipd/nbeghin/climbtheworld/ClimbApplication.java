@@ -34,6 +34,7 @@ import org.unipd.nbeghin.climbtheworld.models.Tour;
 import org.unipd.nbeghin.climbtheworld.models.TourText;
 import org.unipd.nbeghin.climbtheworld.models.User;
 import org.unipd.nbeghin.climbtheworld.models.UserBadge;
+import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 import org.unipd.nbeghin.climbtheworld.util.ParseUtils;
 
 import android.app.Activity;
@@ -97,8 +98,9 @@ public class ClimbApplication extends Application {
 	
 	public static final List<String> PERMISSIONS = Arrays.asList("user_friends,public_profile");
 
-	public static final int N_MEMBERS_PER_GROUP = 3;  // REAL: 5 friends + me = 6
-														// TEST: 2 frends + me = 3
+	public static final int N_MEMBERS_PER_GROUP = 6;  
+	public static final int N_MEMBERS_PER_GROUP_TEAM = 2; // REAL: 5 friends + me = 6
+															// TEST: 2 frends + me = 3
 	public static int PERCENTAGE_MICROGOAL = 25;
 	public static boolean BUSY = false;
 	public static Object lock = new Object();
@@ -225,7 +227,17 @@ public class ClimbApplication extends Application {
 		super.onCreate();
 		Log.d("ClimbApplication", "onCreate");
 		
+		
 		sContext = getApplicationContext();
+		
+		//LOG-------------------------------------------------
+				//LINE
+				String line = "OPEN APP at " + new Date().toString();
+				LogUtils.initGameLog(sContext, "BEGINS NOW");
+				LogUtils.writeGameUpdate(sContext, line);
+				//
+				//---------------------------------------------------
+		
 		emptyMultimapNotification();
 		
 		SharedPreferences pref = sContext.getSharedPreferences("UserSession", 0);

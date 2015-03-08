@@ -37,6 +37,7 @@ import org.unipd.nbeghin.climbtheworld.models.NotificationType;
 import org.unipd.nbeghin.climbtheworld.models.User;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
+import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 import org.unipd.nbeghin.climbtheworld.R;
 
 import android.annotation.SuppressLint;
@@ -355,12 +356,21 @@ public void onWindowFocusChanged(boolean hasFocus) {
 			editor.commit();
 
 		}
+		
+		//LOG-------------------------------------------------
+		//LINE
+				String line = "OWNER LOGGED";
+				LogUtils.writeGameUpdate(sContext, line);
+		//
+		//---------------------------------------------------
 		ClimbApplication.refreshClimbings();
 		ClimbApplication.refreshCollaborations();
 		ClimbApplication.refreshCompetitions();
 		ClimbApplication.refreshTeamDuels();
 		ClimbApplication.refreshUserBadge();
 		ClimbApplication.refreshMicrogoals();
+		
+		
 
 		//user account connected to FB?
 		if (FacebookUtils.isOnline(this)) {
@@ -940,8 +950,14 @@ public void onWindowFocusChanged(boolean hasFocus) {
 						}
 					} else {
 						// System.err.println("no user");
-						//FBid gi� settato, scarico le mie informazioni
+						//FBid gia settato, scarico le mie informazioni
 						new MyAsync(MainActivity.this, PD, false).execute();
+						//LOG-------------------------------------------------
+						//LINE
+						String line = "USERNAME (FB) " + pref.getString("username", "");
+						LogUtils.writeGameUpdate(sContext, line);
+						//
+						//---------------------------------------------------
 						Editor edit = pref.edit();
 						edit.putBoolean("openedFirst", false);
 						edit.commit();
@@ -1211,6 +1227,10 @@ public void onWindowFocusChanged(boolean hasFocus) {
 	public void onClosing(int id, boolean fromUser, boolean containsTouch) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void uploadGameLog(MenuItem v){
+		new UploadGameLogTask(getApplicationContext()).execute();
 	}
 
 }

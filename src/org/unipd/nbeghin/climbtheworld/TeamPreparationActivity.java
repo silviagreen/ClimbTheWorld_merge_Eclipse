@@ -130,11 +130,11 @@ public class TeamPreparationActivity extends ActionBarActivity {
 //		else
 //			exitTeam.setEnabled(true);
 
-		for (int i = 0; i < ClimbApplication.N_MEMBERS_PER_GROUP - 1; i++) {
+		for (int i = 0; i < ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1; i++) {
 			int id = getResources().getIdentifier("textMyMember" + (i + 1), "id", getPackageName());
 			myMembers.add((TextView) findViewById(id));
 		}
-		for (int i = 0; i < ClimbApplication.N_MEMBERS_PER_GROUP - 1; i++) {
+		for (int i = 0; i < ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1; i++) {
 			int id = getResources().getIdentifier("textOtherMember" + (i + 1), "id", getPackageName());
 			theirMembers.add((TextView) findViewById(id));
 		}
@@ -414,12 +414,12 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		});
 
 		if (duel.isCreator()) {
-			if (myTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP - 1))
+			if (myTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1))
 				addMyMembersBtn.setEnabled(true);
 			else
 				addMyMembersBtn.setEnabled(false);
 		} else if (duel.isChallenger()) {
-			if (challengerTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP - 1))
+			if (challengerTeam.length() < (ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1))
 				addChallengerTeamBtn.setEnabled(true);
 			else
 				addChallengerTeamBtn.setEnabled(false);
@@ -428,7 +428,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			addMyMembersBtn.setEnabled(false);
 			addChallengerBtn.setEnabled(false);
 		}
-		if (myTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP - 1) && challengerTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP - 1)) {
+		if (myTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1) && challengerTeam.length() == (ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1)) {
 			startPlay.setEnabled(true);
 			startPlay.setVisibility(View.VISIBLE);
 			exitTeam.setEnabled(false);

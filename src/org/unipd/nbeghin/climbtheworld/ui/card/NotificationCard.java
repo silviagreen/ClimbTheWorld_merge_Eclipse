@@ -965,7 +965,7 @@ public class NotificationCard extends Card {
 											if (!meIn) {
 
 												int n_collaborators = team.length();
-												if (n_collaborators < ClimbApplication.N_MEMBERS_PER_GROUP - 1) {
+												if (n_collaborators < ClimbApplication.N_MEMBERS_PER_GROUP_TEAM - 1) {
 
 													
 													final Climbing climb = ClimbApplication.getClimbingForBuildingAndUser(building_3.get_id(), me_3.get_id());// ClimbApplication.getClimbingForBuilding(building.get_id());

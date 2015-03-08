@@ -53,6 +53,13 @@
     </item>
     
     <item
+        android:id="@+id/itemGameLog"
+        android:onClick="uploadGameLog"
+        android:title="Upload Game Log"
+        climbtheworld:showAsAction="never">
+    </item>
+    
+    <item
         android:id="@+id/itemShareDb"
         android:onClick="onShareDb"
         android:title="Share db[D]"

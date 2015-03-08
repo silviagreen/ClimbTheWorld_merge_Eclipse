@@ -16,6 +16,7 @@ import org.unipd.nbeghin.climbtheworld.models.User;
 import org.unipd.nbeghin.climbtheworld.models.UserBadge;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
+import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 import org.unipd.nbeghin.climbtheworld.util.StatUtils;
 
 import android.annotation.TargetApi;
@@ -78,6 +79,12 @@ public class ProfileActivity extends ActionBarActivity implements NetworkRequest
 		if(login){
 			String own = me.isOwner() ? "\n" + getString(R.string.owner) : "";
 			Toast.makeText(this, getString(R.string.logged_as, me.getName()) + own, Toast.LENGTH_SHORT).show();
+			//LOG-------------------------------------------------
+			//LINE
+			String line = "USER MAKES LOGIN WITH FB: " + me.getName() + " IS OWNER? " + me.isOwner();
+			LogUtils.writeGameUpdate(getApplicationContext(), line);
+			//
+			//---------------------------------------------------
 		}
 		updateUserData();
 	}

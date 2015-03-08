@@ -12,6 +12,7 @@ import org.unipd.nbeghin.climbtheworld.models.TourText;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fima.cardsui.objects.Card;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
  * CardsUI card for a single tour
@@ -50,7 +58,54 @@ public class TourCard extends Card {
 		List<Integer> images=ClimbApplication.getBuildingPhotosForTour(tour.get_id());
 		for(int image: images) {
 			ImageView imageView=new ImageView(context);
-			imageView.setImageResource(image);
+			
+			
+			ImageLoaderConfiguration config_image = new ImageLoaderConfiguration.Builder(context)
+	        //.memoryCacheSize(41943040)
+	        //.discCacheSize(104857600)
+	        .threadPoolSize(10)
+	        .build();
+
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+			.showImageForEmptyUri(R.drawable.ic_action_help_dark)
+			.showImageOnFail(R.drawable.ic_action_cancel)
+			.resetViewBeforeLoading(true)
+			.imageScaleType(ImageScaleType.EXACTLY)
+			.bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new FadeInBitmapDisplayer(300))
+			.cacheInMemory(true)
+			.cacheOnDisc(true)
+			.build();
+			
+			
+			
+			//ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity.getApplicationContext()).threadPoolSize(3).defaultDisplayImageOptions(options).build();
+			ImageLoader.getInstance().init(config_image);
+			
+			ImageLoader.getInstance().displayImage("drawable://"+image, imageView, options, new ImageLoadingListener() {
+				
+				@Override
+				public void onLoadingStarted(String arg0, View arg1) {
+					
+				}
+				
+				@Override
+				public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
+					
+				}
+				
+				@Override
+				public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
+										
+				}
+				
+				@Override
+				public void onLoadingCancelled(String arg0, View arg1) {
+										
+				}
+			});
+			
+			//imageView.setImageResource(image);
 			imageView.setAdjustViewBounds(true);
 			imageView.setPadding(0, 0, 7, 0);
 			imageView.setScaleType(ScaleType.FIT_START);
