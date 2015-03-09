@@ -795,7 +795,7 @@ public class ClimbApplication extends Application {
 
 	public static UserBadge getUserBadgeForUserAndBadge(int badge_id, int obj_id, int user_id) {
 
-		QueryBuilder<UserBadge, Integer> query = userBadgeDao.queryBuilder();
+		QueryBuilder<UserBadge, Integer> query = userBadgeDao.queryBuilder(); 
 		Where<UserBadge, Integer> where = query.where();
 		try {
 			where.eq("badge_id", badge_id);
@@ -803,8 +803,8 @@ public class ClimbApplication extends Application {
 			where.eq("user_id", user_id);
 			where.and();
 			where.eq("obj_id", obj_id);
-			PreparedQuery<UserBadge> preparedQuery = query.prepare();
-			List<UserBadge> userBadges = userBadgeDao.query(preparedQuery);
+			PreparedQuery<UserBadge> preparedQuery = query.prepare(); 
+			List<UserBadge> userBadges = userBadgeDao.query(preparedQuery); System.out.println("Userbadges size " + userBadges.size());
 			if (userBadges.isEmpty())
 				return null;
 			return userBadges.get(0);

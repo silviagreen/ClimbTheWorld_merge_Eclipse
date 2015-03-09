@@ -667,13 +667,13 @@ public class NotificationCard extends Card {
 						break;
 					case ASK_TEAM_COMPETITION_CHALLENGER:
 						final AskTeamDuelNotification current2 = ((AskTeamDuelNotification) notification);
-
-						Collaboration collabs2 = ClimbApplication.getCollaborationByBuildingAndUser(current2.getBuilding_id(), pref.getInt("local_id", -1));
-						Competition compet2 = ClimbApplication.getCompetitionByBuildingAndUser(current2.getBuilding_id(), pref.getInt("local_id", -1));
-						TeamDuel duel2 = ClimbApplication.getTeamDuelByBuildingAndUser(current2.getBuilding_id(), pref.getInt("local_id", -1));
+						final Building building_2 = (ClimbApplication.getBuildingTextById(current2.getBuilding_id())).getBuilding();
+						Collaboration collabs2 = ClimbApplication.getCollaborationByBuildingAndUser(building_2.get_id(), pref.getInt("local_id", -1));
+						Competition compet2 = ClimbApplication.getCompetitionByBuildingAndUser(building_2.get_id(), pref.getInt("local_id", -1));
+						TeamDuel duel2 = ClimbApplication.getTeamDuelByBuildingAndUser(building_2.get_id(), pref.getInt("local_id", -1));
 						
 						final User me_2 = ClimbApplication.getUserById(pref.getInt("local_id", -1));
-						final Building building_2 = ClimbApplication.getBuildingById(current2.getBuilding_id());
+						
 						
 						if(me_2.getLevel() >= building_2.getBase_level()){
 						
@@ -804,7 +804,7 @@ public class NotificationCard extends Card {
 																	// save team duel locally
 																	TeamDuel teamDuelLocal = new TeamDuel();
 																	teamDuelLocal.setId_online(teamDuelParse.getObjectId());
-																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(current2.getBuilding_id()));
+																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(building_2.get_id()));
 																	teamDuelLocal.setMy_steps(0);
 																	teamDuelLocal.setSaved(true);
 																	teamDuelLocal.setUser(me_2);
@@ -834,7 +834,7 @@ public class NotificationCard extends Card {
 
 																} else {
 																	TeamDuel teamDuelLocal = new TeamDuel();
-																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(current2.getBuilding_id()));
+																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(building_2.get_id()));
 																	teamDuelLocal.setCompleted(true);
 																	teamDuelLocal.setSaved(false);
 																	teamDuelLocal.setDeleted(true);
@@ -914,13 +914,13 @@ public class NotificationCard extends Card {
 						break;
 					case ASK_TEAM_COMPETITION_TEAM:
 						final AskTeamDuelNotification current3 = ((AskTeamDuelNotification) notification);
-
-						Collaboration collabs3 = ClimbApplication.getCollaborationByBuildingAndUser(current3.getBuilding_id(), pref.getInt("local_id", -1));
-						Competition compet3 = ClimbApplication.getCompetitionByBuildingAndUser(current3.getBuilding_id(), pref.getInt("local_id", -1));
-						TeamDuel duel3 = ClimbApplication.getTeamDuelByBuildingAndUser(current3.getBuilding_id(), pref.getInt("local_id", -1));
+						final Building building_3 = (ClimbApplication.getBuildingTextById(current3.getBuilding_id())).getBuilding();
+						Collaboration collabs3 = ClimbApplication.getCollaborationByBuildingAndUser(building_3.get_id(), pref.getInt("local_id", -1));
+						Competition compet3 = ClimbApplication.getCompetitionByBuildingAndUser(building_3.get_id(), pref.getInt("local_id", -1));
+						TeamDuel duel3 = ClimbApplication.getTeamDuelByBuildingAndUser(building_3.get_id(), pref.getInt("local_id", -1));
 						
 						final User me_3 = ClimbApplication.getUserById(pref.getInt("local_id", -1));
-						final Building building_3 = ClimbApplication.getBuildingById(current3.getBuilding_id());
+						
 						
 						if(me_3.getLevel() >= building_3.getBase_level()){
 						
@@ -1075,7 +1075,7 @@ public class NotificationCard extends Card {
 																	// save team duel locally
 																	TeamDuel teamDuelLocal = new TeamDuel();
 																	teamDuelLocal.setId_online(teamDuelParse.getObjectId());
-																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(current3.getBuilding_id()));
+																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(building_3.get_id()));
 																	teamDuelLocal.setMy_steps(0);
 																	teamDuelLocal.setSaved(true);
 																	teamDuelLocal.setUser(me_3);
@@ -1108,7 +1108,7 @@ public class NotificationCard extends Card {
 
 																} else {
 																	TeamDuel teamDuelLocal = new TeamDuel();
-																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(current3.getBuilding_id()));
+																	teamDuelLocal.setBuilding(ClimbApplication.getBuildingById(building_3.get_id()));
 																	teamDuelLocal.setCompleted(true);
 																	teamDuelLocal.setSaved(false);
 																	teamDuelLocal.setDeleted(true);

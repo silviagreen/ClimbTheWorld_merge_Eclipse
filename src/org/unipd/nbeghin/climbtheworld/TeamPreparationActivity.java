@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.unipd.nbeghin.climbtheworld.models.Building;
+import org.unipd.nbeghin.climbtheworld.models.BuildingText;
 import org.unipd.nbeghin.climbtheworld.models.Climbing;
 import org.unipd.nbeghin.climbtheworld.models.Group;
 import org.unipd.nbeghin.climbtheworld.models.TeamDuel;
@@ -76,7 +77,8 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_preparation_teams);
 		SharedPreferences pref = getSharedPreferences("UserSession", 0);
 		building_id = getIntent().getIntExtra(ClimbApplication.building_text_intent_object, 0);
-		building = (ClimbApplication.buildingTextDao.queryForId(building_id)).getBuilding();
+		BuildingText bt = ClimbApplication.buildingTextDao.queryForId(building_id);
+		building = bt.getBuilding();
 		addMyMembersBtn = (Button) findViewById(R.id.addMyTeamBtn);
 		addChallengerBtn = (Button) findViewById(R.id.addChallengerBtn);
 		startPlay = (ImageButton) findViewById(R.id.btnStartClimbing);
@@ -138,13 +140,14 @@ public class TeamPreparationActivity extends ActionBarActivity {
 			int id = getResources().getIdentifier("textOtherMember" + (i + 1), "id", getPackageName());
 			theirMembers.add((TextView) findViewById(id));
 		}
-
+		
 		// int team_online_id =
 		// getIntent().getIntExtra(ClimbApplication.duel_intent_object, 0);
 		// System.out.println(building_id + " " + pref.getInt("local_id", -1));
 		duel = ClimbApplication.getTeamDuelByBuildingAndUser(building.get_id(), pref.getInt("local_id", -1));
 		// quando arrivo qui, id online di duel deve essere settato
-
+		System.out.println("id e " + building.get_id());
+		System.out.println("user è " + pref.getInt("local_id", -1));
 		if (duel.isCreator()) {
 			addChallengerBtn.setVisibility(View.VISIBLE);
 			addChallengerTeamBtn.setVisibility(View.GONE);
@@ -519,7 +522,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	public void onAddMyMembersBtn() {
 
 		Bundle params = new Bundle();
-		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building.get_id() + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
+		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building_id + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
 																																																														// will
 																																																														// not
 																																																														// be
@@ -537,7 +540,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 
 	public void onAddChallengerMemberBtn() {
 		Bundle params = new Bundle();
-		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building.get_id() + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
+		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building_id + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
 																																																														// will
 																																																														// not
 																																																														// be

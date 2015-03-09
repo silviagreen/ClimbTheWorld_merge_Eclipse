@@ -686,7 +686,7 @@ public class BuildingCard extends Card {
 								else {
 									Log.i("BuildingCard", "Building id clicked: " + building.get_id());
 									Intent intent = new Intent(activity.getApplicationContext(), TeamPreparationActivity.class);
-									intent.putExtra(ClimbApplication.building_text_intent_object, building.get_id());
+									intent.putExtra(ClimbApplication.building_text_intent_object, buildingText.get_id());
 									intent.putExtra(ClimbApplication.duel_intent_object, currentDuel.get_id());
 									activity.startActivity(intent);
 								}
@@ -797,7 +797,7 @@ public class BuildingCard extends Card {
 
 									Log.i("Building Card", "Building id clicked: " + building.get_id());
 									Intent intent = new Intent(activity.getApplicationContext(), TeamPreparationActivity.class);
-									intent.putExtra(ClimbApplication.building_text_intent_object, building.get_id());
+									intent.putExtra(ClimbApplication.building_text_intent_object, buildingText.get_id());
 									activity.startActivity(intent);
 								}
 							} else {

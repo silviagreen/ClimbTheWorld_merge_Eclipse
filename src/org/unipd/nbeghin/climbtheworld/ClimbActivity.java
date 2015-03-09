@@ -2072,7 +2072,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				int unit = (int) Math.ceil((double) (building.getSteps()*percentage)/ (double) 100);
 				double perc_unit = Math.ceil(((double) (unit*100)/ (double) building.getSteps()));
 				int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
-				if(num_steps == building.getSteps()) final_pos += 1;
+				if(num_steps == building.getSteps() && final_pos < 4) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
 		}
 		
@@ -4277,7 +4277,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		List<UserBadge> ubs = new ArrayList<UserBadge>();
 		if (data instanceof Climbing) {
 			// check building
-			Badge badge = ClimbApplication.getBadgeByCategory(0);
+			Badge badge = ClimbApplication.getBadgeByCategory(0); 
+			System.out.println("badge id " + badge.get_id());
+			System.out.println("building id" + building.get_id());
+			System.out.println("user " + currentUser.get_id());
 			UserBadge userbadge = ClimbApplication.getUserBadgeForUserAndBadge(badge.get_id(), building.get_id(), currentUser.get_id());
 			saveBuildingBadge(userbadge, badge, (Climbing) data);// saves locally
 			ubs.add(userbadge);
