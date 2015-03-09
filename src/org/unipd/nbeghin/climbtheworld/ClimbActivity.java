@@ -1091,10 +1091,13 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				if (building_id == 0)
 					throw new Exception("ERROR: unable to get intent data"); // no building id found in received intent
 				buildingText = ClimbApplication.buildingTextDao.queryForId(building_id);
+				System.out.println("BUILDING_ID " + building_id);
 				building = buildingText.getBuilding();
+				
 				setup_from_building(); // load building info
 				backgroundClassifySampler = new Intent(this, SamplingClassifyService.class); // instance (without starting) background classifier
 			} catch (Exception e) {
+				
 				e.printStackTrace();
 			}
 			setGraphicsSocialMode();

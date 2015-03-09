@@ -886,6 +886,15 @@ public class ClimbApplication extends Application {
 			return null;
 		return buildings.get(0);
 	}
+	
+	public static BuildingText getBuildingTextByBuildingId(int id) {
+		Map<String, Object> conditions = new HashMap<String, Object>();
+		conditions.put("building_id", id); // filter for building ID
+		List<BuildingText> buildings = buildingTextDao.queryForFieldValuesArgs(conditions);
+		if (buildings.size() == 0)
+			return null;
+		return buildings.get(0);
+	}
 
 	public static Tour getTourById(int id) {
 		Map<String, Object> conditions = new HashMap<String, Object>();

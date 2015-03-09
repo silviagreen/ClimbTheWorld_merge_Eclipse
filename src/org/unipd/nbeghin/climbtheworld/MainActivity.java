@@ -1236,7 +1236,10 @@ public void onWindowFocusChanged(boolean hasFocus) {
 	}
 	
 	public void uploadGameLog(MenuItem v){
-		new UploadGameLogTask(getApplicationContext()).execute();
+		if(FacebookUtils.isOnline(getApplicationContext()))
+			new UploadGameLogTask(getApplicationContext()).execute();
+		else
+			Toast.makeText(getApplicationContext(), "Ops! No intenet connection", Toast.LENGTH_SHORT).show();
 	}
 
 }

@@ -76,7 +76,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_preparation_teams);
 		SharedPreferences pref = getSharedPreferences("UserSession", 0);
 		building_id = getIntent().getIntExtra(ClimbApplication.building_text_intent_object, 0);
-		building = ClimbApplication.getBuildingById(building_id);
+		building = (ClimbApplication.buildingTextDao.queryForId(building_id)).getBuilding();
 		addMyMembersBtn = (Button) findViewById(R.id.addMyTeamBtn);
 		addChallengerBtn = (Button) findViewById(R.id.addChallengerBtn);
 		startPlay = (ImageButton) findViewById(R.id.btnStartClimbing);
@@ -142,7 +142,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 		// int team_online_id =
 		// getIntent().getIntExtra(ClimbApplication.duel_intent_object, 0);
 		// System.out.println(building_id + " " + pref.getInt("local_id", -1));
-		duel = ClimbApplication.getTeamDuelByBuildingAndUser(building_id, pref.getInt("local_id", -1));
+		duel = ClimbApplication.getTeamDuelByBuildingAndUser(building.get_id(), pref.getInt("local_id", -1));
 		// quando arrivo qui, id online di duel deve essere settato
 
 		if (duel.isCreator()) {
@@ -519,7 +519,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 	public void onAddMyMembersBtn() {
 
 		Bundle params = new Bundle();
-		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building_id + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
+		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building.get_id() + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
 																																																														// will
 																																																														// not
 																																																														// be
@@ -537,7 +537,7 @@ public class TeamPreparationActivity extends ActionBarActivity {
 
 	public void onAddChallengerMemberBtn() {
 		Bundle params = new Bundle();
-		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building_id + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
+		params.putString("data", "{\"idCollab\":\"" + duel.getId_online() + "\"," + "" + "\"idBuilding\":\"" + building.get_id() + "\"," + "\"nameBuilding\":\"" + building.getName() + "\"," + " \"type\": \"3\"," + "\"challenger\": \"" + false + "\"," // you
 																																																														// will
 																																																														// not
 																																																														// be

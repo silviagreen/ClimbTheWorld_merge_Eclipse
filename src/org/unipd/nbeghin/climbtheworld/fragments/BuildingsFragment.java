@@ -73,7 +73,7 @@ public class BuildingsFragment extends Fragment implements Updater {
 									Log.i("Building Fragment", "Building id clicked: " + building.getBuilding().get_id());
 									Intent intent = new Intent(getActivity(), TeamPreparationActivity.class);
 									intent.putExtra(ClimbApplication.counter_mode, false);
-									intent.putExtra(ClimbApplication.building_text_intent_object, building.getBuilding().get_id());
+									intent.putExtra(ClimbApplication.building_text_intent_object, building.get_id());
 									intent.setAction("back");
 									getActivity().startActivity(intent);
 									//getActivity().finish();
