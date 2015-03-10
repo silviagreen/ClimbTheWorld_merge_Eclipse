@@ -170,8 +170,10 @@
     <string name="bonus_competition">You have won %d XP as bonus for your victory!!!!</string>
     <string name="bonus_team_duel">You have won %d XP as bonus for your help and victory!!!!</string>
     <string name="team_of">Team of </string>
+    <string name="my_team">My team</string>
+    <string name="other_team">Opposing team</string>
     <string name="ready_to_go">READY TO CLIMB!</string>
-    <string name="win">YOU DID IT!</string>
+    <string name="win">CLIMBING\nCOMPLETED!</string>
     <string name="encouragement">Well Done!</string>
     <string name="microgoal_terminated">Goal completed!!!! You earn %d XP</string>
     <string name="microgoal_terminated2">Goal completed!!!! + %d XP extra</string>
@@ -393,7 +395,7 @@
 	<string name="social_challenge_improve_post">I\'m climbing %1$s to win the challenge and I\'ve made %2$d more steps</string>
 	
 	<string name="team_vs_team_win_post">My team arrived to %s\'s top first</string>
-	<string name="team_vs_team_improve_post">I\'m climbing %1$s with my team to win the challenge and I\'ve made %1$d more steps</string>
+	<string name="team_vs_team_improve_post">I\'m climbing %1$s with my team to win the challenge and I\'ve made %2$d more steps</string>
 
 	<string name="solo_climb_win_opengraph_title">I\'m on top of %s</string>
 	<string name="solo_climb_win_opengraph_descr">I\'ve made %d steps to win</string>	

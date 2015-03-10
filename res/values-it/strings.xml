@@ -158,8 +158,10 @@
     <string name="bonus_competition">Hai vinto %d XP bonus per la tua vittoria!!!!</string>
     <string name="bonus_team_duel">Hai vinto %d XP bonus per il tuo aiuto e per la vittoria!!!!</string>
     <string name="team_of">Team di </string>
+    <string name="my_team">Il tuo team</string>
+    <string name="other_team">Il team avversario</string>
     <string name="ready_to_go">PRONTO PER LA SCALATA!</string>
-    <string name="win">CE L\'HAI FATTA!</string>
+    <string name="win">SCALATA\nCOMPLETATA!</string>
     <string name="encouragement">Ben fatto!</string>
     <string name="microgoal_terminated">Goal completato!!!! Hai vinto %d XP</string>
     <string name="microgoal_terminated2">Goal completato!\n + %d XP extra</string>

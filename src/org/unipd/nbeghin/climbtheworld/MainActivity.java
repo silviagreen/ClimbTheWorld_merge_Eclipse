@@ -959,6 +959,8 @@ public void onWindowFocusChanged(boolean hasFocus) {
 						//LOG-------------------------------------------------
 						//LINE
 						String line = "USERNAME (FB) " + pref.getString("username", "");
+						System.out.println("USERNAME (FB) " + pref.getString("username", ""));
+						System.out.println("USERNAME (ID) " + pref.getInt("local_id", -1));
 						LogUtils.writeGameUpdate(sContext, line);
 						//
 						//---------------------------------------------------

@@ -199,6 +199,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	private int difficulty;
 	private int old_chart_position;
 	private GameModeType old_game_mode;
+	
+	private boolean canceled_timer = false;
 
 	SharedPreferences pref;
 	
@@ -383,7 +385,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		stepsInGamePeriod=true;
 		Log.d(MainActivity.AppName,"ClimbActivity - STEP");
 		
-		if (climbedYesterday && percentage > 0.25f && percentage < 0.50f && used_bonus == false && building.get_id() != 6) {
+		if (climbedYesterday && percentage > 0.25f && percentage < 0.50f && used_bonus == false && building.get_id() != 6 && mode != GameModeType.TEAM_VS_TEAM) {
 			// bonus at 25%
 			int rest = apply_percentage_bonus();
 			boolean winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();
@@ -404,6 +406,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					setThresholdText();
 				} else if (mode == GameModeType.TEAM_VS_TEAM) {
 					seekbarIndicator.setProgress(myTeamScore());
+					seekbarIndicator.setPlaceHeight(Math.ceil(((double) (num_steps*100)/ (double) building.getSteps())));
 					setThresholdText();
 				} else
 					seekbarIndicator.setProgress(num_steps);
@@ -414,9 +417,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			boolean win = false; // user wins?
 			boolean winMicrogoal = false; // is current microgoal completed?
 			if (!isCounterMode) { // check win only if game mode is on
-				winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();
-				System.out.println("done_steps: " + microgoal.getDone_steps());
-				System.out.println("tot_steps: " + microgoal.getTot_steps());
+				winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();				
 				if (winMicrogoal)
 					apply_win_microgoal();
 
@@ -455,7 +456,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				// progress
 				// bar
 				findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-				apply_win();
+				apply_win(true);
 			}
 		}
 		
@@ -492,12 +493,14 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		return rest_micro_steps;
 	}
 
-	private void apply_win() {
+	private void apply_win(boolean isWinner) {
 		Log.i(MainActivity.AppName, "Succesfully climbed building #" + building.get_id());
 		// Toast.makeText(getApplicationContext(), getString(R.string.successfull_climb, building.getSteps(), building.getHeight(), building.getName()), Toast.LENGTH_LONG).show();
 		// show completion text
-		findViewById(R.id.lblWin).setVisibility(View.VISIBLE); // load and animate completed climbing test
-		findViewById(R.id.lblWin).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
+		if(isWinner){
+			findViewById(R.id.lblWin).setVisibility(View.VISIBLE); // load and animate completed climbing test
+			findViewById(R.id.lblWin).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
+		}
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 		findViewById(R.id.btnAccessPhotoGallery).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_in));
 		findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
@@ -1268,9 +1271,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				dialog.dismiss();
 			}
 			//AUTOMATIC UPDATE
-			if(climbing.getGame_mode() != 0)
+			if(climbing.getGame_mode() != 0 && !canceled_timer){
 				timer.schedule(updates, 3000, 5000); //execute in every 10 ms
-		
+				canceled_timer = false;
+			}
 		}
 	}
 
@@ -1412,6 +1416,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							// no collaboration found
 							showMessage(getString(R.string.collab_no_available));
 							Log.e("loadCollaboration", "Collaboration " + collaboration.getId() + " not present in Parse");
+							canceled_timer = true;
 							timer.cancel();
 						} else {
 
@@ -1565,6 +1570,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									// this building, but I didn't pass the
 									// threshold
 									current_win = true;
+									canceled_timer = true;
 									timer.cancel();
 									socialPenalty();
 									if (microgoal != null && (isUpdate || isOpening))
@@ -1581,11 +1587,13 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										// saveBadges(true);
 										saveCollaborationData();
 									}
+									canceled_timer = true;
 									timer.cancel();
 								}
 
 							} else {
 								showMessage(getString(R.string.kicked_out));
+								canceled_timer = true;
 								timer.cancel();
 								ClimbApplication.collaborationDao.delete(collaboration);
 								apply_removed_from_collaboration();
@@ -1997,11 +2005,14 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		// per le competizioni setta la seconda seek bar
 
 		updateStats();
-		if (percentage >= 1.00) { // building already climbed
+		System.out.println("CURRENT_WIN " + current_win);
+		if (percentage >= 1.00 || current_win) { // building already climbed
 			findViewById(R.id.lblReadyToClimb).setVisibility(View.GONE);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
 			((TextView) findViewById(R.id.lblWin)).setText(getString(R.string.already_climb, sdf.format(new Date(climbing.getCompleted()))));
-			apply_win();
+			boolean isWinner = true;
+			if(percentage < 1) isWinner = false;
+			apply_win(isWinner);
 		} else { // building to be completed
 			// animate "ready to climb" text
 			Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_top);
@@ -2061,7 +2072,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		//seekbarIndicator.setInitialGoldenStars(num_steps/unit);
 		
 		//calculate interval 
-		if(!isCounterMode){ System.out.println("gioco");
+		if(!isCounterMode){ 
 				int percentage = 5;
 				if(building.getSteps() < 6000)
 					percentage = 25;
@@ -2074,6 +2085,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
 				if(num_steps == building.getSteps() && final_pos < 4) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
+				
+				System.out.println(mode);
+				if(mode == GameModeType.TEAM_VS_TEAM){
+					seekbarIndicator.showPlace();
+					seekbarIndicator.setPlaceHeight(Math.ceil(((double) (num_steps*100)/ (double) building.getSteps())));
+				}
 		}
 		
 		super.onWindowFocusChanged(hasFocus);
@@ -2960,6 +2977,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		stopAllServices(); // make sure to stop all background services
 		super.onDestroy();
 		uiHelper.onDestroy();
+		canceled_timer = true;
 		timer.cancel();
 		if (samplingEnabled) {
 			
@@ -3080,6 +3098,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	}
 
 	private void endCompetition(boolean saveOnline) {
+		canceled_timer = true;
 		timer.cancel();
 		Log.d("END COMPETITION", "fineeee");
 		updatePoints(false, saveOnline);
@@ -3114,6 +3133,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 	private void endTeamCompetition(/* boolean penalty, */boolean saveOnline) {
 		// updatePoints(penalty, saveOnline);
+		canceled_timer = true;
 		timer.cancel();
 		saveTeamDuelData();
 		if (soloClimb != null) {
@@ -3154,6 +3174,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					if (e == null) {
 						if (tds == null || tds.size() == 0) {
 							showMessage(getString(R.string.team_duel_no_available));
+							canceled_timer = true;
 							timer.cancel();
 							// Toast.makeText(getApplicationContext(), getString(R.string.team_duel_no_available), Toast.LENGTH_SHORT).show();
 							Log.e("updateTeams", "TeamDuel not present in Parse");
@@ -3232,6 +3253,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								teamDuel_parse.increment("checks", 1);
 								climbing.setChecked(true);
 								updateClimbingInParse(climbing, true);
+								
+								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
 							}else{
 								updateChecks = true;
 							}
@@ -3251,6 +3275,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							} else if (foundWinner) {
 								chartHelpText.setVisibility(View.VISIBLE);
 								chartHelpText.setText(getString(R.string.help_chart, (((teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length()) - teamDuel.getChecks()))));
+								current_win = true;
+								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
 							}
 
 							try {
@@ -3284,14 +3311,18 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							teamDuel.setMy_steps(num_steps);
 							ClimbApplication.teamDuelDao.update(teamDuel);
 							if (teamDuel.getMygroup() == Group.CHALLENGER) {
-								group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
+								//group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
+								group_members.get(0).setText(getString(R.string.my_team));
 								group_steps.get(0).setText(String.valueOf(teamDuel.getSteps_my_group()));
-								group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
+								//group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
+								group_members.get(1).setText(getString(R.string.other_team));
 								group_steps.get(1).setText(String.valueOf(teamDuel.getSteps_other_group()));
 							} else {
-								group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
+								//group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
+								group_members.get(0).setText(getString(R.string.my_team));
 								group_steps.get(0).setText(String.valueOf(teamDuel.getSteps_my_group()));
-								group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
+								//group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
+								group_members.get(1).setText(getString(R.string.other_team));
 								group_steps.get(1).setText(String.valueOf(teamDuel.getSteps_other_group()));
 							}
 							group_members.get(0).setBackgroundColor(Color.parseColor("#adeead"));
@@ -3304,7 +3335,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							group_steps.get(1).setVisibility(View.VISIBLE);
 							int new_seekbar_progress = myTeamScore();
 							seekbarIndicator.setProgress(new_seekbar_progress);
-							double progress = (((double) (new_seekbar_progress + (microgoal.getTot_steps() - microgoal.getDone_steps())) * (double) 100) / (double) building.getSteps());
+							//double progress = (((double) (new_seekbar_progress + (microgoal.getTot_steps() - microgoal.getDone_steps())) * (double) 100) / (double) building.getSteps());
 							//seekbarIndicator.nextStar((int) Math.round(progress));
 							secondSeekbar.setProgress(ModelsUtil.sum(otherTeam));
 
@@ -3313,6 +3344,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								chartHelpText.setText(getString(R.string.your_team_won));
 								chartHelpText.setVisibility(View.VISIBLE);
 								current_win = true;
+								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
 								// Toast.makeText(getApplicationContext(), getString(R.string.your_team_won), Toast.LENGTH_SHORT).show();
 								boolean penalty = false;
 								percentage = 1.00;
@@ -3320,7 +3352,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									socialTeamPenality();
 									penalty = true;
 								} else {
-									apply_win();
+									apply_win(true);
 								}
 								endTeamCompetition(false);
 
@@ -3398,6 +3430,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							Log.e("updatechart", "Competition not present in Parse");
 							// delete this collaboration
 							ClimbApplication.competitionDao.delete(competition);
+							canceled_timer = true;
 							timer.cancel();
 						} else {
 							SharedPreferences pref = getApplicationContext().getSharedPreferences("UserSession", 0);
@@ -3656,6 +3689,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								// Toast.makeText(getApplicationContext(), getString(R.string.kicked_out), Toast.LENGTH_SHORT).show();
 								ClimbApplication.competitionDao.delete(competition);
 								apply_removed_from_competition();
+								canceled_timer = true;
 								timer.cancel();
 								// reset graphics
 								current.setVisibility(View.GONE);

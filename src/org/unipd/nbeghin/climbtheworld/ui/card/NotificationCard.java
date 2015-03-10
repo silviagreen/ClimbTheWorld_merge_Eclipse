@@ -153,14 +153,16 @@ public class NotificationCard extends Card {
 					case ASK_COLLABORATION:
 
 						final AskCollaborationNotification current = ((AskCollaborationNotification) notification);
-
+						
 						Collaboration collabs = ClimbApplication.getCollaborationByBuildingAndUser(current.getBuilding_id(), pref.getInt("local_id", -1));
 						Competition compet = ClimbApplication.getCompetitionByBuildingAndUser(current.getBuilding_id(), pref.getInt("local_id", -1));
 						TeamDuel duel = ClimbApplication.getTeamDuelByBuildingAndUser(current.getBuilding_id(), pref.getInt("local_id", -1));
-						
+						if(collabs != null) System.out.println("NO null " + collabs.getId());
+						if(compet != null) System.out.println("NO null " + compet.get_id());
+						if(duel != null) System.out.println("NO null " + duel.get_id());
 						final Building building = ClimbApplication.getBuildingById(current.getBuilding_id());
 						final User me = ClimbApplication.getUserById(pref.getInt("local_id", -1));
-
+						
 						if(me.getLevel() >= building.getBase_level()){
 
 						// stessa per team
@@ -198,7 +200,7 @@ public class NotificationCard extends Card {
 												int n_collaborators = collaborators.length();
 												if (n_collaborators < ClimbApplication.N_MEMBERS_PER_GROUP) {
 
-													final Climbing climb = ClimbApplication.getClimbingForBuilding(building.get_id());
+													final Climbing climb = ClimbApplication.getClimbingForBuildingAndUser(building.get_id(), me.get_id());
 													if (climb != null && (climb.getGame_mode() != 0 /* || climb.getId_mode().equalsIgnoreCase("paused") */)) {
 														Toast.makeText(context, ClimbApplication.getContext().getString(R.string.building_occupied), Toast.LENGTH_SHORT).show();
 														text.setText(ClimbApplication.getContext().getString(R.string.building_occupied));
@@ -458,7 +460,7 @@ public class NotificationCard extends Card {
 												if (n_collaborators < ClimbApplication.N_MEMBERS_PER_GROUP) {
 
 													
-													final Climbing climb = ClimbApplication.getClimbingForBuilding(building_1.get_id());
+													final Climbing climb = ClimbApplication.getClimbingForBuildingAndUser(building_1.get_id(), me_1.get_id());
 
 													if (ModelsUtil.hasSomeoneWon(ModelsUtil.fromJsonToChart(stairs), building_1.getSteps())) {
 														Toast.makeText(ClimbApplication.getContext(), ClimbApplication.getContext().getString(R.string.competition_end), Toast.LENGTH_SHORT).show();
@@ -713,7 +715,7 @@ public class NotificationCard extends Card {
 												if (n_collaborators < 1) {
 
 													
-													final Climbing climb = ClimbApplication.getClimbingForBuilding(building_2.get_id());
+													final Climbing climb = ClimbApplication.getClimbingForBuildingAndUser(building_2.get_id(), me_2.get_id());
 
 													if (climb != null && (climb.getGame_mode() != 0 /* || climb.getId_mode().equalsIgnoreCase("paused") */)) {
 														Toast.makeText(context, ClimbApplication.getContext().getString(R.string.building_occupied), Toast.LENGTH_SHORT).show();
