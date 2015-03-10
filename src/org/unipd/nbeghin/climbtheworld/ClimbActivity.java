@@ -3266,6 +3266,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							ParseUtils.saveTeamDuel(teamDuel_parse, teamDuel);
 
 							Iterator<String> keys = myTeam.keys();
+							myTeamScores.clear();
 							while (keys.hasNext()) {
 								String key = keys.next();
 								if (!key.equals(pref.getString("FBid", ""))) {

@@ -241,39 +241,39 @@ public class HelpDialogActivity extends Dialog {
 	private void setTeamPreparationActivityHelp(){
 		imageShare.setVisibility(View.VISIBLE);
 		imageGallery.setVisibility(View.INVISIBLE);
-		imageMicrogoal.setVisibility(View.VISIBLE);
+		imageMicrogoal.setVisibility(View.INVISIBLE);
 		imageUpdate.setVisibility(View.INVISIBLE);
 		textGallery.setVisibility(View.INVISIBLE);
 		textUpdate.setVisibility(View.INVISIBLE);
-		textMicrogoal.setVisibility(View.VISIBLE);
-		textMicrogoal.setText(ClimbApplication.getContext().getString(R.string.update_group_help));
+		textMicrogoal.setVisibility(View.INVISIBLE);
+		//textMicrogoal.setText(ClimbApplication.getContext().getString(R.string.update_group_help));
 		if(duel.isReadyToPlay()){
 			textShare.setText(ClimbApplication.getContext().getString(R.string.play_climb_help));
 		}else{
 			textShare.setText(ClimbApplication.getContext().getString(R.string.exit_game_help));
 		}
-		if(duel.isChallenger()){
-			imageRow1.setVisibility(View.VISIBLE);
-			textRow1.setVisibility(View.VISIBLE);
-			imageRow1.setImageResource(R.drawable.add_group);
-			textRow1.setText(ClimbApplication.getContext().getString(R.string.add_group_help));
-			imageRow2.setVisibility(View.GONE);
-			textRow2.setVisibility(View.GONE);
-		}else if(duel.isCreator()){
-			imageRow1.setVisibility(View.VISIBLE);
-			textRow1.setVisibility(View.VISIBLE);
-			imageRow1.setImageResource(R.drawable.add_person);
-			textRow1.setText(ClimbApplication.getContext().getString(R.string.add_challenger));
-			imageRow2.setVisibility(View.VISIBLE);
-			textRow2.setVisibility(View.VISIBLE);
-			imageRow2.setImageResource(R.drawable.add_group);
-			textRow2.setText(ClimbApplication.getContext().getString(R.string.add_group_help));
-		}else{
+//		if(duel.isChallenger()){
+//			imageRow1.setVisibility(View.VISIBLE);
+//			textRow1.setVisibility(View.VISIBLE);
+//			imageRow1.setImageResource(R.drawable.add_group);
+//			textRow1.setText(ClimbApplication.getContext().getString(R.string.add_group_help));
+//			imageRow2.setVisibility(View.GONE);
+//			textRow2.setVisibility(View.GONE);
+//		}else if(duel.isCreator()){
+//			imageRow1.setVisibility(View.VISIBLE);
+//			textRow1.setVisibility(View.VISIBLE);
+//			imageRow1.setImageResource(R.drawable.add_person);
+//			textRow1.setText(ClimbApplication.getContext().getString(R.string.add_challenger));
+//			imageRow2.setVisibility(View.VISIBLE);
+//			textRow2.setVisibility(View.VISIBLE);
+//			imageRow2.setImageResource(R.drawable.add_group);
+//			textRow2.setText(ClimbApplication.getContext().getString(R.string.add_group_help));
+//		}else{
 			imageRow1.setVisibility(View.GONE);
 			textRow1.setVisibility(View.GONE);
 			imageRow2.setVisibility(View.GONE);
 			textRow2.setVisibility(View.GONE);
-		}
+		//}
 	}
 	
 	
