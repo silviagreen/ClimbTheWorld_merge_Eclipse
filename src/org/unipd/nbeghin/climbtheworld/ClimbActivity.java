@@ -1579,7 +1579,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								} else if ((num_steps + sumOthersStep() >= building.getSteps()) && (num_steps >= threshold)) {
 									percentage = 1.0;
 									current_win = true;
-									System.out.println("ho vinto");
+									stopAllServices();
+									samplingEnabled = false;
 									if (isUpdate || isOpening) {
 										if (microgoal != null)
 											deleteMicrogoalInParse(microgoal);
@@ -2389,6 +2390,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	 * Make sure that all background services are stopped
 	 */
 	private void stopAllServices() {
+		System.out.println("STOP SERVICES");
 		try {
 			unregisterReceiver(sampleRateDetectorReceiver);
 			stopService(backgroundSamplingRateDetector);
@@ -2437,6 +2439,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		updatePoints(true, true);
 		Toast.makeText(this.getApplicationContext(), getString(R.string.social_penalty), Toast.LENGTH_SHORT).show();
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+		stopAllServices();
+		samplingEnabled = false;
+		findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
 		mode = GameModeType.SOLO_CLIMB;
 		climbing.setGame_mode(0);
 		climbing.setId_mode("");
@@ -3100,6 +3105,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	private void endCompetition(boolean saveOnline) {
 		canceled_timer = true;
 		timer.cancel();
+		stopAllServices();
+		samplingEnabled = false;
+		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 		Log.d("END COMPETITION", "fineeee");
 		updatePoints(false, saveOnline);
 		saveCompetitionData();
@@ -3135,6 +3143,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		// updatePoints(penalty, saveOnline);
 		canceled_timer = true;
 		timer.cancel();
+		stopAllServices();
+		samplingEnabled = false;
+		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+		
 		saveTeamDuelData();
 		if (soloClimb != null) {
 			deleteClimbingInParse(climbing);
@@ -3254,8 +3266,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								climbing.setChecked(true);
 								updateClimbingInParse(climbing, true);
 								
-								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
+								
 							}else{
 								updateChecks = true;
 							}
@@ -3276,8 +3287,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								chartHelpText.setVisibility(View.VISIBLE);
 								chartHelpText.setText(getString(R.string.help_chart, (((teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length()) - teamDuel.getChecks()))));
 								current_win = true;
+								stopAllServices();
+								samplingEnabled = false;
 								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
+								
+								
 							}
 
 							try {
@@ -3344,7 +3358,6 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								chartHelpText.setText(getString(R.string.your_team_won));
 								chartHelpText.setVisibility(View.VISIBLE);
 								current_win = true;
-								findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
 								// Toast.makeText(getApplicationContext(), getString(R.string.your_team_won), Toast.LENGTH_SHORT).show();
 								boolean penalty = false;
 								percentage = 1.00;
@@ -3519,6 +3532,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								} else if (foundWinner) {
 									chartHelpText.setVisibility(View.VISIBLE);
 									chartHelpText.setText(getString(R.string.help_chart, (others.length() - competition.getChecks())));
+									stopAllServices();
+									samplingEnabled = false;
+									((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+									
 								}
 								try {
 									compet_parse.put("victory_time", df.parse(df.format(competition.getVictory_time())));
