@@ -132,7 +132,7 @@
     <string name="new_group">Crea gruppo: inserisci un nome per il gruppo</string>
     
     <!-- ClimbActivity -->
-    <string name="bonus">BONUS: hai scalato questo edificio più di una volta nelle ultime 24h, guadagni +30%%</string>
+    <string name="bonus">BONUS: hai scalato questo edificio più di una volta nelle ultime 24h, guadagni +30%</string>
     <string name="well_done">Ben Fatto!!!!</string>
     <string name="alert_title">Rate di campionamento basso</string>
     <string name="alert_message">Il tuo accelerometro non è veloce a sufficienza per questa applicazione. Assicurati di usare almeno %f Hz</string>   

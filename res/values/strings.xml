@@ -144,7 +144,7 @@
     <string name="new_group">New Group: insert a name for the group</string>
     
     <!-- ClimbActivity -->
-    <string name="bonus">BONUS: you climbed this building several times in the last 24h, you earn +30%%</string>
+    <string name="bonus">BONUS: you climbed this building several times in the last 24h, you earn +30%</string>
     <string name="well_done">Well Done!!!!</string>
     <string name="alert_title">Sampling rate not high enough</string>
     <string name="alert_message">Your accelerometer is not fast enough for this application. Make sure to use at least %f Hz</string>    

@@ -388,17 +388,19 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		if (climbedYesterday && percentage > 0.25f && percentage < 0.50f && used_bonus == false && building.get_id() != 6 && mode != GameModeType.TEAM_VS_TEAM) {
 			// bonus at 25%
 			int rest = apply_percentage_bonus();
-			boolean winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();
-			if (winMicrogoal){
-				apply_win_microgoal();
-				microgoal.setDone_steps(microgoal.getDone_steps() + rest);
+			if(mode == GameModeType.SOLO_CLIMB){
+				boolean winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();
+				if (winMicrogoal){
+					apply_win_microgoal();
+					microgoal.setDone_steps(microgoal.getDone_steps() + rest);
+				}
 			}
 		} else { // standard, no bonus
 			num_steps += vstep_for_rstep; // increase the number of steps
 			new_steps += vstep_for_rstep;
 			previous_progress = new_steps;
 			if (!isCounterMode) { // increase the seekbar progress and update the microgoal progress only if game mode is on
-				microgoal.setDone_steps(microgoal.getDone_steps() + vstep_for_rstep);
+				if(mode == GameModeType.SOLO_CLIMB) microgoal.setDone_steps(microgoal.getDone_steps() + vstep_for_rstep);
 
 				// increase the seekbar progress
 				if (mode == GameModeType.SOCIAL_CLIMB) {
@@ -417,10 +419,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			boolean win = false; // user wins?
 			boolean winMicrogoal = false; // is current microgoal completed?
 			if (!isCounterMode) { // check win only if game mode is on
-				winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();				
-				if (winMicrogoal)
-					apply_win_microgoal();
-
+				if(mode == GameModeType.SOLO_CLIMB){
+					winMicrogoal = microgoal.getDone_steps() >= microgoal.getTot_steps();				
+					if (winMicrogoal)
+						apply_win_microgoal();
+				}
 				if (mode == GameModeType.SOCIAL_CLIMB) {
 					// consider also my friends' steps
 					win = ((num_steps + sumOthersStep()) >= building.getSteps()) && (threshold - num_steps <= 0);
@@ -473,16 +476,18 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		int old_steps = num_steps;
 		num_steps = (int) (((double) building.getSteps()) * percentage);
 		int gained_steps = num_steps - old_steps;
-		int remaining = microgoal.getTot_steps() - microgoal.getDone_steps();
 		int rest_micro_steps = 0;
-		if(gained_steps >= remaining)
-			rest_micro_steps = gained_steps - remaining;
-		microgoal.setDone_steps(microgoal.getDone_steps() + remaining);
+		if(mode == GameModeType.SOLO_CLIMB){
+			int remaining = microgoal.getTot_steps() - microgoal.getDone_steps();
+			if(gained_steps >= remaining)
+				rest_micro_steps = gained_steps - remaining;
+			microgoal.setDone_steps(microgoal.getDone_steps() + remaining);
+		}
 		// stopClassify();
 		used_bonus = true;
 		Toast.makeText(getApplicationContext(), getString(R.string.bonus), Toast.LENGTH_LONG).show();
 		enableRocket();
-		double progress = ((double) ((microgoal.getTot_steps() - microgoal.getDone_steps()) + num_steps) * (double) 100) / (double) building.getSteps();
+		//double progress = ((double) ((microgoal.getTot_steps() - microgoal.getDone_steps()) + num_steps) * (double) 100) / (double) building.getSteps();
 		//seekbarIndicator.nextStar((int) Math.round(progress));
 		updateStats(); // update the view of current stats
 		if (mode == GameModeType.SOCIAL_CLIMB) {
@@ -893,6 +898,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 		switch (GameModeType.values()[climbing.getGame_mode()]) {
 		case SOCIAL_CLIMB:
+			seekbarIndicator.hideStars();
 			secondSeekbar.setVisibility(View.GONE);
 			for (int i = 0; i < group_members.size() - 1; i++) {
 				group_members.get(i).setVisibility(View.VISIBLE);
@@ -906,6 +912,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 			break;
 		case SOCIAL_CHALLENGE:
+			seekbarIndicator.hideStars();
 			secondSeekbar.setVisibility(View.INVISIBLE);
 			current.setVisibility(View.VISIBLE);
 			for (int i = 0; i < group_members.size(); i++) {
@@ -917,6 +924,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 			break;
 		case TEAM_VS_TEAM:
+			seekbarIndicator.hideStars();
 			secondSeekbar.setVisibility(View.VISIBLE);
 			secondSeekbar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_red));
 			seekbarIndicator.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_green));
@@ -1224,6 +1232,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		((TextView) findViewById(R.id.lblNumSteps)).setText(getString(R.string.num_steps, Integer.toString(building.getSteps()))); // building's
 		// steps
 		((TextView) findViewById(R.id.lblHeight)).setText(Integer.toString(building.getHeight()) + "mt"); // building's height (in mt)
+
 		loadPreviousClimbing(); // get previous climbing for this building
 		mode = GameModeType.values()[climbing.getGame_mode()]; // setup game mode
 		old_game_mode = mode;
@@ -1556,7 +1565,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								}
 								int new_seekbar_progress = num_steps + sumOthersStep();
 								seekbarIndicator.setProgress(new_seekbar_progress);
-								double progress = ((double) (new_seekbar_progress + (microgoal.getTot_steps() - microgoal.getDone_steps())) * (double) 100) / (double) (building.getSteps());
+								//double progress = ((double) (new_seekbar_progress + (microgoal.getTot_steps() - microgoal.getDone_steps())) * (double) 100) / (double) (building.getSteps());
 								//seekbarIndicator.nextStar((int) Math.round(progress));
 								for (; i < group_members.size(); i++) {
 									group_members.get(i).setClickable(false);
@@ -1978,7 +1987,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 			Log.i(MainActivity.AppName, "Created new climbing #" + climbing.get_id());
 			// current_win = false;
-			if (percentage < 1.00 && !current_win)
+			if (GameModeType.values()[climbing.getGame_mode()] == GameModeType.SOLO_CLIMB && percentage < 1.00 && !current_win)
 				createMicrogoal();
 
 		} else {
@@ -1986,10 +1995,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			percentage = climbing.getPercentage();
 			if (percentage >= 1.00)
 				current_win = true;
-			microgoal = ClimbApplication.getMicrogoalByUserAndBuilding(pref.getInt("local_id", -1), building.get_id());
-			if (microgoal == null && percentage < 1.00 && !current_win)
-				createMicrogoal();
-
+			
+			if(GameModeType.values()[climbing.getGame_mode()] == GameModeType.SOLO_CLIMB){
+				microgoal = ClimbApplication.getMicrogoalByUserAndBuilding(pref.getInt("local_id", -1), building.get_id());
+				if (microgoal == null && percentage < 1.00 && !current_win)
+					createMicrogoal();
+				}
 			Log.i(MainActivity.AppName, "Loaded existing climbing (#" + climbing.get_id() + ")");
 		}
 		climbing.addObserver(this);
@@ -2074,6 +2085,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		
 		//calculate interval 
 		if(!isCounterMode){ 
+			if(mode == GameModeType.SOLO_CLIMB && old_game_mode == GameModeType.SOLO_CLIMB){
 				int percentage = 5;
 				if(building.getSteps() < 6000)
 					percentage = 25;
@@ -2087,7 +2099,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				if(num_steps == building.getSteps() && final_pos < 4) final_pos += 1;
 				seekbarIndicator.setInitialGoldenStars(final_pos, perc_unit);
 				
-				System.out.println(mode);
+			}else{
+				seekbarIndicator.hideStars();
+			}
+				
 				if(mode == GameModeType.TEAM_VS_TEAM){
 					seekbarIndicator.showPlace();
 					seekbarIndicator.setPlaceHeight(Math.ceil(((double) (num_steps*100)/ (double) building.getSteps())));
@@ -2611,7 +2626,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty")) {
 					ClimbApplication.climbingDao.update(climbing); // save to db
 					updateClimbingInParse(climbing, false);
-					updateMicrogoalInParse();
+					if(mode == GameModeType.SOLO_CLIMB) updateMicrogoalInParse();
 
 				} else {
 					climbing.setSaved(true);
@@ -3054,9 +3069,18 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			for (int i = 0; i < menu.size() - 1; i++)
 				menu.getItem(i).setVisible(false);
 		}
-		if (!isCounterMode && mode.equals(GameModeType.SOLO_CLIMB))
-			menu.getItem(0).setVisible(false); // hide update
-
+//		if (!isCounterMode && mode.equals(GameModeType.SOLO_CLIMB))
+//			menu.getItem(0).setVisible(false); // hide update
+		if(!isCounterMode){
+			MenuItem item_up = menu.findItem(R.id.itemMicroGoal);
+			if(mode == GameModeType.SOLO_CLIMB){
+				item_up.setVisible(true);
+			}else{
+				item_up.setVisible(false);
+			}
+				
+		}
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			supportInvalidateOptionsMenu();
 		else
@@ -3108,6 +3132,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		stopAllServices();
 		samplingEnabled = false;
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+		findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
 		Log.d("END COMPETITION", "fineeee");
 		updatePoints(false, saveOnline);
 		saveCompetitionData();
@@ -3146,7 +3171,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		stopAllServices();
 		samplingEnabled = false;
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-		
+		findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
 		saveTeamDuelData();
 		if (soloClimb != null) {
 			deleteClimbingInParse(climbing);
@@ -3290,7 +3315,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								stopAllServices();
 								samplingEnabled = false;
 								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-								
+								findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
 								
 							}
 
@@ -3327,17 +3352,29 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							if (teamDuel.getMygroup() == Group.CHALLENGER) {
 								//group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
 								group_members.get(0).setText(getString(R.string.my_team));
-								group_steps.get(0).setText(String.valueOf(teamDuel.getSteps_my_group()));
+								int steps1 = teamDuel.getSteps_my_group();
+								if(steps1 > building.getSteps())
+									steps1 = building.getSteps();
+								group_steps.get(0).setText(String.valueOf(steps1));
 								//group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
 								group_members.get(1).setText(getString(R.string.other_team));
-								group_steps.get(1).setText(String.valueOf(teamDuel.getSteps_other_group()));
+								int steps2 = teamDuel.getSteps_other_group();
+								if(steps2 > building.getSteps())
+									steps2 = building.getSteps();
+								group_steps.get(1).setText(String.valueOf(steps2));
 							} else {
 								//group_members.get(0).setText(getString(R.string.team_of) + " " + teamDuel.getCreator_name());
 								group_members.get(0).setText(getString(R.string.my_team));
-								group_steps.get(0).setText(String.valueOf(teamDuel.getSteps_my_group()));
+								int steps1 = teamDuel.getSteps_my_group();
+								if(steps1 > building.getSteps())
+									steps1 = building.getSteps();
+								group_steps.get(0).setText(String.valueOf(steps1));
 								//group_members.get(1).setText(getString(R.string.team_of) + " " + teamDuel.getChallenger_name());
 								group_members.get(1).setText(getString(R.string.other_team));
-								group_steps.get(1).setText(String.valueOf(teamDuel.getSteps_other_group()));
+								int steps2 = teamDuel.getSteps_other_group();
+								if(steps2 > building.getSteps())
+									steps2 = building.getSteps();
+								group_steps.get(1).setText(String.valueOf(steps2));
 							}
 							group_members.get(0).setBackgroundColor(Color.parseColor("#adeead"));
 							group_steps.get(0).setBackgroundColor(Color.parseColor("#adeead"));
@@ -3535,6 +3572,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									stopAllServices();
 									samplingEnabled = false;
 									((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+									findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
 									
 								}
 								try {

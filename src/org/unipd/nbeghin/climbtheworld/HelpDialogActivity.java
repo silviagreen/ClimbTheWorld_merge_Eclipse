@@ -173,10 +173,16 @@ public class HelpDialogActivity extends Dialog {
 					textRow2.setVisibility(View.GONE);
 				}else{
 					imageShare.setVisibility(View.VISIBLE);
-					imageMicrogoal.setVisibility(View.VISIBLE);
+					
 					textShare.setVisibility(View.VISIBLE);
-					textMicrogoal.setVisibility(View.VISIBLE);
-					textMicrogoal.setText(ClimbApplication.getContext().getString(R.string.microgoal_help));
+					if(mode == GameModeType.SOLO_CLIMB){
+						imageMicrogoal.setVisibility(View.VISIBLE);
+						textMicrogoal.setVisibility(View.VISIBLE);
+						textMicrogoal.setText(ClimbApplication.getContext().getString(R.string.microgoal_help));
+					}else{
+						imageMicrogoal.setVisibility(View.INVISIBLE);
+						textMicrogoal.setVisibility(View.INVISIBLE);
+					}
 					if(!samplingEnabled)
 						textShare.setText(ClimbApplication.getContext().getString(R.string.play_help));
 					else

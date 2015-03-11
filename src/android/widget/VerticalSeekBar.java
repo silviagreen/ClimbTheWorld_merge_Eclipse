@@ -91,7 +91,7 @@ public class VerticalSeekBar extends SeekBar {
 		
 		if(lines.size() < 4 && thumbs.size() < 4 && show) setLists();
 
-		for(int i = 0; i < lines.size(); i++){
+		for(int i = 0; i < lines.size(); i++){ 
 			View v = lines.get(i);
 			v.setVisibility(View.GONE);
 			v.setLayoutParams(new LayoutParams(width/2, 2));
@@ -126,18 +126,18 @@ public class VerticalSeekBar extends SeekBar {
 		super.onDraw(c);
 	}
 	
-	public void nextStar(int progress){
-		thumb1 = BitmapFactory.decodeResource(getResources(), R.drawable.star);
-		//System.out.println("height " + height  + " progress " + progress);
-		starHeight = (((double) progress * ((double) height)) /(double) 100) + 5;
-		if(starHeight >= height){
-			float toolbar_dimens = getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
-			starHeight = height - toolbar_dimens;//100 + 5;
-		}
-		//System.out.println(starHeight);
-		invalidate();
-		
-	}
+//	public void nextStar(int progress){
+//		thumb1 = BitmapFactory.decodeResource(getResources(), R.drawable.star);
+//		//System.out.println("height " + height  + " progress " + progress);
+//		starHeight = (((double) progress * ((double) height)) /(double) 100) + 5;
+//		if(starHeight >= height){
+//			float toolbar_dimens = getResources().getDimension(R.dimen.abc_action_bar_default_height_material);
+//			starHeight = height - toolbar_dimens;//100 + 5;
+//		}
+//		//System.out.println(starHeight);
+//		invalidate();
+//		
+//	}
 	
 	public void setTotalHeight(){
 		totalHeight = height;
@@ -150,11 +150,13 @@ public class VerticalSeekBar extends SeekBar {
 	}
 	
 	public void setInitialGoldenStars(int finalPosition, double unit){
-		perc_unit = unit;
-		Bitmap goldenStar = BitmapFactory.decodeResource(getResources(), R.drawable.gold_star);
-		for(int i = 0; i < finalPosition; i++)
-			thumbs.set(i, goldenStar);
-		invalidate();
+		if(thumbs.size() >= 4){
+			perc_unit = unit;
+			Bitmap goldenStar = BitmapFactory.decodeResource(getResources(), R.drawable.gold_star);
+			for(int i = 0; i < finalPosition; i++)
+				thumbs.set(i, goldenStar);
+			invalidate();
+		}
 	}
 	
 	public void hideStars(){
