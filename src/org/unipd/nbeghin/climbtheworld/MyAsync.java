@@ -71,7 +71,7 @@ public class MyAsync {
 			requestBatch.executeAsync();
 		else
 			requestBatch.executeAndWait();
-		ParseUtils.updateCurrentUserData();
+		ParseUtils.saveNewDayStats();//updateCurrentUserData();
 		// NetworkRequestAsyncTask.setMessage("load badge");
 		saveBadges();
 		// NetworkRequestAsyncTask.setMessage("load microgoal");

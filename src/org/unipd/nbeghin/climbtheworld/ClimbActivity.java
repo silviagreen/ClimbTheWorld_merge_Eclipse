@@ -507,7 +507,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			findViewById(R.id.lblWin).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink));
 		}
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-		findViewById(R.id.btnAccessPhotoGallery).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_in));
+		//findViewById(R.id.btnAccessPhotoGallery).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_in));
 		findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
 		((ImageButton) findViewById(R.id.btnAccessPhotoGallery)).setImageResource(R.drawable.ic_action_video);
 		switch (climbing.getGame_mode()) {
@@ -540,6 +540,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		if (!isCounterMode && (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty"))) {
 			((ImageButton) findViewById(R.id.btnAccessPhotoGallery)).setImageResource(R.drawable.social_share);
 			findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
+			if(current_win)
+				((ImageButton) findViewById(R.id.btnStartClimbing)).setVisibility(View.GONE);
 		}
 		previous_progress = new_steps;
 		new_steps = 0;
@@ -1582,6 +1584,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									canceled_timer = true;
 									timer.cancel();
 									socialPenalty();
+									updateUserStats(true);
 									if (microgoal != null && (isUpdate || isOpening))
 										deleteMicrogoalInParse(microgoal);
 
@@ -1594,6 +1597,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										if (microgoal != null)
 											deleteMicrogoalInParse(microgoal);
 										updatePoints(false, true);
+										updateUserStats(false);
 										// saveBadges(true);
 										saveCollaborationData();
 									}
@@ -2104,7 +2108,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 				
 				if(mode == GameModeType.TEAM_VS_TEAM){
-					seekbarIndicator.showPlace();
+					//seekbarIndicator.showPlace();
 					seekbarIndicator.setPlaceHeight(Math.ceil(((double) (num_steps*100)/ (double) building.getSteps())));
 				}
 		}
@@ -2567,7 +2571,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		if (isCounterMode)
 			updateUserStats(true);
 		else
-			updateUserStats(false);
+			updateUserStats(true);
 		if (!isCounterMode && changes) {
 			// update db
 
@@ -3290,7 +3294,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								teamDuel_parse.increment("checks", 1);
 								climbing.setChecked(true);
 								updateClimbingInParse(climbing, true);
-								
+								updateUserStats(true);
 								
 							}else{
 								updateChecks = true;
@@ -3557,6 +3561,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									compet_parse.increment("checks", 1);
 									climbing.setChecked(true); System.out.println("nuovi check " + competition.getChecks());
 									updateClimbingInParse(climbing, true);
+									updateUserStats(true);
 
 								}else{
 									updateChecks = true;

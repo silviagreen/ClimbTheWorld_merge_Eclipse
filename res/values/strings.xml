@@ -273,6 +273,7 @@
         <item quantity="one">There is a notification for you</item>
         <item quantity="other">There are %d notifications for you</item>
     </plurals>
+    <string name="download_notification">Download\nNotifications</string>
     
     <!-- FBPickFriendActivity -->
     <string name="pick_friends">Select friends to invite</string>

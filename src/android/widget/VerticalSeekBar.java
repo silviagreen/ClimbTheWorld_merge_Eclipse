@@ -27,7 +27,7 @@ public class VerticalSeekBar extends SeekBar {
 	 private Bitmap thumb2 = BitmapFactory.decodeResource(getResources(), R.drawable.star);
 	 private Bitmap thumb3 = BitmapFactory.decodeResource(getResources(), R.drawable.star);
 	 private Bitmap thumb4 = BitmapFactory.decodeResource(getResources(), R.drawable.star);
-	 private Bitmap place =  BitmapFactory.decodeResource(getResources(), R.drawable.ic_place);
+	 //private Bitmap place =  BitmapFactory.decodeResource(getResources(), R.drawable.ic_place);
 
 	 private static double starHeight = 0;
 	 private static double placeHeight = 1;
@@ -39,7 +39,7 @@ public class VerticalSeekBar extends SeekBar {
 	 private List<Bitmap> thumbs = new ArrayList<Bitmap>();
 	 
 	 private boolean show = true;
-	 private boolean showPlace = false;
+	 //private boolean showPlace = false;
 	 
 	 private void setLists(){ 
 			RelativeLayout parent = (RelativeLayout) this.getParent();
@@ -109,8 +109,8 @@ public class VerticalSeekBar extends SeekBar {
 //			v.setBackgroundColor(getResources().getColor(R.color.red));
 		}
 		
-		if(showPlace)
-			c.drawBitmap(place, (float)placeHeight , 40, null);
+//		if(showPlace)
+//			c.drawBitmap(place, (float)placeHeight , 40, null);
 		
 		
 //		line1 = parent.findViewById(R.id.redLine1);		
@@ -163,9 +163,9 @@ public class VerticalSeekBar extends SeekBar {
 		show = false;
 	}
 	
-	public void showPlace(){
-		showPlace = true;
-	}
+//	public void showPlace(){
+//		showPlace = true;
+//	}
 	
 	public void setPlaceHeight(double placePerc){
 		this.placeHeight = ((double) height) /  ((double) 100) * (placePerc);

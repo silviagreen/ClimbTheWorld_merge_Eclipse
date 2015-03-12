@@ -1,5 +1,6 @@
 package org.unipd.nbeghin.climbtheworld.util;
 
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -342,6 +343,19 @@ public class ParseUtils {
 				
 			}
 		});
+	}
+	public static void saveNewDayStats(){
+    	SharedPreferences pref = ClimbApplication.getContext().getSharedPreferences("UserSession", 0);
+		User me = ClimbApplication.getUserByFBId(pref.getString("FBid", "none"));
+		ParseUser user = ParseUser.getCurrentUser();
+		if (ClimbApplication.are24hPassed(me.getBegin_date())) {
+			me.setMean(ClimbApplication.calculateNewMean((long) me.getMean(), me.getN_measured_days(), (me.getCurrent_steps_value())));
+			me.setCurrent_steps_value(0);
+			me.setN_measured_days(me.getN_measured_days() + 1);
+			me.setBegin_date(String.valueOf(new Date().getTime()));
+			// ClimbApplication.userDao.update(currentUser);
+		}
+		updateCurrentUserData();
 	}
 	
 	public static void updateCurrentUserData(){
