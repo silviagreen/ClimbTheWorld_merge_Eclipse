@@ -1457,7 +1457,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 								try {
 									String fbid = pref.getString("FBid", "");
-									if(!fbid.equalsIgnoreCase("none") && !fbid.equalsIgnoreCase("empty")) others.put(fbid, num_steps);
+									if(!fbid.equalsIgnoreCase("none") && !fbid.equalsIgnoreCase("empty")) 
+										others.put(fbid, num_steps);
 								} catch (JSONException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -2360,6 +2361,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					climbedYesterday = StatUtils.climbedYesterday(climbing.get_id());
 				// FOR TESTING PURPOSES
 				// climbedYesterday=true;
+				previous_progress = 0;
 				startClassifyService(next_alarm,current_day_index);
 				
 //l'utente fa partire il gioco, generando un "periodo di gioco"
@@ -3541,7 +3543,13 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								boolean foundWinner = ModelsUtil.hasSomeoneWon(chart, building.getSteps());
 								boolean updateChecks = false;
 								
-								System.out.println("checked climb????" + climbing.isChecked());
+								System.out.println("victory time = " + victory_time.getTime());
+								try {
+									System.out.println(victory_time.after(df.parse(df.format(climbing.getModified()))));
+								} catch (java.text.ParseException e3) {
+									// TODO Auto-generated catch block
+									e3.printStackTrace();
+								}
 								if (foundWinner && !climbing.isChecked()) {
 									current_win = true;
 									try {

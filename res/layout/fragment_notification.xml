@@ -10,14 +10,30 @@
         android:layout_height="match_parent" >
     </com.fima.cardsui.views.CardUI>
     
-   <TextView android:id="@+id/empty"
+    <Button
+          android:id="@+id/emptyBtn"
+          style="?android:attr/borderlessButtonStyle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          
+          android:background="@drawable/selector_btn_background"
+          android:padding="12dp"
+		  android:layout_centerHorizontal="true"      
+		  android:layout_centerVertical="true"    
+          android:scaleType="fitXY"
+          android:text="@string/download_notification"
+          android:textAllCaps="true"
+          android:textColor="@color/selector_btn_text"
+          android:textSize="14sp"
+           />
+    
+  <!--  <TextView android:id="@+id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-                            android:textColor="@color/black"
-            
-            android:text="@string/no_notifications"/>
+            android:textColor="@color/black"    
+            android:text="@string/no_notifications"/> -->
 </RelativeLayout>
 
 
