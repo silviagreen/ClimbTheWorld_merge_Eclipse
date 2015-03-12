@@ -30,18 +30,20 @@
     <string name="notClimbedYet">Non ancora scalato</string>
     <string name="climb_complete">Scalata: COMPLETATA! (%s)</string>
     <string name="climb_status">Stato della scalata: %1$s%% (ultimo tentativo: %2$s)</string>
+    <string name="connection_needed">E\' richiesta la connessione alla rete</string>
     <string name="reward">Premio: %d XP</string>
     <string name="not_yet_microgoal">Inizia la scalata per avere il primo obiettivo</string>
     <string name="back_solo_climb">Torna a Solo Climb</string>
     <string name="unlock_at_level">Disponibile al livello %d</string>
     <string name="lock_message">Raggiungi il livello %d per sbloccare questo edificio</string>
+    
     <!-- General Toasts -->
     <string name="connection_problem">Problemi di Connessione</string>
     <string name="connection_problem2">Problemi di Connessione: i tuoi dati saranno salvati alla prossima connessione</string>
-    <string name="connection_needed">Connessione necessaria</string>
     <string name="no_fb_connection">Non sei connesso a Facebook</string>
     <string name="collaboration_not_exists">Questa collaborazione non esiste più</string>
-    
+    <string name="fb_connect_invite">Connettiti a Facebook per invitare i tuoi amici</string>
+     
     <!-- TourCard -->
     <string name="num_buildings">%d edifici</string>
     
@@ -49,7 +51,7 @@
     <string name="message_group_invite">%1$s ti chiede di unirsi al suo nuovo gruppo: %2$s</string>
     <string name="message_collaboration">%1$s ti chiede aiuto per scalare l\'edificio %2$s</string>
     <string name="message_competition">%1$s ti sfida a scalare l\'edificio %2$s</string>    
-    <string name="message_team_challenge">%1$s ti sfida in un team duel a scalare l\'edificio %2$s</string>  
+    <string name="message_team_challenge">%1$s ti sfida in una sfida tra team a scalare l\'edificio %2$s</string>  
     <string name="message_team_member">%1$s ti chiede aiuto per vincere il duello con il suo team scalando l\'edificio %2$s</string>
     <string name="group_not_exists">Il gruppo non esiste più</string>
     <string name="group_already_part">Fai già parte di %s</string>
@@ -67,6 +69,7 @@
     <string name="team_duel_already">Tu sei già lo sfidante</string>
     <string name="team_duel_completed">Questo team è già completo</string>
     <string name="team_duel_already_part">Fai già parte di questo team</string>
+    <string name="wait_notification">Attendi il salvataggio</string>
     <string name="delete_req">Richiesta eliminata</string>
     <string name="no_notifications">Nessuna notifica \n\n Premi b0 per fare login con Facebook poi \n\n premi b1 o b2 -> "Notifiche FB" per vedere le nuove notifiche</string>
     <string name="competition_end">Competizione già terminata</string>
@@ -101,7 +104,17 @@
     <string name="not_logged_in">Login non eseguito</string>
     <string name="no_user_defined">Nessun utente definito</string>
     <string name="check_connection">Controlla di essere connesso a Internet</string>
-    <string name="fb_connect_invite">Connettiti a Facebook per invitare i tuoi amici</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="no_profile_set">Nessun profilo</string>
+    <string name="enter_profile">Scrivi il tuo nome</string>
+    <string name="title_profile">Profilo</string>
+    <string name="climbing_settings">Impostazioni della scalata</string>
+    <string name="title_difficulty">Difficoltà</string>
+    <string name="text_not_logged">Non connesso a Facebook</string>
+    <string name="com_facebook_loginview_log_in_button">Accedi con Facebook</string>
+    <string name="com_facebook_loginview_log_out_button">Logout</string>
+    <string name="logged_as">Ciao, %s!</string>
+    <string name="owner">Sei il possessore di questo telefono</string>
     
     
     <!-- ProfileActivity -->
@@ -163,13 +176,13 @@
     <string name="ready_to_go">PRONTO PER LA SCALATA!</string>
     <string name="win">SCALATA\nCOMPLETATA!</string>
     <string name="encouragement">Ben fatto!</string>
-    <string name="microgoal_terminated">Goal completato!!!! Hai vinto %d XP</string>
+    <string name="microgoal_terminated">Goal completato!!!! Hai guadagnato %d XP</string>
     <string name="microgoal_terminated2">Goal completato!\n + %d XP extra</string>
     
     <string name="successfull_climb">Hai fatto i %1$d scalini (%2$d m) dell\'edificio %3$s !</string>
     <string name="kicked_out">Sei stato cacciato! Ora sei in modalità Solo Climb</string>
     <string name="new_level">Grande! Hai raggiunto il livello %d!</string>
-    <string name="new_level_inbox">Nuovo livello Livello %d</string>
+    <string name="new_level_inbox">Nuovo livello: Livello %d</string>
     <string name="new_badge">Hai vinto un nuovo trofeo: %s</string>
     <string name="new_badge_inbox">Nuovo trofeo! %s</string>
     <string name="no_microgoal">Nessun altro goal disponibile per questo edificio</string>
@@ -181,23 +194,11 @@
     <string name="creator">Leader: </string>
     <string name="offline_team">Vai online per vedere i team attuali o per ritirarti</string>
     <string name="wait_team">Attendi che i team siano completi</string>
-    <string name="completed_teams">I team sono completi\nPremy play per giocare</string>
+    <string name="completed_teams">I team sono completi\nPremi play per giocare</string>
     <string name="exit_team_btn">Esci dal gruppo</string>
     <string name="add_members_btn">Aggiungi membri</string>
     <string name="add_challenger_btn">Aggiungi sfidante</string>
-  
-    <!-- SettingsActivity -->
-    <string name="settings_title">Impostazioni</string>
-    <string name="no_profile_set">Nessun profilo</string>
-    <string name="enter_profile">Scrivi il tuo nome</string>
-    <string name="title_profile">Profilo</string>
-    <string name="climbing_settings">Impostazioni della scalata</string>
-    <string name="title_difficulty">Difficoltà</string>
-    <string name="text_not_logged">Non connesso a Facebook</string>
-    <string name="com_facebook_loginview_log_in_button">Accedi con Facebook</string>
-    <string name="com_facebook_loginview_log_out_button">Logout</string>
-    <string name="logged_as">Ciao, %s!</string>
-    <string name="owner">Sei il possessore di questo telefono</string>
+
 
     
     <!-- string activity setting -->
@@ -277,7 +278,6 @@
         <item quantity="one">C\'è una notifica per te</item>
         <item quantity="other">Ci sono %d notifiche per te</item>
     </plurals>
-    <string name="download_notification">Download\nNotifiche</string>
     
     <!-- FBPickFriendActivity -->
     <string name="pick_friends">Seleziona gli amici che vuoi invitare</string>
@@ -302,7 +302,7 @@
     <string name="microgoal_help">Premi per vedere il tuo obiettivo attuale</string>
     <string name="update_help">Premi per aggiornare i dati suoi tuoi amici</string>
     <string name="tap_to_dismiss">Tocca per chiudere</string>
-    <string name="add_group_help">Invita 5 tuoi amici su Facebook ad entrare nel tuo team</string>
+    <string name="add_group_help">Invita un amico su Facebook ad entrare nel tuo team</string>
     <string name="add_challenger">Scegli lo sfidante tra i tuoi amici di facebook</string>
     <string name="add_other_help">Invita altri tuoi amici su Facebook ad entrare nel tuo team</string>
     <string name="delete_player">Caccia un tuo amico da questa scalata</string>
@@ -442,7 +442,7 @@
     
 	<plurals name="summary_inbox_text_2">
         <item quantity="one">%d notifica</item>
-        <item quantity="other">%d notfiche</item>
+        <item quantity="other">%d notifiche</item>
     </plurals>	
     
 	<string name="tip_profile">Tocca qui per vedere il tuo profilo</string>
@@ -491,5 +491,6 @@
     	
     <!-- Trigger notification -->   
     <string name="trigger_text">Fai degli scalini giocando con l\'app!!</string>
-    
+    <string name="download_notification">Download\nNotifiche</string>
+    <string name="notification_read">Notifica letta</string>
 </resources>

@@ -2,6 +2,7 @@ package org.unipd.nbeghin.climbtheworld.ui.card;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.unipd.nbeghin.climbtheworld.models.Building;
 import org.unipd.nbeghin.climbtheworld.models.Climbing;
 import org.unipd.nbeghin.climbtheworld.models.Collaboration;
 import org.unipd.nbeghin.climbtheworld.models.Competition;
+import org.unipd.nbeghin.climbtheworld.models.GameNotification;
 import org.unipd.nbeghin.climbtheworld.models.Group;
 import org.unipd.nbeghin.climbtheworld.models.Notification;
 import org.unipd.nbeghin.climbtheworld.models.NotificationType;
@@ -91,7 +93,19 @@ public class NotificationCard extends Card {
 		progressBar = (ProgressBar) view.findViewById(R.id.progressBarNotf);
 		progressBar.setIndeterminate(true);
 
-		text.setText(setMessage());
+		
+		
+		if(notification instanceof GameNotification){
+			cancelBtn.setVisibility(View.INVISIBLE);
+			ArrayList<String> texts = ((GameNotification) notification).getText();
+			String text_notification = "";
+			for(String s : texts)
+				text_notification += s + "\n";
+			text.setText(text_notification);
+		}else{
+			cancelBtn.setVisibility(View.VISIBLE);
+			text.setText(setMessage());
+		}
 		/*
 		 * if (enabled){ acceptBtn.setVisibility(View.VISIBLE); acceptBtn.setEnabled(true); cancelBtn.setVisibility(View.VISIBLE); cancelBtn.setEnabled(true); view.setBackgroundColor(Color.parseColor("#fffb94")); }else{ acceptBtn.setVisibility(View.INVISIBLE); acceptBtn.setEnabled(false); cancelBtn.setVisibility(View.INVISIBLE); cancelBtn.setEnabled(false); view.setBackgroundColor(Color.parseColor("#ffffff")); }
 		 */
@@ -100,6 +114,14 @@ public class NotificationCard extends Card {
 
 			@Override
 			public void onClick(View arg0) {
+				
+				if(notification instanceof GameNotification){
+					cancelBtn.setEnabled(false);
+					acceptBtn.setEnabled(false);
+					acceptBtn.setVisibility(View.INVISIBLE);
+					text.setText(ClimbApplication.getContext().getString(R.string.notification_read));
+					notification.setRead(true);
+				}else{
 
 				boolean busy = ClimbApplication.BUSY;
 				if (FacebookUtils.isOnline(context) && !busy) {
@@ -1194,7 +1216,12 @@ public class NotificationCard extends Card {
 					Toast.makeText(context, ClimbApplication.getContext().getString(R.string.wait_notification), Toast.LENGTH_SHORT).show();
 				}
 			}
-		});
+		}
+		
+	}//fine else 
+		
+				
+				);
 
 		cancelBtn.setOnClickListener(new View.OnClickListener() {
 

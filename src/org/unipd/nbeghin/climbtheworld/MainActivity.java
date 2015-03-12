@@ -31,6 +31,7 @@ import org.unipd.nbeghin.climbtheworld.fragments.ToursFragment;
 import org.unipd.nbeghin.climbtheworld.models.AskCollaborationNotification;
 import org.unipd.nbeghin.climbtheworld.models.AskCompetitionNotification;
 import org.unipd.nbeghin.climbtheworld.models.AskTeamDuelNotification;
+import org.unipd.nbeghin.climbtheworld.models.GameNotification;
 import org.unipd.nbeghin.climbtheworld.models.InviteNotification;
 import org.unipd.nbeghin.climbtheworld.models.Notification;
 import org.unipd.nbeghin.climbtheworld.models.NotificationType;
@@ -268,7 +269,17 @@ public class MainActivity extends ActionBarActivity implements NetworkRequests, 
         if(isFromSplashScreen)
             getIntent().removeExtra("FirstOpen");
 		
-
+        ArrayList<String> notif_texts = null;
+        if(i != null && i.getExtras() != null)
+        	notif_texts = getIntent().getExtras().getStringArrayList("notificationText");
+        
+        if(notif_texts != null){
+        	GameNotification game_not = new GameNotification(notif_texts);
+        	ClimbApplication.notifications.add(game_not);
+        	getIntent().removeExtra("notificationText");
+        }
+        	
+        
 	}
 	
 	public void startOnboarding(){

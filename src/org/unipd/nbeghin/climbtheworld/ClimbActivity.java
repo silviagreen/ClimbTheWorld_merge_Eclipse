@@ -123,6 +123,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
+import com.google.android.gms.internal.ex;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
@@ -4272,6 +4273,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		final int REQUEST_CODE_BASE = 1000;
 		final Intent deleteIntent = new Intent(ClimbActivity.this, NotificationDeletedReceiver.class); // new Intent("org.unipd.nbeghin.climbtheworld.services.NotificationDeletedReceiver");
 		final Intent contentIntent = new Intent(ClimbActivity.this, NotificationClickedService.class);
+		
 		final int requestID = REQUEST_CODE_BASE + (int) System.currentTimeMillis();
 		final int requestID2 = REQUEST_CODE_BASE + (int) System.currentTimeMillis();
 
@@ -4285,13 +4287,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 		final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(notification_icon).setLargeIcon(BitmapFactory.decodeResource(getResources(), notification_icon)).setContentTitle("Climb the World")
 		// .setContentText(getResources().getQuantityString(R.plurals.summary_inbox_text_2, notification_size, notification_size))
-		.setContentText("Climb the World").setDeleteIntent(PendingIntent.getService(ClimbActivity.this, requestID, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT))
-		.setContentIntent(PendingIntent.getService(ClimbActivity.this, requestID2, contentIntent, PendingIntent.FLAG_CANCEL_CURRENT
-				| PendingIntent.FLAG_ONE_SHOT));
+		.setContentText("Climb the World").setDeleteIntent(PendingIntent.getService(ClimbActivity.this, requestID, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT));
 
 		NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 		List<Spannable> events = new ArrayList<Spannable>();
-
+		ArrayList<String> extras = new ArrayList<String>();
 		System.out.println("notifico " + ClimbApplication.notifications_inbox_contents.toString());
 
 		// add bonus line
@@ -4299,8 +4299,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		Spannable sb = new SpannableString(getString(R.string.notification_bonus, current_bonus));
 		int end_index = sb.toString().indexOf("+");
 		sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, end_index - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		if (current_bonus > 0)
+		if (current_bonus > 0){
 			events.add(sb);
+			extras.add(sb.toString());
+		}
 		else
 			notification_size -= 1;
 
@@ -4309,8 +4311,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		sb = new SpannableString(getString(R.string.new_level_inbox, current_level));
 		end_index = sb.toString().indexOf("L");
 		sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, end_index - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		if (current_level > 0)
+		if (current_level > 0){
 			events.add(sb);
+			extras.add(sb.toString());
+		}
 		else
 			notification_size -= 1;
 
@@ -4330,6 +4334,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				sb = new SpannableString(b);
 				sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, end_index, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				events.add(sb);
+				extras.add(sb.toString());
 			}
 
 			int remaining_lines = badges.size() - added_lines;
@@ -4342,6 +4347,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		for (int i = 0; i < events.size(); i++) {
 			inboxStyle.addLine(events.get(i));
 		}
+		contentIntent.putStringArrayListExtra("events", extras);
+		mBuilder.setContentIntent(PendingIntent.getService(ClimbActivity.this, requestID2, contentIntent, PendingIntent.FLAG_CANCEL_CURRENT
+				| PendingIntent.FLAG_ONE_SHOT));
 		mBuilder.setStyle(inboxStyle);
 
 		ClimbActivity.this.runOnUiThread(new Runnable() {
