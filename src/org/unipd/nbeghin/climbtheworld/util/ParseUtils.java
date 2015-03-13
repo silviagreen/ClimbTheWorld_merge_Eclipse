@@ -349,13 +349,54 @@ public class ParseUtils {
 		User me = ClimbApplication.getUserByFBId(pref.getString("FBid", "none"));
 		ParseUser user = ParseUser.getCurrentUser();
 		if (ClimbApplication.are24hPassed(me.getBegin_date())) {
+			System.out.println("sono passate 24 ore");
 			me.setMean(ClimbApplication.calculateNewMean((long) me.getMean(), me.getN_measured_days(), (me.getCurrent_steps_value())));
 			me.setCurrent_steps_value(0);
 			me.setN_measured_days(me.getN_measured_days() + 1);
 			me.setBegin_date(String.valueOf(new Date().getTime()));
 			// ClimbApplication.userDao.update(currentUser);
+			
+			
+			
+			if (user != null) {
+				JSONObject stats = user.getJSONObject("mean_daily_steps");
+				try {
+					stats.put("mean", me.getMean());
+					stats.put("n_days", me.getN_measured_days());
+					stats.put("current_value", me.getCurrent_steps_value());
+					stats.put("begin_date", me.getBegin_date());
+					user.put("mean_daily_steps", stats);
+					user.put("height", me.getHeight());
+					// user.saveEventually();
+					
+					ParseUtils.saveUserInParse(user);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}else{
+			System.out.println("non sono passate 24 ore");
+			me.setHeight(user.getDouble("height"));
+			JSONObject stats = user.getJSONObject("mean_daily_steps");
+			if (stats != null && stats.length() > 0) {
+			try {
+				me.setBegin_date(String.valueOf(stats.getLong("begin_date")));
+				me.setMean(stats.getLong("mean"));
+				me.setN_measured_days(stats.getInt("n_days"));
+				me.setCurrent_steps_value(stats.getInt("current_value"));
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			}
 		}
-		updateCurrentUserData();
+		me.setLevel(user.getInt("level"));
+		me.setXP(user.getInt("XP"));
+		ClimbApplication.setDoneTutorial(me);
+		ClimbApplication.userDao.update(me);
+		
+		//updateCurrentUserData();
 	}
 	
 	public static void updateCurrentUserData(){

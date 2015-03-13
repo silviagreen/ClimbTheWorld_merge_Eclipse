@@ -3323,7 +3323,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								samplingEnabled = false;
 								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 								findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-								
+								if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE)
+									findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.INVISIBLE);
 							}
 
 							try {
@@ -3587,7 +3588,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									samplingEnabled = false;
 									((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 									findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-									
+									if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE)
+										findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.INVISIBLE);
 								}
 								try {
 									compet_parse.put("victory_time", df.parse(df.format(competition.getVictory_time())));

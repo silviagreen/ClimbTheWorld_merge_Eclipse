@@ -229,7 +229,8 @@ public class ClimbApplication extends Application {
 		
 		
 		sContext = getApplicationContext();
-		
+		if(notifications == null)
+			ClimbApplication.notifications = new ArrayList<Notification>();
 		//LOG-------------------------------------------------
 				//LINE
 				String line = "OPEN APP at " + new Date().toString();
