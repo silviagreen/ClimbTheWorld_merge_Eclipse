@@ -815,7 +815,68 @@ public class ClimbApplication extends Application {
 			return null;
 		}
 	}
+	
+	public static TeamDuel getTeamDuelForUserAndId(String id, int user_id) {
 
+		QueryBuilder<TeamDuel, Integer> query = teamDuelDao.queryBuilder(); 
+		Where<TeamDuel, Integer> where = query.where();
+		try {
+			where.eq("id_online", id);
+			where.and();
+			where.eq("user_id", user_id);
+			PreparedQuery<TeamDuel> preparedQuery = query.prepare(); 
+			List<TeamDuel> userBadges = teamDuelDao.query(preparedQuery); 
+			if (userBadges.isEmpty())
+				return null;
+			return userBadges.get(0);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Collaboration getCollaborationForUserAndId(String id, int user_id) {
+
+		QueryBuilder<Collaboration, Integer> query = collaborationDao.queryBuilder(); 
+		Where<Collaboration, Integer> where = query.where();
+		try {
+			where.eq("id_online", id);
+			where.and();
+			where.eq("user_id", user_id);
+			PreparedQuery<Collaboration> preparedQuery = query.prepare(); 
+			List<Collaboration> userBadges = collaborationDao.query(preparedQuery); 
+			if (userBadges.isEmpty())
+				return null;
+			return userBadges.get(0);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Competition getCompetitionForUserAndId(String id, int user_id) {
+
+		QueryBuilder<Competition, Integer> query = competitionDao.queryBuilder(); 
+		Where<Competition, Integer> where = query.where();
+		try {
+			where.eq("id_online", id);
+			where.and();
+			where.eq("user_id", user_id);
+			PreparedQuery<Competition> preparedQuery = query.prepare(); 
+			List<Competition> userBadges = competitionDao.query(preparedQuery); 
+			if (userBadges.isEmpty())
+				return null;
+			return userBadges.get(0);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	public static Collaboration getCollaborationForBuilding(int building_id) {
 		Map<String, Object> conditions = new HashMap<String, Object>();
 		conditions.put("building_id", building_id); // filter for building ID

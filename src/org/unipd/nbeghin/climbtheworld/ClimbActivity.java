@@ -1346,7 +1346,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	 * Loads the Collaboration object corresponding to the current climbing
 	 */
 	private void loadCollaboration() {
-		collaboration = ClimbApplication.getCollaborationById(climbing.getId_mode());// MainActivity.getCollaborationForBuilding(building.get_id());
+		collaboration = ClimbApplication.getCollaborationForUserAndId(climbing.getId_mode(), pref.getInt("local_id", -1));// MainActivity.getCollaborationForBuilding(building.get_id());
 		others_steps = new HashMap<String, Integer>();
 		if (collaboration == null) {
 			Toast.makeText(this, getString(R.string.no_collaboration), Toast.LENGTH_SHORT).show();
@@ -1366,7 +1366,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	 * Loads the TeamDuel object corresponding to the current climbing
 	 */
 	private void loadTeamDuel() {
-		teamDuel = ClimbApplication.getTeamDuelById(climbing.getId_mode());
+		teamDuel = ClimbApplication.getTeamDuelForUserAndId(climbing.getId_mode(), pref.getInt("local_id", -1));
 		myTeamScores = new ArrayList<Integer>();
 		if (teamDuel == null) {
 			Toast.makeText(this, getString(R.string.no_team_duel), Toast.LENGTH_SHORT).show();
@@ -1397,7 +1397,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	 * Loads the Competition object corresponding to the current climbing
 	 */
 	private void loadCompetition() {
-		competition = ClimbApplication.getCompetitionById(climbing.getId_mode());// MainActivity.getCompetitionByBuilding(building.get_id());
+		competition = ClimbApplication.getCompetitionForUserAndId(climbing.getId_mode(), pref.getInt("local_id", -1));// MainActivity.getCompetitionByBuilding(building.get_id());
 		if (competition == null) {
 			Toast.makeText(this, getString(R.string.no_competition), Toast.LENGTH_SHORT).show();
 			synchronized (ClimbApplication.lock) {
@@ -2353,7 +2353,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.av_play); // set
 				findViewById(R.id.progressBarClimbing).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_fade_out)); // hide progress bar
 				findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-				if (new_steps != 0) {
+				if (new_steps != 0) { 
 					apply_update();
 
 				}
@@ -2461,6 +2461,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		updatePoints(true, true);
 		Toast.makeText(this.getApplicationContext(), getString(R.string.social_penalty), Toast.LENGTH_SHORT).show();
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
+
 		stopAllServices();
 		samplingEnabled = false;
 		findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
@@ -3179,6 +3180,12 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		samplingEnabled = false;
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 		findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
+		System.out.println("VISIBLE???? " + (findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE));
+		System.out.println("Am I WINNER " + (teamDuel.getWinner_id().equalsIgnoreCase(String.valueOf(teamDuel.getMygroup().ordinal()))));
+		if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE && (!teamDuel.getWinner_id().equalsIgnoreCase(String.valueOf(teamDuel.getMygroup().ordinal())) || teamDuel.getMy_steps() < threshold))
+			findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
+		if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.GONE && teamDuel.getWinner_id().equalsIgnoreCase(String.valueOf(teamDuel.getMygroup().ordinal())) && teamDuel.getMy_steps() >= threshold)
+		findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
 		saveTeamDuelData();
 		if (soloClimb != null) {
 			deleteClimbingInParse(climbing);
@@ -3272,8 +3279,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							teamDuel.setChecks(teamDuel_parse.getInt("checks"));
 							teamDuel.setCompleted(teamDuel_parse.getBoolean("completed"));
-							teamDuel.setVictory_time(victory_time.getTime());
-							teamDuel.setWinner_id(teamDuel_parse.getString("winner_id"));
+							if(teamDuel.getVictory_time() == 0){
+								teamDuel.setVictory_time(victory_time.getTime());
+								teamDuel.setWinner_id(teamDuel_parse.getString("winner_id"));
+							}
 							ClimbApplication.teamDuelDao.update(teamDuel);
 
 							boolean foundWinner = ModelsUtil.hasSomeoneWon(myGroupScore, otherGroupScore, building.getSteps());
@@ -3284,6 +3293,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								current_win = true;
 
 								try {
+									System.out.println("VINTO???? " + (myGroupScore >= building.getSteps()) );
+									System.out.println("NULLO TIME VIC " + (victory_time.getTime() == 0) );
+									System.out.println("SUCCESSIVO???? " + (victory_time.after(df.parse(df.format(climbing.getModified())))));
 									if (myGroupScore >= building.getSteps() && (victory_time.getTime() == 0 || victory_time.after(df.parse(df.format(climbing.getModified()))))) {
 										teamDuel.setVictory_time(climbing.getModified());
 										teamDuel.setWinner_id(new Integer((teamDuel.getMygroup()).ordinal()).toString());
@@ -3323,8 +3335,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								samplingEnabled = false;
 								((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 								findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-								if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE)
-									findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.INVISIBLE);
+								System.out.println("VISIBLE???? " + (findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE));
+								System.out.println("Am I WINNER " + (teamDuel.getWinner_id().equalsIgnoreCase(String.valueOf(teamDuel.getMygroup().ordinal()))));
+								if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE )
+									findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
+							
 							}
 
 							try {
@@ -3538,8 +3553,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 								DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 								competition.setCompleted(compet_parse.getBoolean("completed"));
-								competition.setVictory_time(victory_time.getTime());
-								competition.setWinner_id(winner_id);
+								if(competition.getVictory_time() == 0){
+									competition.setVictory_time(victory_time.getTime());
+									competition.setWinner_id(winner_id);
+								}
 								ClimbApplication.competitionDao.update(competition);
 
 								boolean foundWinner = ModelsUtil.hasSomeoneWon(chart, building.getSteps());
@@ -3555,7 +3572,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								if (foundWinner && !climbing.isChecked()) {
 									current_win = true;
 									try {
+										System.out.println("VINCO???? " + (num_steps >= building.getSteps()));
+										System.out.println("Victory time " + (victory_time.getTime() == 0));
+										System.out.println("victory after" + victory_time.after(df.parse(df.format(climbing.getModified()))));
 										if (num_steps >= building.getSteps() && (victory_time.getTime() == 0 || victory_time.after(df.parse(df.format(climbing.getModified()))))) {
+											System.out.println("SETTO VINCITORE");
 											competition.setVictory_time(climbing.getModified());
 											competition.setWinner_id(pref.getString("FBid", ""));
 											winner_id = competition.getWinner_id();
@@ -3578,9 +3599,11 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								}
 								if (competition.getChecks() >= others.length() || last_update.after(new Date(last_update.getTime() + 5 * 24 * 3600 * 1000))) {
 									competition.setCompleted(true);
+									findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.VISIBLE);
 									chartHelpText.setVisibility(View.GONE);
 									if (last_update.after(new Date(last_update.getTime() + 5 * 24 * 3600 * 1000)))
 										competition.setWinner_id(chart.get(0).getId());
+						
 								} else if (foundWinner) {
 									chartHelpText.setVisibility(View.VISIBLE);
 									chartHelpText.setText(getString(R.string.help_chart, (others.length() - competition.getChecks())));
@@ -3588,8 +3611,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									samplingEnabled = false;
 									((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
 									findViewById(R.id.progressBarClimbing).setVisibility(View.INVISIBLE);
-									if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE)
-										findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.INVISIBLE);
+									if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE )
+										findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
+									
 								}
 								try {
 									compet_parse.put("victory_time", df.parse(df.format(competition.getVictory_time())));
@@ -3685,6 +3709,10 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 											endCompetition(true);
 											chartHelpText.setText(getString(R.string.competition_lose, name));
 											chartHelpText.setVisibility(View.VISIBLE);
+											System.out.println("VISIBLE???? " + (findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE));
+											System.out.println("Am I WINNER " + (competition.getWinner_id().equalsIgnoreCase(pref.getString("FBid", ""))));
+											if(findViewById(R.id.btnAccessPhotoGallery).getVisibility() == View.VISIBLE && !competition.getWinner_id().equalsIgnoreCase(pref.getString("FBid", "")))
+												findViewById(R.id.btnAccessPhotoGallery).setVisibility(View.GONE);
 											showMessage(getString(R.string.competition_lose, name));
 											// Toast.makeText(getApplicationContext(), getString(R.string.competition_lose, name), Toast.LENGTH_SHORT).show();
 										}

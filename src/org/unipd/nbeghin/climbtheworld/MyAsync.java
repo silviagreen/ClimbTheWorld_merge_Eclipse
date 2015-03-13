@@ -343,7 +343,7 @@ public class MyAsync {
 					boolean created = false;
 					if (duels.size() == 0) {
 						if (!pausedExists) {
-							TeamDuel local_duel = ClimbApplication.getTeamDuelById(id);
+							TeamDuel local_duel = ClimbApplication.getTeamDuelForUserAndId(id, pref.getInt("local_id", -1));
 							ClimbApplication.teamDuelDao.delete(local_duel);
 							c.setId_mode("");
 							c.setGame_mode(0);
@@ -360,7 +360,7 @@ public class MyAsync {
 						}
 					} else {
 						ParseObject duel = duels.get(0);
-						TeamDuel local_duel = ClimbApplication.getTeamDuelById(duel.getObjectId());
+						TeamDuel local_duel = ClimbApplication.getTeamDuelForUserAndId(duel.getObjectId(), pref.getInt("local_id", -1));
 						if (local_duel == null) {
 							local_duel = new TeamDuel();
 							created = true;
@@ -507,7 +507,7 @@ public class MyAsync {
 					ParseObject collaboration = collabs.get(0);
 					JSONObject others_steps = collaboration.getJSONObject("stairs");
 					boolean completed = collaboration.getBoolean("completed");
-					Collaboration local_collab = ClimbApplication.getCollaborationById(collaboration.getObjectId());
+					Collaboration local_collab = ClimbApplication.getCollaborationForUserAndId(collaboration.getObjectId(), pref.getInt("local_id", -1));
 					if (local_collab == null) {
 						// crea nuova collaborazione
 						Collaboration coll = new Collaboration();
@@ -571,7 +571,7 @@ public class MyAsync {
 					ParseObject competition = compets.get(0);
 					JSONObject others_steps = competition.getJSONObject("stairs");
 					boolean completed = competition.getBoolean("completed");
-					Competition local_compet = ClimbApplication.getCompetitionById(competition.getObjectId());
+					Competition local_compet = ClimbApplication.getCompetitionForUserAndId(competition.getObjectId(), pref.getInt("local_id", -1));
 					User me = ClimbApplication.getUserById(pref.getInt("local_id", -1));
 					if (local_compet == null) {
 						// crea nuova collaborazione

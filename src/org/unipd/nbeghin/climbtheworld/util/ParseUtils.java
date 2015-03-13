@@ -345,6 +345,9 @@ public class ParseUtils {
 		});
 	}
 	public static void saveNewDayStats(){
+		ParseUser.getCurrentUser().fetchInBackground(new GetCallback<ParseUser>() {
+			  public void done(ParseUser object, ParseException e) {
+				    if (e == null) {
     	SharedPreferences pref = ClimbApplication.getContext().getSharedPreferences("UserSession", 0);
 		User me = ClimbApplication.getUserByFBId(pref.getString("FBid", "none"));
 		ParseUser user = ParseUser.getCurrentUser();
@@ -370,9 +373,9 @@ public class ParseUtils {
 					// user.saveEventually();
 					
 					ParseUtils.saveUserInParse(user);
-				} catch (JSONException e) {
+				} catch (JSONException ex) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ex.printStackTrace();
 				}
 			}
 		}else{
@@ -397,6 +400,13 @@ public class ParseUtils {
 		ClimbApplication.userDao.update(me);
 		
 		//updateCurrentUserData();
+				    } else {
+			    		//Toast.makeText(ClimbApplication.getContext(), ClimbApplication.getContext().getString(R.string.connection_problem2), Toast.LENGTH_SHORT).show();
+					//ClimbApplication.showConnectionProblemsToast();
+			    	Log.e(getClass().getName(), e.getMessage());
+			    }
+			  }
+			});
 	}
 	
 	public static void updateCurrentUserData(){
