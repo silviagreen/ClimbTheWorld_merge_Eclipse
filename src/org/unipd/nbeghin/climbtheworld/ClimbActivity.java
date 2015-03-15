@@ -2717,7 +2717,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		//---------------------------------------------------
 		currentUser.addObserver(this);
 		ParseUser user = ParseUser.getCurrentUser();
-		if (ClimbApplication.are24hPassed(currentUser.getBegin_date())) {
+		//if (ClimbApplication.are24hPassed(currentUser.getBegin_date())) {
+		if (ClimbApplication.needUpdate(currentUser.getBegin_date())) {
 			currentUser.setMean(ClimbApplication.calculateNewMean((long) currentUser.getMean(), currentUser.getN_measured_days(), (currentUser.getCurrent_steps_value())));
 			currentUser.setCurrent_steps_value(real_steps);
 			currentUser.setN_measured_days(currentUser.getN_measured_days() + 1);

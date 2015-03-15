@@ -493,4 +493,5 @@
     <string name="trigger_text">Fai degli scalini giocando con l\'app!!</string>
     <string name="download_notification">Download\nNotifiche</string>
     <string name="notification_read">Notifica letta</string>
+    <string name="no_notification_msg">Nessuna notifica\nPremi per controllare se ci sono notifiche per te</string>
 </resources>

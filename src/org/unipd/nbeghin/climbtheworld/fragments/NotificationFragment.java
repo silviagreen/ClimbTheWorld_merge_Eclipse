@@ -15,13 +15,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.fima.cardsui.views.CardUI;
 
 public class NotificationFragment extends Fragment implements Updater{
 	static public CardUI	notificationCards;
 	static Button btnUpdate;
-	
+	LinearLayout no_notif_layout;
 	private class LoadNotificationTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... unused) {
@@ -33,11 +34,13 @@ public class NotificationFragment extends Fragment implements Updater{
 	@Override
 	public void refresh() {
 		if(ClimbApplication.notifications.isEmpty()){
-			btnUpdate.setVisibility(View.VISIBLE);
-			notificationCards.setVisibility(View.GONE);
+			//btnUpdate.setVisibility(View.VISIBLE);
+			//notificationCards.setVisibility(View.GONE);
+			no_notif_layout.setVisibility(View.VISIBLE);
 		}else{
-			btnUpdate.setVisibility(View.GONE);
-			notificationCards.setVisibility(View.VISIBLE);
+			//btnUpdate.setVisibility(View.VISIBLE);
+			//notificationCards.setVisibility(View.VISIBLE);
+			no_notif_layout.setVisibility(View.GONE);
 		
 		notificationCards.clearCards();
 		for (final Notification notification : ClimbApplication.notifications) {
@@ -78,6 +81,8 @@ public class NotificationFragment extends Fragment implements Updater{
 				
 			}
 		});
+		
+		no_notif_layout = (LinearLayout) result.findViewById(R.id.no_notf_msg);
 //		empty = (TextView) result.findViewById(R.id.empty);
 //		int i = (String.valueOf(empty.getText())).indexOf("b1");
 //		SpannableString ss = new SpannableString(empty.getText()); 

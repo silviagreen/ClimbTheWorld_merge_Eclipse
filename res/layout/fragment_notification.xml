@@ -4,28 +4,53 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
+    <LinearLayout
+        android:id="@+id/no_notf_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/emptyBtn"
+        android:orientation="vertical" 
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="153dp"
+            android:layout_height="120dp"
+            android:src="@drawable/straight_black" 
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_notification_msg"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/emptyBtn"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_background"
+        android:padding="12dp"
+        android:scaleType="fitXY"
+        android:text="@string/download_notification"
+        android:textAllCaps="true"
+        android:textColor="@color/selector_btn_text"
+        android:textSize="14sp" />
+
     <com.fima.cardsui.views.CardUI
         android:id="@+id/cardsNotification"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_below="@+id/emptyBtn" >
+
     </com.fima.cardsui.views.CardUI>
-    
-    <Button
-          android:id="@+id/emptyBtn"
-          style="?android:attr/borderlessButtonStyle"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          
-          android:background="@drawable/selector_btn_background"
-          android:padding="12dp"
-		  android:layout_centerHorizontal="true"      
-		  android:layout_centerVertical="true"    
-          android:scaleType="fitXY"
-          android:text="@string/download_notification"
-          android:textAllCaps="true"
-          android:textColor="@color/selector_btn_text"
-          android:textSize="14sp"
-           />
     
   <!--  <TextView android:id="@+id/empty"
             android:layout_width="match_parent"

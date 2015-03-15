@@ -351,7 +351,8 @@ public class ParseUtils {
     	SharedPreferences pref = ClimbApplication.getContext().getSharedPreferences("UserSession", 0);
 		User me = ClimbApplication.getUserByFBId(pref.getString("FBid", "none"));
 		ParseUser user = ParseUser.getCurrentUser();
-		if (me.getBegin_date() != null && ClimbApplication.are24hPassed(me.getBegin_date())) {
+		//if (me.getBegin_date() != null && ClimbApplication.are24hPassed(me.getBegin_date())) {
+		if (me.getBegin_date() != null && ClimbApplication.needUpdate(me.getBegin_date())) {
 			System.out.println("sono passate 24 ore");
 			me.setMean(ClimbApplication.calculateNewMean((long) me.getMean(), me.getN_measured_days(), (me.getCurrent_steps_value())));
 			me.setCurrent_steps_value(0);

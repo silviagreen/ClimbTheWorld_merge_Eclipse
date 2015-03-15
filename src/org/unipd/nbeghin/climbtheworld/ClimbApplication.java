@@ -1137,6 +1137,27 @@ public class ClimbApplication extends Application {
 		// return false;
 		// }
 	}
+	public static boolean needUpdate(String date){	 
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		 
+		 Date today = null;
+		 Date check = null;
+		try {
+			today = sdf.parse(sdf.format(new Date()));
+			check = sdf.parse(sdf.format(new Date(Long.valueOf(date))));
+
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		 
+		 if(check.before(today))
+			 return true;
+		 else
+			 return false;
+		 
+	 }
 
 	public static long daysPassed(String date) {
 		Date today = new Date();
