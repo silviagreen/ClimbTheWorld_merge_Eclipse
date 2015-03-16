@@ -26,6 +26,13 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp" >
 
+        <ImageView
+            android:id="@+id/logoView"
+            android:layout_width="30dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/fb_logo" />
+
         <TextView
             android:id="@+id/text"
             style="@style/CardText"

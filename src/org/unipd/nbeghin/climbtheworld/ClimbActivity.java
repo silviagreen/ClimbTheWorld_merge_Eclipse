@@ -37,6 +37,7 @@ import org.unipd.nbeghin.climbtheworld.models.Climbing;
 import org.unipd.nbeghin.climbtheworld.models.Collaboration;
 import org.unipd.nbeghin.climbtheworld.models.Competition;
 import org.unipd.nbeghin.climbtheworld.models.GameModeType;
+import org.unipd.nbeghin.climbtheworld.models.GameNotification;
 import org.unipd.nbeghin.climbtheworld.models.Group;
 import org.unipd.nbeghin.climbtheworld.models.Microgoal;
 import org.unipd.nbeghin.climbtheworld.models.MicrogoalText;
@@ -52,7 +53,6 @@ import org.unipd.nbeghin.climbtheworld.services.SamplingClassifyService;
 import org.unipd.nbeghin.climbtheworld.util.AlarmUtils;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GeneralUtils;
-import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
 import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 import org.unipd.nbeghin.climbtheworld.util.ModelsUtil;
 import org.unipd.nbeghin.climbtheworld.util.ParseUtils;
@@ -86,7 +86,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -94,7 +93,6 @@ import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -123,7 +121,6 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
-import com.google.android.gms.internal.ex;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
@@ -238,6 +235,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 	private Menu mymenu;
 	private TextView chartHelpText;
+	private TextView difficulty_text;
 
 	// number of virtual step for each real step
 	/**
@@ -1239,9 +1237,53 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		loadPreviousClimbing(); // get previous climbing for this building
 		mode = GameModeType.values()[climbing.getGame_mode()]; // setup game mode
 		old_game_mode = mode;
+		
+		difficulty_text = (TextView) findViewById(R.id.lblDifficulty);
+		
+//
+//		if(climbing.getPercentage() <= 1.0){
+//		
+//		int diff = Integer.parseInt(settings.getString("difficulty", "10"));
+//		
+//				if(mode == GameModeType.SOCIAL_CHALLENGE)
+//					diff = competition.getDifficulty();
+//				else if(mode == GameModeType.TEAM_VS_TEAM)
+//					diff = teamDuel.getDifficulty();
+//				switch (diff) {
+//				case 1:
+//					diff_text = getString(R.string.hard);
+//					break;
+//
+//				case 10:
+//					diff_text = getString(R.string.normal);
+//					break;
+//					
+//				case 100:
+//					diff_text = getString(R.string.easy);
+//					break;
+//				}
+//				
+//		difficulty_text.setText(getString(R.string.difficulty, diff_text));
+//		}else{
+//			difficulty_text.setVisibility(View.INVISIBLE);
+//		}
+		
 		// loadSocialMode();
 		new LoadSocialModeTask().execute();
 
+	}
+	
+	private String getDifficultyText(int difficulty){ 
+		switch(difficulty){
+		case 1:
+			return getString(R.string.difficulty, getString(R.string.hard));
+		case 10:
+			return getString(R.string.difficulty, getString(R.string.normal));
+		case 100:
+			return getString(R.string.difficulty, getString(R.string.easy));
+			default:
+				return "";
+		}
 	}
 
 	static boolean in_progress = true;
@@ -1333,6 +1375,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				LogUtils.writeGameUpdate(getApplicationContext(), line);
 				//
 				//---------------------------------------------------
+				difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
+			}else{
+				difficulty_text.setVisibility(View.INVISIBLE);
 			}
 			synchronized (ClimbApplication.lock) {
 				in_progress = false;
@@ -1356,6 +1401,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 
 		} else {
+			difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
 			collaboration.setMy_stairs(climbing.getCompleted_steps());
 			updateOthers(false, true);
 		}
@@ -1377,6 +1423,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		} else {
 			teamDuel.setMy_steps(climbing.getCompleted_steps());
 			teamDuel.setSteps_my_group(teamDuel.getSteps_my_group() + climbing.getCompleted_steps());
+			difficulty_text.setText(getDifficultyText(teamDuel.getDifficulty()));
 			updateTeams(false, true);
 		}
 	}
@@ -1397,6 +1444,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 	 * Loads the Competition object corresponding to the current climbing
 	 */
 	private void loadCompetition() {
+		System.out.println("LoadCompetition");
 		competition = ClimbApplication.getCompetitionForUserAndId(climbing.getId_mode(), pref.getInt("local_id", -1));// MainActivity.getCompetitionByBuilding(building.get_id());
 		if (competition == null) {
 			Toast.makeText(this, getString(R.string.no_competition), Toast.LENGTH_SHORT).show();
@@ -1405,6 +1453,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				ClimbApplication.lock.notifyAll();
 			}
 		} else {
+			difficulty_text.setText(getDifficultyText(competition.getDifficulty()));
 			competition.setMy_stairs(climbing.getCompleted_steps());
 			updateChart(false, true);
 		}
@@ -2888,11 +2937,17 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 																														// reference
 																														// to
 																														// android
-																														// preferences
+				if(mode == GameModeType.SOLO_CLIMB || mode == GameModeType.SOCIAL_CLIMB)																										// preferences
 				/* int */difficulty = Integer.parseInt(settings.getString("difficulty", "10")); // get
 																								// difficulty
 																								// from
 																								// preferences
+				else{
+					if(mode == GameModeType.SOCIAL_CHALLENGE)
+						difficulty = competition.getDifficulty();
+					else if(mode == GameModeType.TEAM_VS_TEAM)
+						difficulty = teamDuel.getDifficulty();
+				}
 				switch (difficulty) { // set several parameters related to
 										// difficulty
 				case 100: // easy
@@ -4378,7 +4433,15 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		for (int i = 0; i < events.size(); i++) {
 			inboxStyle.addLine(events.get(i));
 		}
-		contentIntent.putStringArrayListExtra("events", extras);
+		//contentIntent.putStringArrayListExtra("events", extras);
+		
+		int index_game_notification = ClimbApplication.getGameNotification(); System.out.println("index game notification " + index_game_notification);
+		if(index_game_notification == -1){
+			GameNotification game_not = new GameNotification(extras);
+			ClimbApplication.notifications.add(game_not);
+		}else{
+			((GameNotification) ClimbApplication.notifications.get(index_game_notification)).setText(extras);
+		}
 		mBuilder.setContentIntent(PendingIntent.getService(ClimbActivity.this, requestID2, contentIntent, PendingIntent.FLAG_CANCEL_CURRENT
 				| PendingIntent.FLAG_ONE_SHOT));
 		mBuilder.setStyle(inboxStyle);

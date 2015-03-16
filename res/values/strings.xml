@@ -153,6 +153,7 @@
     <string name="threshold">Steps to threshold</string>
     <string name="threashold_passed">Threshold passed: you\'re in!!!!</string>
     <string name="num_steps">%s steps</string>
+    <string name="difficulty">Difficulty: %s</string>
     <string name="no_collaboration">No collaboration available for this building</string>
     <string name="no_team_duel">No team duel available for this building"</string>
     

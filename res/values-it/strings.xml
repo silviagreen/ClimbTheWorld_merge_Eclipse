@@ -153,6 +153,7 @@
     <string name="threshold">Scalini alla soglia</string>
     <string name="threashold_passed">Soglia superata: vai così!!!!</string>
     <string name="num_steps">%s scalini</string>
+    <string name="difficulty">Difficoltà: %s</string>
     <string name="no_collaboration">Nessuna collaborazione disponibile per questo edificio</string>
     <string name="no_team_duel">Nessuna sfida tra team disponibile per questo edificio</string>
     

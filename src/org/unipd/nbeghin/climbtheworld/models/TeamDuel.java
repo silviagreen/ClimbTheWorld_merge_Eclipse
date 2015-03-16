@@ -44,6 +44,8 @@ public class TeamDuel {
 	private long victory_time;
 	@DatabaseField
 	private String winner_id;
+	@DatabaseField
+	private int difficulty;
 	
 	public TeamDuel(){}
 	
@@ -236,6 +238,13 @@ public class TeamDuel {
 	public void setWinner_id(String winner_id) {
 		this.winner_id = winner_id;
 	}
-	
+	public int getDifficulty() {
+		return difficulty;
+	}
+
+
+	public void setDifficulty(int difficulty) {
+		this.difficulty = difficulty;
+	}
 	
 }

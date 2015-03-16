@@ -1,5 +1,7 @@
 package org.unipd.nbeghin.climbtheworld.fragments;
 
+import java.util.Iterator;
+
 import org.unipd.nbeghin.climbtheworld.ClimbApplication;
 import org.unipd.nbeghin.climbtheworld.MainActivity;
 import org.unipd.nbeghin.climbtheworld.R;
@@ -43,7 +45,10 @@ public class NotificationFragment extends Fragment implements Updater{
 			no_notif_layout.setVisibility(View.GONE);
 		
 		notificationCards.clearCards();
-		for (final Notification notification : ClimbApplication.notifications) {
+		Iterator<Notification> iter = ClimbApplication.notifications.iterator();
+		//for (final Notification notification : ClimbApplication.notifications) {
+		while(iter.hasNext()){
+			Notification notification = iter.next();
 			if(!notification.isRead()){
 				NotificationCard notificationCard;
 				if(ClimbApplication.notifications.indexOf(notification) == 0)
@@ -62,7 +67,8 @@ public class NotificationFragment extends Fragment implements Updater{
 			
 			notificationCards.addCard(notificationCard);
 			}else{
-				ClimbApplication.notifications.remove(notification);
+				iter.remove();
+				//ClimbApplication.notifications.remove(notification);
 			}
 		}
 		notificationCards.refresh();

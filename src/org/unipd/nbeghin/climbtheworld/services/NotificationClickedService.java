@@ -33,15 +33,15 @@ public class NotificationClickedService extends IntentService{
 		
 
 		
-		ArrayList<String> notif_texts = null;
-        if(workIntent != null && workIntent.getExtras() != null)
-        	notif_texts = workIntent.getExtras().getStringArrayList("events");
-        
-        if(notif_texts != null){
-        	GameNotification game_not = new GameNotification(notif_texts);
-        	ClimbApplication.notifications.add(game_not);
-        	workIntent.removeExtra("notificationText");
-        }
+//		ArrayList<String> notif_texts = null;
+//        if(workIntent != null && workIntent.getExtras() != null)
+//        	notif_texts = workIntent.getExtras().getStringArrayList("events");
+//        
+//        if(notif_texts != null){
+//        	GameNotification game_not = new GameNotification(notif_texts);
+//        	ClimbApplication.notifications.add(game_not);
+//        	workIntent.removeExtra("notificationText");
+//        }
         
 		Intent i = getPackageManager().getLaunchIntentForPackage("org.unipd.nbeghin.climbtheworld");
 		i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT|Intent.FLAG_ACTIVITY_NEW_TASK);

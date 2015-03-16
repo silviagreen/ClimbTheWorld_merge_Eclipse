@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +60,7 @@ public class NotificationCard extends Card {
 	TextView text;
 	ProgressBar progressBar;
 	boolean enabled;
+	ImageView logo;
 
 	public NotificationCard(Notification notification, boolean enabled) {
 		super(notification.getId());
@@ -92,19 +94,21 @@ public class NotificationCard extends Card {
 		text = ((TextView) view.findViewById(R.id.text));
 		progressBar = (ProgressBar) view.findViewById(R.id.progressBarNotf);
 		progressBar.setIndeterminate(true);
-
+		logo = (ImageView) view.findViewById(R.id.logoView);
 		
 		
 		if(notification instanceof GameNotification){
 			cancelBtn.setVisibility(View.INVISIBLE);
 			ArrayList<String> texts = ((GameNotification) notification).getText();
 			String text_notification = "";
+			logo.setImageResource(R.drawable.lock_win);
 			for(String s : texts)
 				text_notification += s + "\n";
 			text.setText(text_notification);
 		}else{
 			cancelBtn.setVisibility(View.VISIBLE);
 			text.setText(setMessage());
+			logo.setImageResource(R.drawable.fb_logo);
 		}
 		/*
 		 * if (enabled){ acceptBtn.setVisibility(View.VISIBLE); acceptBtn.setEnabled(true); cancelBtn.setVisibility(View.VISIBLE); cancelBtn.setEnabled(true); view.setBackgroundColor(Color.parseColor("#fffb94")); }else{ acceptBtn.setVisibility(View.INVISIBLE); acceptBtn.setEnabled(false); cancelBtn.setVisibility(View.INVISIBLE); cancelBtn.setEnabled(false); view.setBackgroundColor(Color.parseColor("#ffffff")); }
@@ -592,6 +596,7 @@ public class NotificationCard extends Card {
 																		competitionLocal.setVictory_time(collaborationParse.getDate("victory_time").getTime());
 																		competitionLocal.setChecks(collaborationParse.getInt("checks"));
 																		competitionLocal.setWinner_id(collaborationParse.getString("winner_id"));
+																		competitionLocal.setDifficulty(collaborationParse.getInt("difficulty"));
 																		ClimbApplication.competitionDao.create(competitionLocal);
 
 																		text.setText(ClimbApplication.getContext().getString(R.string.accept_req));
@@ -613,6 +618,7 @@ public class NotificationCard extends Card {
 																		competitionLocal.setVictory_time(0);
 																		competitionLocal.setChecks(0);
 																		competitionLocal.setWinner_id("0");
+																		competitionLocal.setDifficulty(10);
 																		ClimbApplication.competitionDao.create(competitionLocal);
 																		Toast.makeText(context, ClimbApplication.getContext().getString(R.string.connection_problem), Toast.LENGTH_SHORT).show();
 																		Log.e("2 Connection Problem adding me in competition", "Error: " + e.getMessage());
@@ -845,6 +851,7 @@ public class NotificationCard extends Card {
 																	teamDuelLocal.setVictory_time(teamDuelParse.getDate("victory_time").getTime());
 																	teamDuelLocal.setChecks(teamDuelParse.getInt("checks"));
 																	teamDuelLocal.setWinner_id(teamDuelParse.getString("winner_id"));
+																	teamDuelLocal.setDifficulty(teamDuelParse.getInt("difficulty"));
 																	ClimbApplication.teamDuelDao.create(teamDuelLocal);
 
 																	text.setText(ClimbApplication.getContext().getString(R.string.accept_req));
@@ -1119,6 +1126,7 @@ public class NotificationCard extends Card {
 																	teamDuelLocal.setVictory_time(teamDuelParse.getDate("victory_time").getTime());
 																	teamDuelLocal.setChecks(teamDuelParse.getInt("checks"));
 																	teamDuelLocal.setWinner_id(teamDuelParse.getString("winner_id"));
+																	teamDuelLocal.setDifficulty(teamDuelParse.getInt("difficulty"));
 																	ClimbApplication.teamDuelDao.create(teamDuelLocal);
 
 																	text.setText(ClimbApplication.getContext().getString(R.string.accept_req));

@@ -39,6 +39,7 @@ import org.unipd.nbeghin.climbtheworld.models.User;
 import org.unipd.nbeghin.climbtheworld.util.FacebookUtils;
 import org.unipd.nbeghin.climbtheworld.util.GraphicsUtils;
 import org.unipd.nbeghin.climbtheworld.util.LogUtils;
+import org.unipd.nbeghin.climbtheworld.util.ModelsUtil;
 import org.unipd.nbeghin.climbtheworld.R;
 
 import android.annotation.SuppressLint;
@@ -473,7 +474,8 @@ public void onWindowFocusChanged(boolean hasFocus) {
 						JSONArray array = (JSONArray) res.getProperty("data");
 						Log.d("MainActivity", "Notifications: " + array.length());
 						for (int i = 0; i < array.length(); i++) {
-							createNotification((JSONObject) array.get(i), deleteRequests);
+							if(!ModelsUtil.containsId(ClimbApplication.notifications, ((JSONObject) array.get(i)).getString("id")))
+									createNotification((JSONObject) array.get(i), deleteRequests);
 						}
 						Request.executeBatchAndWait(deleteRequests);
 					} catch (Exception e) {

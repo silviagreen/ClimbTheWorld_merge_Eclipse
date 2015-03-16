@@ -40,6 +40,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -295,7 +296,7 @@ public class BuildingCard extends Card {
 
 			gameMode.setText(ClimbApplication.getContext().getString(R.string.mode) + setModeText());
 			if (climbing != null) {
-				if (climbing.getPercentage() >= 1.00)
+				if (climbing.getPercentage() >= 1.00 || climbing.getGame_mode() != 0)
 					microGoalBtn.setVisibility(View.GONE);
 				else
 					microGoalBtn.setVisibility(View.VISIBLE);
@@ -1043,7 +1044,7 @@ public class BuildingCard extends Card {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 		compet.setBuilding(building);
 		compet.setMy_stairs(0);
 		compet.setCurrent_position(0);
@@ -1054,6 +1055,7 @@ public class BuildingCard extends Card {
 		compet.setChecks(0);
 		compet.setWinner_id("0");
 		compet.setVictory_time(0);
+		compet.setDifficulty(Integer.parseInt(settings.getString("difficulty", "10")));
 		ClimbApplication.competitionDao.create(compet);
 		
 		competParse = new ParseObject("Competition");
@@ -1064,6 +1066,7 @@ public class BuildingCard extends Card {
 		competParse.put("creator", creator);
 		competParse.put("checks", compet.getChecks());
 		competParse.put("winner_id", compet.getWinner_id());
+		competParse.put("difficulty", compet.getDifficulty());
 		try {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			competParse.put("victory_time", df.parse(df.format(compet.getVictory_time())));
@@ -1108,6 +1111,7 @@ public class BuildingCard extends Card {
 	 */
 	private void saveTeamDuel() {
 		System.out.println("save team duel");
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 		User me = ClimbApplication.getUserById(pref.getInt("local_id", -1));
 		duel.setBuilding(building);
 		duel.setUser(me);
@@ -1125,6 +1129,7 @@ public class BuildingCard extends Card {
 		duel.setVictory_time(0);
 		duel.setChecks(0);
 		duel.setWinner_id("0");
+		duel.setDifficulty(Integer.parseInt(settings.getString("difficulty", "10")));
 		ClimbApplication.teamDuelDao.create(duel);
 
 		JSONObject creator_stairs = new JSONObject();
@@ -1155,6 +1160,7 @@ public class BuildingCard extends Card {
 		teamDuelParse.put("challenger_stairs", challenger_stairs);
 		teamDuelParse.put("winner_id", duel.getWinner_id());
 		teamDuelParse.put("checks", duel.getChecks());
+		teamDuelParse.put("difficulty", duel.getDifficulty());
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 		try {

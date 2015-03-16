@@ -25,6 +25,7 @@ import org.unipd.nbeghin.climbtheworld.models.BuildingTour;
 import org.unipd.nbeghin.climbtheworld.models.Climbing;
 import org.unipd.nbeghin.climbtheworld.models.Collaboration;
 import org.unipd.nbeghin.climbtheworld.models.Competition;
+import org.unipd.nbeghin.climbtheworld.models.GameNotification;
 import org.unipd.nbeghin.climbtheworld.models.Microgoal;
 import org.unipd.nbeghin.climbtheworld.models.MicrogoalText;
 import org.unipd.nbeghin.climbtheworld.models.Notification;
@@ -279,8 +280,16 @@ public class ClimbApplication extends Application {
 	
 	public static void addBadgeNotification(String message){
 		notifications_inbox_contents.put("BADGE", message);
-		System.out.println(notifications_inbox_contents.toString());
+		//System.out.println(notifications_inbox_contents.toString());
 
+	}
+	
+	public static int getGameNotification(){
+		for(int i = 0; i < notifications.size(); i++){
+			if(notifications.get(i) instanceof GameNotification)
+				return i;
+		}
+		return -1;
 	}
 
 	/**

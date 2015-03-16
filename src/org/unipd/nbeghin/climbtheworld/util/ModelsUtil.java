@@ -17,6 +17,7 @@ import org.unipd.nbeghin.climbtheworld.models.Building;
 import org.unipd.nbeghin.climbtheworld.models.BuildingText;
 import org.unipd.nbeghin.climbtheworld.models.ChartMember;
 import org.unipd.nbeghin.climbtheworld.models.MicrogoalText;
+import org.unipd.nbeghin.climbtheworld.models.Notification;
 import org.unipd.nbeghin.climbtheworld.models.TourText;
 
 public class ModelsUtil {
@@ -160,5 +161,16 @@ public class ModelsUtil {
 				return true;
 		else
 			return false;
+	}
+	
+	public static boolean containsId(List<Notification> list, String id) { 
+		if(list.isEmpty())
+			return false;
+	    for (Notification object : list) {
+	        if (object.getId().equalsIgnoreCase(id)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }
