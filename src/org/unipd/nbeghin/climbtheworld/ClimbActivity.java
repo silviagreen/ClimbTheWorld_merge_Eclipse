@@ -1375,7 +1375,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				LogUtils.writeGameUpdate(getApplicationContext(), line);
 				//
 				//---------------------------------------------------
-				difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
+				//difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
+				setDifficultyText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
 			}else{
 				difficulty_text.setVisibility(View.INVISIBLE);
 			}
@@ -1401,7 +1402,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			}
 
 		} else {
-			difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
+			//difficulty_text.setText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
+			setDifficultyText(getDifficultyText(Integer.parseInt(settings.getString("difficulty", "10"))));
 			collaboration.setMy_stairs(climbing.getCompleted_steps());
 			updateOthers(false, true);
 		}
@@ -1423,7 +1425,8 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		} else {
 			teamDuel.setMy_steps(climbing.getCompleted_steps());
 			teamDuel.setSteps_my_group(teamDuel.getSteps_my_group() + climbing.getCompleted_steps());
-			difficulty_text.setText(getDifficultyText(teamDuel.getDifficulty()));
+			//difficulty_text.setText(getDifficultyText(teamDuel.getDifficulty()));
+			setDifficultyText(getDifficultyText(teamDuel.getDifficulty()));
 			updateTeams(false, true);
 		}
 	}
@@ -1453,10 +1456,19 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 				ClimbApplication.lock.notifyAll();
 			}
 		} else {
-			difficulty_text.setText(getDifficultyText(competition.getDifficulty()));
+			//difficulty_text.setText(getDifficultyText(competition.getDifficulty()));
+			setDifficultyText(getDifficultyText(competition.getDifficulty()));
 			competition.setMy_stairs(climbing.getCompleted_steps());
 			updateChart(false, true);
 		}
+	}
+	
+	private void setDifficultyText(final String text){
+		ClimbActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+				difficulty_text.setText(text);
+			}
+		});
 	}
 
 	/**
