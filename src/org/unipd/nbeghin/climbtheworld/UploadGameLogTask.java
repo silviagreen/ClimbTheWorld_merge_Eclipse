@@ -58,9 +58,9 @@ public class UploadGameLogTask extends AsyncTask<Void, Void, String> {
 		else{
 		
 			int returned_id= Integer.valueOf(result);
-			
+			System.out.println("returned id "  + returned_id);
 			if(returned_id!=-1){					
-				GeneralUtils.renameLogFile(mContext, returned_id);
+				//GeneralUtils.renameLogFile(mContext, returned_id);
 			}
 			
 			result=mContext.getResources().getString(R.string.lab_upload_success);

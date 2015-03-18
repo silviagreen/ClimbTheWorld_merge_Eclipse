@@ -1,5 +1,6 @@
 package org.unipd.nbeghin.climbtheworld;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -253,6 +254,14 @@ public class ClimbApplication extends Application {
 		// Parse initialize
 		Parse.initialize(this, "e9wlYQPdpXlFX3XQc9Lq0GJFecuYrDSzwVNSovvd", "QVII1Qhy8pXrjAZiL07qaTKbaWpkB87zc88UMWv2");
 		ParseFacebookUtils.initialize(getString(R.string.app_id));
+		
+		File f = sContext.getDir("climbTheWorld_dir", Context.MODE_PRIVATE);
+		File[] fList = f.listFiles();
+		for(File file : fList)
+			System.out.println(file.getAbsolutePath());
+		int log_file_id = PreferenceManager
+				.getDefaultSharedPreferences(sContext).getInt("log_file_id", -1);
+		System.out.println(log_file_id);
 		
 		loadDb();
 
