@@ -565,7 +565,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		
 		int unit = (int) Math.ceil((double) (building.getSteps()*percentage)/ (double) 100);
 		int final_pos = (int) Math.floor(((double) (num_steps)/ (double) unit));
-		if(num_steps == building.getSteps()) final_pos += 1;
+		if(num_steps == building.getSteps() && final_pos < 4) final_pos += 1;
 		System.out.println("unit " + unit);
 		System.out.println("num_steps " + num_steps);
 		System.out.println("final_pos " + final_pos);
