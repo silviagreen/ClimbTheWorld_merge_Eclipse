@@ -1236,7 +1236,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 		loadPreviousClimbing(); // get previous climbing for this building
 		mode = GameModeType.values()[climbing.getGame_mode()]; // setup game mode
-		old_game_mode = mode;
+		old_game_mode = GameModeType.values()[climbing.getGame_mode()];
 		
 		difficulty_text = (TextView) findViewById(R.id.lblDifficulty);
 		
@@ -1648,6 +1648,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 									timer.cancel();
 									socialPenalty();
 									updateUserStats(true);
+									old_game_mode = GameModeType.SOCIAL_CLIMB;
 									if (microgoal != null && (isUpdate || isOpening))
 										deleteMicrogoalInParse(microgoal);
 
@@ -1664,6 +1665,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 										// saveBadges(true);
 										saveCollaborationData();
 									}
+									old_game_mode = GameModeType.SOCIAL_CLIMB;
 									canceled_timer = true;
 									timer.cancel();
 								}
@@ -2649,7 +2651,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 			if (percentage >= 1.00) {
 				switch (mode) {
 				case SOCIAL_CLIMB:
-					old_game_mode = mode;
+					old_game_mode = GameModeType.SOCIAL_CLIMB;
 					updateOthers(false, false);
 					climbing.setGame_mode(0);
 					climbing.setId_mode("");
@@ -2673,7 +2675,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 					// if(teamDuel.isCompleted()) endTeamCompetition(false);
 					break;
 				case SOLO_CLIMB:
-					old_game_mode = mode;
+					old_game_mode = GameModeType.SOLO_CLIMB;
 					ClimbApplication.climbingDao.update(climbing); // save to db
 					if (!pref.getString("FBid", "none").equalsIgnoreCase("none") && !pref.getString("FBid", "none").equalsIgnoreCase("empty")) {
 						updateClimbingInParse(climbing, false);
@@ -3235,7 +3237,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		if (microgoal != null)
 			deleteMicrogoalInParse(microgoal);
 		((ImageButton) findViewById(R.id.btnStartClimbing)).setImageResource(R.drawable.social_share);
-		old_game_mode = mode;
+		old_game_mode = GameModeType.SOCIAL_CHALLENGE;
 		mode = GameModeType.SOLO_CLIMB;
 
 	}
@@ -3271,7 +3273,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 		}
 		if (microgoal != null)
 			deleteMicrogoalInParse(microgoal);
-		old_game_mode = mode;
+		old_game_mode = GameModeType.TEAM_VS_TEAM;
 		mode = GameModeType.SOLO_CLIMB;
 
 	}
@@ -3347,7 +3349,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							teamDuel.setChecks(teamDuel_parse.getInt("checks"));
 							teamDuel.setCompleted(teamDuel_parse.getBoolean("completed"));
-							if(teamDuel.getVictory_time() == 0){
+							if(teamDuel.getVictory_time() == 0 || new Date(teamDuel.getVictory_time()).after(new Date(victory_time.getTime()))){
 								teamDuel.setVictory_time(victory_time.getTime());
 								teamDuel.setWinner_id(teamDuel_parse.getString("winner_id"));
 							}
@@ -3385,6 +3387,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							if (teamDuel.getChecks() >= (teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length())
 									|| last_update.after(new Date(last_update.getTime() + 5 * 24 * 3600 * 1000))) {
+								
 								teamDuel.setCompleted(true);
 								chartHelpText.setVisibility(View.GONE);
 								if (last_update.after(new Date(last_update.getTime() + 5 * 24 * 3600 * 1000))) {
