@@ -248,7 +248,7 @@ public class FacebookUtils {
         return shareDialog;
 	}
 	
-	public static FacebookDialog publishOpenGraphStory_SocialChallenge(Activity activity, List<ChartMember> chart, boolean win, int steps, String building_name, int old_position){
+	public static FacebookDialog publishOpenGraphStory_SocialChallenge(Activity activity, List<ChartMember> chart, boolean win, int steps, String building_name, int old_position, boolean checked){
 		SharedPreferences pref = ClimbApplication.getContext().getSharedPreferences("UserSession", 0);
 		
 		OpenGraphObject setObj = null;//OpenGraphObject.Factory.createForPost("unipdclimb:building");
@@ -260,7 +260,7 @@ public class FacebookUtils {
     	String my_fb_id = pref.getString("FBid", "");
     	int current_position = ModelsUtil.chartPosition(my_fb_id, chart);
         
-        if(win){
+        if(win && checked){
             action.setType("unipdclimb:win");
             setObj = OpenGraphObject.Factory.createForPost("unipdclimb:challenge");
         	setObj.setProperty("url", "http://climbtheworld.parseapp.com/challenge.com");
@@ -304,7 +304,7 @@ public class FacebookUtils {
 	}
 	
 	
-	public static FacebookDialog publishOpenGraphStory_TeamVsTeam(Activity activity, Group myTeam, JSONObject creators, JSONObject challengers, boolean win, int steps, String building_name, int old_position, int new_position){
+	public static FacebookDialog publishOpenGraphStory_TeamVsTeam(Activity activity, Group myTeam, JSONObject creators, JSONObject challengers, boolean win, int steps, String building_name, int old_position, int new_position, boolean checked){
 		SharedPreferences pref = ClimbApplication.getContext().getSharedPreferences("UserSession", 0);
 		OpenGraphObject setObj = null;// OpenGraphObject.Factory.createForPost("unipdclimb:building");
 		OpenGraphAction action = GraphObject.Factory.create(OpenGraphAction.class);
@@ -313,7 +313,7 @@ public class FacebookUtils {
 
       	Iterator<String> it = null;
 
-        if(win){
+        if(win && checked){
         	setObj =  OpenGraphObject.Factory.createForPost("unipdclimb:team_challenge");
         	action.setType("unipdclimb:win");
         	setObj.setProperty("url", "http://climbtheworld.parseapp.com/team_challenge.com");

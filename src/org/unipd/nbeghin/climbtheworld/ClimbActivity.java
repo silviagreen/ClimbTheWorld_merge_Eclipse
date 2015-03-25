@@ -792,7 +792,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							break;
 
 						case SOCIAL_CHALLENGE:
-							shareDialog = FacebookUtils.publishOpenGraphStory_SocialChallenge(this, chart, win, previous_progress, buildingText.getName(), old_chart_position);
+							win = (competition.getWinner_id().equalsIgnoreCase(pref.getString("FBid", "")));
+							boolean checked1 = (competition.getChecks() >= compet_parse.getJSONObject("stairs").length());
+							shareDialog = FacebookUtils.publishOpenGraphStory_SocialChallenge(this, chart, win, previous_progress, buildingText.getName(), old_chart_position, checked1);
 							break;
 
 						case TEAM_VS_TEAM:
@@ -801,7 +803,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								new_position = 0;
 							else
 								new_position = 1;
-							shareDialog = FacebookUtils.publishOpenGraphStory_TeamVsTeam(this, teamDuel.getMygroup(), teamDuel_parse.getJSONObject("creator_stairs"), teamDuel_parse.getJSONObject("challenger_stairs"), win, previous_progress, buildingText.getName(), old_chart_position, new_position);
+							boolean checked = (teamDuel.getChecks() >= (teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length()));
+							win = (Integer.valueOf(teamDuel.getWinner_id()) == teamDuel.getMygroup().ordinal());
+							shareDialog = FacebookUtils.publishOpenGraphStory_TeamVsTeam(this, teamDuel.getMygroup(), teamDuel_parse.getJSONObject("creator_stairs"), teamDuel_parse.getJSONObject("challenger_stairs"), win, previous_progress, buildingText.getName(), old_chart_position, new_position, checked);
 							break;
 						}
 
@@ -2356,7 +2360,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 							break;
 
 						case SOCIAL_CHALLENGE:
-							shareDialog = FacebookUtils.publishOpenGraphStory_SocialChallenge(this, chart, win, previous_progress, buildingText.getName(), old_chart_position);
+							win = (competition.getWinner_id().equalsIgnoreCase(pref.getString("FBid", "")));
+							boolean checked1 = (competition.getChecks() >= compet_parse.getJSONObject("stairs").length());
+							shareDialog = FacebookUtils.publishOpenGraphStory_SocialChallenge(this, chart, win, previous_progress, buildingText.getName(), old_chart_position, checked1);
 							break;
 
 						case TEAM_VS_TEAM:
@@ -2365,7 +2371,9 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 								new_position = 0;
 							else
 								new_position = 1;
-							shareDialog = FacebookUtils.publishOpenGraphStory_TeamVsTeam(this, teamDuel.getMygroup(), teamDuel_parse.getJSONObject("creator_stairs"), teamDuel_parse.getJSONObject("challenger_stairs"), win, previous_progress, buildingText.getName(), old_chart_position, new_position);
+							boolean checked = (teamDuel.getChecks() >= (teamDuel_parse.getJSONObject("challenger_stairs").length() + teamDuel_parse.getJSONObject("creator_stairs").length()));
+							win = (Integer.valueOf(teamDuel.getWinner_id()) == teamDuel.getMygroup().ordinal());
+							shareDialog = FacebookUtils.publishOpenGraphStory_TeamVsTeam(this, teamDuel.getMygroup(), teamDuel_parse.getJSONObject("creator_stairs"), teamDuel_parse.getJSONObject("challenger_stairs"), win, previous_progress, buildingText.getName(), old_chart_position, new_position, checked);
 							break;
 						}
 
@@ -3349,7 +3357,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 							teamDuel.setChecks(teamDuel_parse.getInt("checks"));
 							teamDuel.setCompleted(teamDuel_parse.getBoolean("completed"));
-							if(teamDuel.getVictory_time() == 0 || new Date(teamDuel.getVictory_time()).after(new Date(victory_time.getTime()))){
+							if(victory_time.getTime() != 0 && (teamDuel.getVictory_time() == 0 || new Date(teamDuel.getVictory_time()).after(new Date(victory_time.getTime())))){
 								teamDuel.setVictory_time(victory_time.getTime());
 								teamDuel.setWinner_id(teamDuel_parse.getString("winner_id"));
 							}
@@ -3624,7 +3632,7 @@ public class ClimbActivity extends ActionBarActivity implements Observer {
 
 								DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 								competition.setCompleted(compet_parse.getBoolean("completed"));
-								if(competition.getVictory_time() == 0){
+								if(victory_time.getTime() != 0 &&(competition.getVictory_time() == 0 || new Date(competition.getVictory_time()).after(new Date(victory_time.getTime())))){
 									competition.setVictory_time(victory_time.getTime());
 									competition.setWinner_id(winner_id);
 								}
