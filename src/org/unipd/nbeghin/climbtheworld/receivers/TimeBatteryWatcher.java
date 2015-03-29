@@ -680,33 +680,68 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 				//lancia quest'ultimo solo se vengono soddisfatte tutte queste condizioni:
 				//- il gioco non è attivo;
 				//- dista almeno 6 ore dall'ultimo trigger mostrato;
-				//- oggi, fino a questo momento, l'utente non ha migliorato il suo punteggio
-				//  facendo almeno 10 scalini in più rispetto a ieri
+				//- oggi, fino a questo momento, l'utente non sta migliorando il suo punteggio,
+				//  cioè, giocando, sta faticando a raggiungere la soglia di almeno 10 scalini 
+				//  in più rispetto a ieri
 				if(!ClimbActivity.isGameActive() && 
 						AlarmUtils.hasTrigger(pref, this_alarm_id) &&
-						(pref.getInt("steps_with_game_today",0) <= pref.getInt("steps_with_game_yesterday",0)+steps_with_game_threshold) &&
 						AlarmUtils.isLastShownTriggerFarEnough(context, this_alarm_id)){
 					
-					//si visualizza la notifica		
-					AlarmUtils.showTriggerNotification(context);		
+					//il tasso di miglioramento del punteggio rispetto al giorno precedente è legato
+					//al periodo di attività indicato dall'utente: nella prima metà è relativamente poco
+					//probabile che l'utente possa migliorare considerevolmente il suo punteggio, mentre 
+					//nella seconda metà questa probabilià cresce.
+					//Detto n il numero di scalini fatti dall'utente col gioco il giorno prima, 
+					//un trigger viene lanciato in un certo momento della giornata solo se:
+					//- ci si trova nella prima metà del periodo di attività e l'utente fino a quel momento,
+					//  giocando, non ha raggiunto almeno la metà della soglia richiesta, ovvero non ha fatto
+					//  come minimo (n+10)/2 scalini;
+					//- ci si trova nella seconda metà del periodo di attività e l'utente fino a quel momento,
+					//  giocando, non ha raggiunto almeno la soglia richiesta, ovvero non ha fatto come
+					//  minimo n+10 scalini.
+					
+					boolean trigger_ok = false;
 										
-					//nelle SharedPreferences si memorizza l'informazione del fatto che in questo
-					//momento si è mostrata una notifica trigger (informazione utile per decidere se 
-					//visualizzare o meno un certo trigger a seconda se esso dista almeno 6 ore
-					//dall'ultimo mostrato; infatti, nel metodo per ritornare i migliori trigger
-					//si tiene conto solo dell'arco della giornata, mentre con tale informazione
-					//si considera anche il giorno prima: si visualizza il primo trigger della
-					//giornata solo se esso dista almeno 6 ore dall'ultimo mostrato nella giornata
-					//precedente)
-					Calendar now_tr = Calendar.getInstance();				
-					Editor editor = pref.edit();	
-					//si imposta l'id di questo ultimo trigger visualizzato
-					editor.putInt("last_shown_trigger_id", this_alarm_id);
-					//si impostano giorno, mese e anno di questo ultimo trigger visualizzato
-					editor.putInt("last_shown_trigger_date", now_tr.get(Calendar.DATE));
-					editor.putInt("last_shown_trigger_month", now_tr.get(Calendar.MONTH));
-					editor.putInt("last_shown_trigger_year", now_tr.get(Calendar.YEAR));   
-					editor.commit();    				
+					//si è nella prima metà del periodo di attività  					
+					if(this_alarm_id <= pref.getInt("middle_alarm",0)){
+						
+						if(pref.getInt("steps_with_game_today",0) < 
+								(pref.getInt("steps_with_game_yesterday",0)+steps_with_game_threshold)/2){
+							trigger_ok = true;
+						}									
+					}
+					else{//si è nella seconda metà del periodo di attività
+						
+						if(pref.getInt("steps_with_game_today",0) < 
+								pref.getInt("steps_with_game_yesterday",0)+steps_with_game_threshold){
+							trigger_ok = true;
+						}						
+					}
+					
+					
+					if(trigger_ok){
+						//si visualizza la notifica		
+						AlarmUtils.showTriggerNotification(context);		
+											
+						//nelle SharedPreferences si memorizza l'informazione del fatto che in questo
+						//momento si è mostrata una notifica trigger (informazione utile per decidere se 
+						//visualizzare o meno un certo trigger a seconda se esso dista almeno 6 ore
+						//dall'ultimo mostrato; infatti, nel metodo per ritornare i migliori trigger
+						//si tiene conto solo dell'arco della giornata, mentre con tale informazione
+						//si considera anche il giorno prima: si visualizza il primo trigger della
+						//giornata solo se esso dista almeno 6 ore dall'ultimo mostrato nella giornata
+						//precedente)
+						Calendar now_tr = Calendar.getInstance();				
+						Editor editor = pref.edit();	
+						//si imposta l'id di questo ultimo trigger visualizzato
+						editor.putInt("last_shown_trigger_id", this_alarm_id);
+						//si impostano giorno, mese e anno di questo ultimo trigger visualizzato
+						editor.putInt("last_shown_trigger_date", now_tr.get(Calendar.DATE));
+						editor.putInt("last_shown_trigger_month", now_tr.get(Calendar.MONTH));
+						editor.putInt("last_shown_trigger_year", now_tr.get(Calendar.YEAR));   
+						editor.commit();    		
+					}				
+							
 				}	
 				
 				Alarm this_alarm = AlarmUtils.getAlarm(context, this_alarm_id);

@@ -16,16 +16,6 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "alarms")
 public class Alarm {
-
-	//campi interi che rappresentano i giorni della settimana, utili a controllare se un certo
-	//alarm è attivo in un determinato giorno della settimana
-	public static final int SUNDAY = 0;
-    public static final int MONDAY = 1;
-    public static final int TUESDAY = 2;
-    public static final int WEDNESDAY = 3;
-    public static final int THURSDAY = 4;
-    public static final int FRIDAY = 5;
-    public static final int SATURDAY = 6;
      
 	//si usa questo nome del campo 'id' in modo da considerarlo quando viene costruita una query
     //per ottenere gli alarm aventi un certo id
@@ -33,9 +23,6 @@ public class Alarm {
     //si usa questo nome del campo 'actionType' in modo da considerarlo quando viene costruita una query
     //per ottenere gli alarm che fanno partire o fermano il servizio di classificazione
     public final static String ACTION_TYPE_FIELD_NAME = "actionType";
-    //si usa questo nome del campo 'classificatorType' in modo da considerarlo quando viene costruita una query
-    //per ottenere gli alarm relativi ad un certo classificatore (Google o scalini/non_scalini)
-    public final static String CLASSIF_TYPE_FIELD_NAME = "classificatorType";
     
     @DatabaseField(generatedId = true, canBeNull = false, columnName = ID_FIELD_NAME) 
     private int id;
@@ -46,9 +33,7 @@ public class Alarm {
     @DatabaseField
 	private int second;
     @DatabaseField(columnName = ACTION_TYPE_FIELD_NAME) 
-    private boolean actionType;    //per ora boolean (con lancio trigger: int, 0,1,-1)
-   // @DatabaseField(columnName = CLASSIF_TYPE_FIELD_NAME) 
-    //private boolean classificatorType; 
+    private boolean actionType; 
         
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private boolean repeatingDays[] = new boolean[GeneralUtils.daysOfWeek]; // =  new boolean[7];

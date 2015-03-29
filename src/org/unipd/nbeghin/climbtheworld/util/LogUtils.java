@@ -526,7 +526,7 @@ public final class LogUtils {
 					true));
 
 			if (alarms != null) {
-				buf.append("LOG ALGORITMO");
+				buf.append("LOG ALGORITMO (prob. mutazione = 0.5)");
 				buf.newLine();
 				buf.newLine();
 
