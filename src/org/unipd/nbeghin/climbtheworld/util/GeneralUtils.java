@@ -153,7 +153,7 @@ public final class GeneralUtils {
     				editor.putInt("alarms_number", alarms_number).commit();
     				//si memorizza anche l'id dell'alarm centrale (utile nel caso del lancio trigger
     				//in cui è necessario verificare se si è nella prima o nella seconda metà del
-    				//peiodo di attività)
+    				//periodo di attività)
     				editor.putInt("middle_alarm", alarms_number/2).commit();
     				        	    	
         	    	/////////		

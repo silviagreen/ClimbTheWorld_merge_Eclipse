@@ -10,8 +10,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * 
- * Classe che definisce un oggetto Alarm che rappresenta un evento di start/stop del processo di
- * classificazione oppure un evento di lancio di un trigger.
+ * Class that defines a start/stop event of an interval which corresponds to a start/stop action of
+ * a classify service. In an interval can be launched also a trigger.
  *
  */
 @DatabaseTable(tableName = "alarms")
@@ -39,17 +39,16 @@ public class Alarm {
     private boolean repeatingDays[] = new boolean[GeneralUtils.daysOfWeek]; // =  new boolean[7];
     //la dimensione è decisa all'inizio a seconda del numero di giorni della settimana
     //(per test algoritmo meno di 7 giorni, es. 1,2)
+            
     
-    
-          
-    //i valori del seguente array indicano le varie probabilità di riconsiderare
-    //gli alarm scartati in precedenza; ogni valore dell'array indica la probabilità 
-    //di lanciare il relativo alarm (se scartato) in un certo giorno della settimana;
-    //tale array viene usato solo per gli alarm di start in quanto un alarm di stop
-    //se non è attivo non viene ripescato per essere lanciato 
+    //array nel quale vengono inserite le valutazioni di un certo intervallo
+    //(alarm start-stop) per i vari giorni della settimana;
+    //se per l'algoritmo si considera una probabilità di mutazione legata alla
+    //valutazione, i valori del seguente array indicano le varie probabilità di
+    //riconsiderare un intervallo inattivo per un certo giorno della settimana;
     //tale array per un certo alarm viene popolato durante la settimana: in 
     //corrispondenza dell'indice relativo ad un certo giorno in cui l'alarm viene
-    //considerato viene posto il valore di probabilità calcolato in base alla fitness
+    //considerato viene posta la valutazione calcolata
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private float evaluations[] = new float[GeneralUtils.daysOfWeek]; // =  new float[7];
     
@@ -57,7 +56,7 @@ public class Alarm {
     //i valori di tale array indicano se l'alarm definisce un "intervallo con scalini",
     //cioè un intervallo in cui l'utente la settimana precedente ha fatto scalini (usando
     //il gioco o senza); in un intervallo di questo tipo non si fa partire il servizio di
-    //activity recognition, bensì il classificatore scalini/non_scalini
+    //activity recognition, bensì il classificatore di riconoscimento scalini
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private boolean stepsInterval[] = new boolean[GeneralUtils.daysOfWeek]; // =  new float[7];
     
@@ -69,12 +68,11 @@ public class Alarm {
     }
  
     /**
-     * Costruttore di un oggetto Alarm 
+     * Costruttore di un oggetto Alarm.
      * @param hour
      * @param minute
      * @param second
      * @param actionType
-     * @param repeatingDays
      * @param repeatingDays
      * @param evaluations
      */
@@ -85,7 +83,6 @@ public class Alarm {
     	this.minute=minute;
     	this.second=second;
     	this.actionType=actionType;
-    	//this.classificatorType= classificatorType;
     	    	
     	for(int i=0; i<repeatingDays.length; i++)
     		this.repeatingDays[i]=repeatingDays[i];
@@ -99,7 +96,7 @@ public class Alarm {
 	}
 
     /**
-     * Costruttore
+     * Costruttore di un oggetto Alarm.
      * @param hour
      * @param minute
      * @param second
@@ -113,7 +110,6 @@ public class Alarm {
     	this.minute=minute;
     	this.second=second;
     	this.actionType=actionType;
-    	//this.classificatorType= classificatorType;
     	
     	for(int i=0; i<repeatingDays.length; i++)
     		this.repeatingDays[i]=true;    	
@@ -168,29 +164,7 @@ public class Alarm {
 
 	public void set_actionType(boolean type) {
 		actionType = type;
-	}
-
-	/*
-	public boolean get_classificatorType() {
-		return classificatorType;
-	}
-
-	public void set_classificatorType(boolean type) {
-		classificatorType = type;
-	}
-	*/
-	
-	/*
-	public boolean[] get_repeatingDays(){
-		return repeatingDays;
-	}
-	
-	public void set_repeatingDays(boolean[] repeatingDays) {
-	
-		for(int i=0; i<repeatingDays.length; i++)
-    		this.repeatingDays[i]=repeatingDays[i];		
-	}
-	*/
+	}	
 	
 	public void setRepeatingDay(int dayOfWeek, boolean value) {
         repeatingDays[dayOfWeek] = value;

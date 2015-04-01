@@ -18,6 +18,7 @@ import org.unipd.nbeghin.climbtheworld.services.SetNextAlarmTriggersIntentServic
 import org.unipd.nbeghin.climbtheworld.util.AlarmUtils;
 import org.unipd.nbeghin.climbtheworld.util.GeneralUtils;
 import org.unipd.nbeghin.climbtheworld.util.IntervalEvaluationUtils;
+import org.unipd.nbeghin.climbtheworld.util.LogUtils;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -739,9 +740,13 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						editor.putInt("last_shown_trigger_date", now_tr.get(Calendar.DATE));
 						editor.putInt("last_shown_trigger_month", now_tr.get(Calendar.MONTH));
 						editor.putInt("last_shown_trigger_year", now_tr.get(Calendar.YEAR));   
-						editor.commit();    		
-					}				
-							
+						editor.commit(); 
+												
+						//si scrive nel log che è stato dato un trigger in corrispondenza dell'inizio di questo intervallo
+						Alarm this_start_alarm = AlarmUtils.getAlarm(context, this_alarm_id);
+						Alarm next_stop_alarm = AlarmUtils.getAlarm(context, this_alarm_id+1);						
+						LogUtils.writeIntervalStatus(context, current_day_index, this_start_alarm, next_stop_alarm, "|TR");
+					}								
 				}	
 				
 				Alarm this_alarm = AlarmUtils.getAlarm(context, this_alarm_id);
