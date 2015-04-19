@@ -13,18 +13,11 @@ import android.os.IBinder;
  * 
  *
  */
-public class ActivityRecognitionRecordService extends Service { //IntentService
+public class ActivityRecognitionRecordService extends Service {
 
 	private static ActivityDetectionRequester requester;
 	private static ActivityDetectionRemover remover;
-	
-	
-	/*
-	public ActivityRecognitionRecordService() {
-		super("ActivityRecognitionRecordService");
-	}*/
-
-	
+		
 	@Override
 	public void onCreate() {	
 		requester = new ActivityDetectionRequester(getApplicationContext());
@@ -44,18 +37,7 @@ public class ActivityRecognitionRecordService extends Service { //IntentService
 		
 		return START_STICKY;
 	}
-	
-	/*
-	@Override
-	protected void onHandleIntent(Intent intent) {
-		System.out.println("service On handle intent");
 		
-		//requester.requestUpdates();		
-		//requesterPI = requester.getRequestPendingIntent();
-	}
-	*/
-	
-	
 	
 	@Override
 	public void onDestroy() {

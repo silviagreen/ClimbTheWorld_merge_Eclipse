@@ -123,7 +123,7 @@ public class SetNextAlarmTriggersIntentService extends IntentService {
 					if(!current_next_alarm.get_actionType()){
 						
 						//è un "intervallo di esplorazione"
-							if(!current_next_alarm.isStepsInterval(curr_day_index)){ 
+						if(!current_next_alarm.isStepsInterval(curr_day_index)){ 
 							
 							//si fa ripartire il service di activity recognition solo se
 							//l'intervallo non è stato interessato da un periodo di gioco

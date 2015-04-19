@@ -127,12 +127,7 @@ public final class GeneralUtils {
      * @param prefs reference to android shared preferences. 
      */
     public static void initializeAlgorithm(final Context context, final SharedPreferences prefs) {
-    	    	    	
-    	//si fa il setup del db per gli alarm
-    	//AlarmUtils.setupAlarmsDB(context); 
-    	//si creano gli alarm
-		//AlarmUtils.createAlarms(context);  
-    	//readIntervalsFromFile(context);
+    	
 		
     	Thread thread = new Thread(){
     		@SuppressLint("NewApi")
@@ -156,8 +151,7 @@ public final class GeneralUtils {
     				//periodo di attività)
     				editor.putInt("middle_alarm", alarms_number/2).commit();
     				        	    	
-        	    	/////////		
-        	    	//PER TEST ALGORITMO
+    				//creazione indice per scorrere i giorni della settimana
         	    	editor.putInt("artificialDayIndex", 0);    	
         	    	Calendar cal = Calendar.getInstance();
         	    	SimpleDateFormat calFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -205,7 +199,7 @@ public final class GeneralUtils {
         	    				"  "+calendar.get(Calendar.DATE)+"/"+month+"/"+calendar.get(Calendar.YEAR));        	
         	        	Log.d(MainActivity.AppName + " - TEST", "GeneralUtils - milliseconds of the update day index alarm: " + calendar.getTimeInMillis());
         	    	}
-        	    	/////////        	    	
+        	    	 	    	
         	    	        	    	
         	    	////////////////////////////
         	    	//utile per scrivere il LOG
@@ -275,134 +269,7 @@ public final class GeneralUtils {
 			.putExtra("low_battery", true)); 
     }
     
-    
-    
-    /*
-    private static void readIntervalsFromFile(Context context) {
-
-    	DbHelper helper = DbHelper.getInstance(context);
-    	
-    	RuntimeExceptionDao<Alarm, Integer> alarmDao = helper.getAlarmDao();
-    	
-	    AssetManager assetManager = context.getResources().getAssets();
-	    	    
-	    try {
-	    	
-	        InputStream inputStream = assetManager.open("intervals.txt");
-
-	        if (inputStream!=null) {
-	        	
-	        	InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-	            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-	            String receiveString = "";
-	            
-	            Calendar cal_start = Calendar.getInstance();
-	            Calendar cal_stop = (Calendar) cal_start.clone();	            
-	        	SimpleDateFormat calFormat = new SimpleDateFormat("HH:mm:ss");
-	        	  
-	        	int current_day = cal_start.get(Calendar.DATE);
-	        	int current_month = cal_start.get(Calendar.MONTH);
-	        	int current_year = cal_start.get(Calendar.YEAR);
-	        	
-	        	Calendar cal_previous_stop = Calendar.getInstance();
-	        	//si inizializza questo oggetto Calendar con una data precedente a quella corrente;
-	        	//serve per inserire un intervallo solo se il suo inizio viene dopo la fine del 
-	        	//precedente intervallo
-	        	cal_previous_stop.add(Calendar.YEAR,-1);
-	        	
-	        	//serve perché si saltano le prime due linee
-	        	int line_number=0;
-	        	
-	            while ((receiveString = bufferedReader.readLine())!=null) {
-	            	            	
-	            	Log.d(MainActivity.AppName, "Read intervals file: line number=" + line_number);
-	            	
-	            	if(line_number>1){
-	            	
-		            	int substring_end = receiveString.indexOf(";",0);
-		            		            	
-		            	String str_startTime = receiveString.substring(0,substring_end).trim();
-		            	Log.d(MainActivity.AppName, "Read intervals file: start time string " + str_startTime);
-		            	
-		            	String str_stopTime = receiveString.substring(substring_end+1,receiveString.indexOf(";",substring_end+1)).trim();
-		            	Log.d(MainActivity.AppName, "Read intervals file: stop time string " + str_stopTime);
-		            	
-		            	substring_end = receiveString.indexOf(";",substring_end+1);
-		            	
-		            	cal_start.setTime(calFormat.parse(str_startTime));
-		            	cal_start.set(Calendar.DATE, current_day);
-		            	cal_start.set(Calendar.MONTH, current_month);
-		            	cal_start.set(Calendar.YEAR, current_year);
-		            	cal_stop.setTime(calFormat.parse(str_stopTime));
-		            	cal_stop.set(Calendar.DATE, current_day);
-		            	cal_stop.set(Calendar.MONTH, current_month);
-		            	cal_stop.set(Calendar.YEAR, current_year);
-					
-		            	Log.d(MainActivity.AppName, "Read intervals file: HH:mm:ss START:" + cal_start.get(Calendar.HOUR_OF_DAY)+ ":"
-	        					+ cal_start.get(Calendar.MINUTE)+":"+cal_start.get(Calendar.SECOND) + " STOP: " + cal_stop.get(Calendar.HOUR_OF_DAY)+ ":"
-	        					+ cal_stop.get(Calendar.MINUTE)+":"+cal_stop.get(Calendar.SECOND));
-	        					            	
-		            	   
-		            	if(cal_start.after(cal_previous_stop)){ 
-		            		//l'intervallo ha un orario di inizio successivo alla fine
-		            		//dell'intervallo precedente
-		            		
-		            		Log.d(MainActivity.AppName, "Read intervals file: start time of this interval > end time of the previous one");
-		            		
-		            		if(cal_start.before(cal_stop)){
-		            			//l'intervallo è valido
-		            			Log.d(MainActivity.AppName, "Read intervals file: start time < end time");
-		            			
-		            			
-		            			boolean activationState[] = new boolean[daysOfWeek];
-		            			
-		            			
-		            			String str_initialState = receiveString.substring(substring_end+1,receiveString.indexOf(";",substring_end+1)).trim();
-		            			//System.out.println("str state: " + str_initialState);
-		            			
-		            			String[] parts = str_initialState.split("\\:");
-		            			//System.out.println("str state lenght: " + parts.length + " 0:" + parts[0] + " 1:" + parts[1]);
-		            			
-		            			
-		            			for(int i=0; i<parts.length; i++){
-		            				
-		            				if(parts[i].equals("1")){
-		            					activationState[i]=true;
-		            				}
-		            				else{ //parts[i].equals("0")
-		            					activationState[i]=false;
-		            				}
-		            			}		            			
-		            			
-		            			Alarm start = new Alarm(cal_start.get(Calendar.HOUR_OF_DAY), cal_start.get(Calendar.MINUTE), cal_start.get(Calendar.SECOND), true, activationState, new float[] {0.25f,0.25f});
-		            			Alarm stop = new Alarm(cal_stop.get(Calendar.HOUR_OF_DAY), cal_stop.get(Calendar.MINUTE), cal_stop.get(Calendar.SECOND), false, activationState, new float[] {0.25f,0.25f});
-		            			
-		            			alarmDao.createIfNotExists(start);
-		            			alarmDao.createIfNotExists(stop);
-		            			
-		            			cal_stop=(Calendar) cal_previous_stop.clone();
-		            		}
-		            	}
-	            	}
-	            	line_number++;
-	            }
-	            
-	            Log.d(MainActivity.AppName, "Read intervals file: Total number of lines: " + line_number);
-	            
-	            inputStream.close();
-	        }
-	    } 
-	    catch (ParseException e) {
-			e.printStackTrace();
-		}
-	    catch (FileNotFoundException e) {
-	        Log.e(MainActivity.AppName, " - File not found: " + e.toString());
-	    } catch (IOException e) {
-	        Log.e(MainActivity.AppName, " - Can not read file: " + e.toString());
-	    }
-	}
-    */
-    
+        
     
     @SuppressWarnings("deprecation")
 	public static String uploadLogFile(Context context) throws IOException{

@@ -204,7 +204,7 @@ public class Alarm {
             description.put("minute", get_minute());
             description.put("seconds", get_second());
             description.put("actionType", get_actionType());
-            description.put("repeatingDays", repeatingDays); //controllare se va bene così
+            description.put("repeatingDays", repeatingDays);
             description.put("evaluations", evaluations);
             description.put("stepsInterval", stepsInterval);
 

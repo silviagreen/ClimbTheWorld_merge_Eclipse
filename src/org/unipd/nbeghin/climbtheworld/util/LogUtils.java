@@ -77,8 +77,7 @@ public final class LogUtils {
 		String line;
 
 		// read until end-of-file from the log file, and store the input line as
-		// a
-		// spanned string in the List
+		// a spanned string in the List
 		while ((line = reader.readLine()) != null) {
 			content.add(new SpannedString(line));
 		}
@@ -99,10 +98,8 @@ public final class LogUtils {
 
 		// si considerano gli intervalli che non sono stati valutati durante il
 		// periodo di tempo in cui l'algoritmo non era attivo (a causa del
-		// device spento o del
-		// livello critico della batteria); è utile per tracciarli nel file di
-		// output e, se si
-		// vuole, per cambiare la loro valutazione
+		// device spento o del livello critico della batteria); è utile per tracciarli
+		// nel file di output e, se si vuole, per cambiare la loro valutazione
 
 		Calendar time_now = Calendar.getInstance();
 		time_now.set(Calendar.HOUR_OF_DAY, 0);
@@ -123,15 +120,10 @@ public final class LogUtils {
 		int lastDayIndex = 0;
 
 		// se ancora non è stato impostato alcun alarm, significa che questo
-		// metodo è
-		// chiamato al primo avvio per tracciare gli intervalli che hanno orario
-		// di inizio
-		// già passato
+		// metodo è chiamato al primo avvio per tracciare gli intervalli che
+		// hanno orario di inizio già passato
 		if (alarm_id == -1) {
-			lastDayIndex = pref.getInt("artificialDayIndex", 0);// normalmente,
-																// indice dato
-																// dalla data
-																// corrente
+			lastDayIndex = pref.getInt("artificialDayIndex", 0);
 			alarm_id = 1;
 			dd = time_before.get(Calendar.DATE);
 			mm = time_before.get(Calendar.MONTH);
@@ -139,12 +131,7 @@ public final class LogUtils {
 			// not_evaluated_cause="Non considerato perche' algoritmo non ancora configurato";
 			not_evaluated_cause = "NC";
 		} else {
-			lastDayIndex = pref.getInt("alarm_artificial_day_index", 0); // normalmente,
-																			// indice
-																			// ottenuto
-																			// dalla
-																			// data
-																			// dell'alarm
+			lastDayIndex = pref.getInt("alarm_artificial_day_index", 0); 
 			dd = pref.getInt("alarm_date", -1);
 			mm = pref.getInt("alarm_month", -1);
 			yyyy = pref.getInt("alarm_year", -1);
@@ -309,9 +296,8 @@ public final class LogUtils {
 					previous = e;
 				}
 			} else { // l'alarm è valido, per cui l'intervallo potrà essere
-						// valutato
-						// (anche parzialmente se è già iniziato, cioè se
-						// l'alarm è di stop)
+				     // valutato (anche parzialmente se è già iniziato, cioè se
+					 // l'alarm è di stop)
 				Log.d(MainActivity.AppName, "for - after ");
 				stop = true;
 			}
@@ -322,33 +308,28 @@ public final class LogUtils {
 			Log.d(MainActivity.AppName,
 					"Algoritmo non attivo; si passa al giorno successivo");
 
-			// ///////
-			// PER TEST ALGORITMO: si inizializza l'indice artificiale
+			
+			// si inizializza l'indice artificiale
 			int ii = lastDayIndex;
 
 			// indice per scorrere il numero di giorni di differenza
 			int day_i = 0;
 			// se gli alarm del giorno precedente sono tutti passati, si
-			// incrementa
-			// il giorno
+			// incrementa il giorno
 			while (day_i < days_diff) {
 
 				time_before.add(Calendar.DATE, 1);
 
-				// ///////
-				// PER TEST ALGORITMO: si aggiorna l'indice artificiale man mano
-				// che
+				
+				// si aggiorna l'indice artificiale man mano che
 				// si incrementa la data
 				ii = AlarmUtils.getNextDayIndex(ii);
-				// ///////
-				// time_before.get(Calendar.DAY_OF_WEEK)-1
 
 				Log.d(MainActivity.AppName,
 						"Algoritmo non attivo, indice giorno: " + ii);
 
 				// se si tratta del primo intervallo (id_start=1 e id_stop=2) si
-				// è in
-				// presenza di un nuovo giorno; si scrive il suo indice nel file
+				// è in presenza di un nuovo giorno; si scrive il suo indice nel file
 				// di output
 				Alarm first_interval_stop = AlarmUtils.getAlarm(context, 2);
 				time_before.set(Calendar.HOUR_OF_DAY,
@@ -366,8 +347,7 @@ public final class LogUtils {
 					// writeLogFile(context,"Indice giorno: "+ii+" - "+dd+"/"+mm+"/"+yyyy);
 
 					// se l'alarm di stop per il giorno considerato è passato, è
-					// passato anche
-					// il precedente alarm di start; quindi, si scrive
+					// passato anche il precedente alarm di start; quindi, si scrive
 					// l'intervallo nel log file
 					Alarm first_interval_start = AlarmUtils
 							.getAlarm(context, 1);

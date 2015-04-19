@@ -18,13 +18,13 @@ import android.util.Log;
 public class ActivityRecognitionIntentService extends IntentService {
 
 	//variable to hold the total number of values returned by the service 
-	private static int values_number = 0;	
+	//private static int values_number = 0;	
 	//variable to hold the number of activities
-	private static int activities_number = 0;
+	//private static int activities_number = 0;
 	//sum of the activities' weights
-	private static int weights_sum = 0;
+	//private static int weights_sum = 0;
 	//sum of the confidences-weights products
-	private static float confidences_weights_sum = 0f;
+	//private static float confidences_weights_sum = 0f;
 	
 	
 	private SharedPreferences prefs;

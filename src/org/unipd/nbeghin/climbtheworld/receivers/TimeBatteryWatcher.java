@@ -43,31 +43,11 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 	//private final String BOOT_ACTION = "android.intent.action.BOOT_COMPLETED";
 	private final String INTERVAL_START_ACTION = "org.unipd.nbeghin.climbtheworld.INTERVAL_START";
 	private final String INTERVAL_STOP_ACTION = "org.unipd.nbeghin.climbtheworld.INTERVAL_STOP";	
-	private final String ENERGY_BALANCING = "org.unipd.nbeghin.climbtheworld.BATTERY_ENERGY_BALANCING";
-	/////////	
-	//PER TEST ALGORITMO
+	private final String ENERGY_BALANCING = "org.unipd.nbeghin.climbtheworld.BATTERY_ENERGY_BALANCING";	
 	private final String UPDATE_DAY_INDEX_FOR_TESTING = "org.unipd.nbeghin.climbtheworld.UPDATE_DAY_INDEX_TESTING";
-	/////////	
-	
+		
 	private final int steps_with_game_threshold = 10;
 	
-	//private BroadcastReceiver stairsReceiver = StairsClassifierReceiver.getInstance();
-	//private IntentFilter stairsActionFilter = new IntentFilter(ClassifierCircularBuffer.CLASSIFIER_ACTION);	
-	
-	//campi utili a registrare il receiver che "ascolta" l'attività utente; quest'ultimo sarà
-	//chiamato con qualsiasi broadcast intent che matcha con l'azione descritta dal seguente
-	//IntentFilter
-	//NB: è importante porre campo receiver 'static' per poi annullare la registrazione dello
-	//stesso dopo aver stoppato il servizio di sampling
-	//private static BroadcastReceiver userMotionReceiver = new UserMotionReceiver();
-	//private IntentFilter userMotionFilter = new IntentFilter(ClassifierCircularBuffer.CLASSIFIER_ACTION);	
-
-	//private static Context context;	
-	//private DbHelper dbHelper = new DbHelper(context); 
-	/*
-	private static ActivityDetectionRequester requester = new ActivityDetectionRequester(context);
-	private static ActivityDetectionRemover remover = new ActivityDetectionRemover(context);
-		*/
 	
 	@Override
 	public void onReceive(final Context context, Intent intent) {
@@ -111,8 +91,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 			final int alarm_id = pref.getInt("alarm_id", -1);
 			
 			if(pref.getBoolean("algorithm_configured", false) && alarm_id!=-1){	
-				/////////				
-				//PER TEST ALGORITMO 
+				/////////
 				//si aggiorna l'indice artificiale che rappresenta il giorno corrente della 
 				//settimana (utile per testare l'algoritmo con una settimana corta, composta ad 
 				//esempio da 1,2 giorni); tale indice viene opportunamente aggiornato considerando
@@ -232,7 +211,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 		    				"  "+calendar.get(Calendar.DATE)+"/"+month+"/"+calendar.get(Calendar.YEAR));        	
 		        	Log.d(MainActivity.AppName + " - TEST", "TimeBatteryWatcher - milliseconds of the update day index alarm: " + calendar.getTimeInMillis());
 		    	}
-		    	/////////
+		    	
 		    	
 		    	//if(alarm_id!=-1){ //si mette il controllo nel caso il valore salvato non esista
 					
@@ -438,42 +417,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						//nelle shared preferences si salva il booleano che indica il livello critico della batteria 
 						pref.edit().putBoolean("low_battery_status", true).commit();
 						
-						/*
-						//si recupera il prossimo alarm impostato in precedenza
-						Alarm current_next_alarm = AlarmUtils.getAlarm(context, alarm_id);
-						//se è di stop significa che si è all'interno di un intervallo attivo e, quindi,
-						//si ferma il classificatore eventualmente in esecuzione
-						if(!current_next_alarm.get_actionType()){
-								
-							if(!current_next_alarm.isStepsInterval(pref.getInt("artificialDayIndex", 0))){
-								if(GeneralUtils.isActivityRecognitionServiceRunning(context)){
-									Log.d(MainActivity.AppName,"BATTERY LOW - Stop activity recognition");
-									toLog+=", stop activity recognition";
-									context.getApplicationContext().stopService(new Intent(context, ActivityRecognitionRecordService.class));
-								}
-							}
-							else{
-								//se l'intervallo è un "intervallo con scalini" e il gioco non è in esecuzione, allora
-								//si ferma il classificatore scalini/non_scalini
-								if(!ClimbActivity.isGameActive()){
-									Log.d(MainActivity.AppName,"BATTERY LOW - Gioco non attivo, si ferma il classificatore scalini");
-									toLog+=", game not active, stop stairs classifier";
-									context.getApplicationContext().stopService(new Intent(context, SamplingClassifyService.class));
-									//si disabilita anche il receiver
-									//context.getApplicationContext().unregisterReceiver(stairsReceiver);
-									context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, StairsClassifierReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-								}	
-							}
-						}
-								
-						//si fa partire l'intent service del setNextAlarm che, in tal caso, cancella
-						//solamente il prossimo alarm, precedentemente impostato (in tal modo si
-						//ferma l'algoritmo)
-						context.getApplicationContext().startService(new Intent(context, SetNextAlarmTriggersIntentService.class)	
-							.putExtra("current_alarm_id", pref.getInt("alarm_id",-1))
-							.putExtra("low_battery", true));		
-						*/
-						
+												
 						GeneralUtils.stopAlgorithm(context, alarm_id, pref);
 												
 						toLog+=", STOP ALGORITHM (cancel next alarm)";
@@ -550,9 +494,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 					Log.d(MainActivity.AppName,toLog);
 				}				
 			}
-		}
-		/////////
-		//PER TEST ALGORITMO
+		}		
 		else if(action.equalsIgnoreCase(UPDATE_DAY_INDEX_FOR_TESTING)){
 			//serve per incrementare l'indice artificiale che rappresenta il giorno corrente della
 			//settimana (utile per testare l'algoritmo con una settimana corta, composta ad esempio
@@ -600,22 +542,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 				.putExtra("on_midnight", true)
 				.putExtra("set_next_alarm", false)); //non si imposta alcun alarm
 	    	
-	    	/*
-	    	//si impostano i trigger, se ancora non sono stati settati
-	    	AlarmUtils.setTriggers(context);
-	    	//se il primo intervallo di attività è quello 00:00-00:05 e se il precedente metodo ha
-	    	//impostato un primo trigger proprio in corrispondenza di questo primo intervallo, può
-	    	//darsi che l'action di start sia partita prima del set trigger e, quindi, non abbia 
-	    	//mostrato la notifica; in ogni caso la si visualizza
-	    	Alarm first_alarm = AlarmUtils.getAlarm(context, 1);
-	    	
-	    	int first_trigger_index = pref.getInt("first_trigger", -1);
-	    	
-	    	if(first_alarm.get_hour()==0 && first_alarm.get_minute()==0 && first_trigger_index==1){
-	    		//si visualizza la notifica (non causa problemi se la notifica è già on-screen)
-	    	}
-	    	*/
-	    	
+	    		    	
 	    	//una volta consumato questo alarm per l'update dell'indice artificiale, viene prima
 	    	//cancellato ogni alarm di questo tipo attraverso l'alarm manager (solo per sicurezza)
 	    	//e poi lo si reimposta per la mezzanotte del giorno successivo
@@ -653,20 +580,15 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 	    				"  "+calendar.get(Calendar.DATE)+"/"+month+"/"+calendar.get(Calendar.YEAR));        	
 	        	Log.d(MainActivity.AppName + " - TEST", "TimeBatteryWatcher - milliseconds of the update day index alarm: " + calendar.getTimeInMillis());
 	    	}
-	    	/////////
-	    	
+	    	/////////	    	
 		}
-		/////////
 		else{				
 			
 			//id dell'alarm che era stato impostato, cioè questo
 			final int this_alarm_id = pref.getInt("alarm_id",-1);			
 			
 			//si recupera l'indice del giorno corrente all'interno della settimana
-			/////////		
-	    	//PER TEST ALGORITMO
 			int current_day_index = pref.getInt("artificialDayIndex", 0);
-			///////// altrimenti l'indice del giorno è (Calendar.getInstance().get(Calendar.DAY_OF_WEEK))-1;
 			
 			
 			//tale receiver riceve un intent che rappresenta un'azione di start di un intervallo:
@@ -788,8 +710,6 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 							if(!GeneralUtils.isActivityRecognitionServiceRunning(context)){
 							   	context.startService(new Intent(context, ActivityRecognitionRecordService.class));
 							   	//si abilita anche il receiver per la registrazione dell'attività utente
-								//context.getApplicationContext().registerReceiver(userMotionReceiver, userMotionFilter);
-								//context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, UserMotionReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);					
 							   	Log.d(MainActivity.AppName,"START ACTION - Service di activity recognition NON in esecuzione");
 							}
 							else{
@@ -803,7 +723,6 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 							
 							context.startService(new Intent(context, SamplingClassifyService.class));
 							//si registra anche il receiver
-							//context.getApplicationContext().registerReceiver(stairsReceiver, stairsActionFilter);
 							context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, StairsClassifierReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);					
 						}	
 					} 
@@ -830,9 +749,6 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 					if(GeneralUtils.isActivityRecognitionServiceRunning(context)){
 						Log.d(MainActivity.AppName,"STOP ACTION - Stop activity recognition");
 					   	context.stopService(new Intent(context, ActivityRecognitionRecordService.class));
-						//si disabilita anche il receiver per la registrazione dell'attività utente
-						//context.getApplicationContext().unregisterReceiver(userMotionReceiver);
-						//context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, UserMotionReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 					}					
 					
 					//quando viene lanciato questo evento di stop (fine di un intervallo di esplorazione
@@ -885,7 +801,6 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 						
 						context.stopService(new Intent(context, SamplingClassifyService.class));
 						//si disabilita anche il receiver
-						//context.getApplicationContext().unregisterReceiver(stairsReceiver);
 						context.getPackageManager().setComponentEnabledSetting(new ComponentName(context, StairsClassifierReceiver.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);					
 					
 					}	

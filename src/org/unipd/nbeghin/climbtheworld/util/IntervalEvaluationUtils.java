@@ -38,10 +38,8 @@ public final class IntervalEvaluationUtils {
 			
 		
 		//si recupera l'indice del giorno corrente all'interno della settimana
-		/////////		
-		//PER TEST ALGORITMO
 		int current_day_index = PreferenceManager.getDefaultSharedPreferences(context).getInt("artificialDayIndex", 0);
-		///////// altrimenti l'indice del giorno è (Calendar.getInstance().get(Calendar.DAY_OF_WEEK))-1;
+		
 
 		////////////////////////////
 		//LOG
@@ -263,19 +261,7 @@ public final class IntervalEvaluationUtils {
 			next_interval_stop=AlarmUtils.getAlarm(context, stop_alarm_id+2);		
 			propagateEvaluation(context, alarmDao, next_interval_start, next_interval_stop, current_day_index, evaluation, true);
 		}		
-				
 		
-		/*
-		//forse rivedere casi tra gioco senza scalini e niente gioco
-		float evaluation = 0f;			
-		if(qn>0){
-			evaluation=(GeneralUtils.evaluateInterval(qn, ActivityRecognitionIntentService.getConfidencesList(), ActivityRecognitionIntentService.getWeightsList()) 
-					+0.5f) / 2;
-		}
-		else{
-			evaluation=0.5f;
-		}
-		*/
 		
 		////////////////////////////
 		//LOG
@@ -418,8 +404,6 @@ public final class IntervalEvaluationUtils {
 		//sul file di log si riporta la stringa che indica la propagazione della valutazione	
 		LogUtils.writeIntervalStatus(context, current_day_index, start_alarm, stop_alarm, string);			
 		////////////////////////////			
-	}
-	
-	
+	}	
 	
 }
