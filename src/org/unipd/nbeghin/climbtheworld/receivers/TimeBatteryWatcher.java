@@ -39,8 +39,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 	
 	//stringhe che identificano le varie azioni per gli intent che può ricevere questo receiver
 	//(questo receiver potrà quindi ricevere gli intent mandati da sendBroadcast() che hanno
-	//impostato queste azioni)	
-	//private final String BOOT_ACTION = "android.intent.action.BOOT_COMPLETED";
+	//impostato queste azioni)
 	private final String INTERVAL_START_ACTION = "org.unipd.nbeghin.climbtheworld.INTERVAL_START";
 	private final String INTERVAL_STOP_ACTION = "org.unipd.nbeghin.climbtheworld.INTERVAL_STOP";	
 	private final String ENERGY_BALANCING = "org.unipd.nbeghin.climbtheworld.BATTERY_ENERGY_BALANCING";	
@@ -406,11 +405,11 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 				
 				String toLog="";
 				
-				//se il livello di batteria è critico (<=20%) e non si sono già fatte le opportune
+				//se il livello di batteria è critico (<=30%) e non si sono già fatte le opportune
 				//correzioni, si sospende l'algoritmo (ascolto e trigger)
-				if(batteryPct<=0.2f){
+				if(batteryPct<=0.3f){
 					
-					toLog+="TimeBatteryWatcher - ENERGY BALANCING, LEVEL <=20%";
+					toLog+="TimeBatteryWatcher - ENERGY BALANCING, LEVEL <=30%";
 					
 					if(!pref.getBoolean("low_battery_status", false)){
 						
@@ -425,7 +424,7 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 				}
 				else {
 					
-					toLog+="TimeBatteryWatcher - ENERGY BALANCING, LEVEL >20%";
+					toLog+="TimeBatteryWatcher - ENERGY BALANCING, LEVEL >30%";
 					
 					//se l'ultima volta è stato rilevato un livello di batteria critico, ora quest'ultimo
 					//si è alzato e, quindi, si fa ripartire l'algoritmo, impostando opportunamente il
@@ -454,25 +453,25 @@ public class TimeBatteryWatcher extends BroadcastReceiver {
 					
 					boolean restart=false;
 					
-					//se il livello di batteria L è <=45% si abbassa la frequenza di aggiornamento
+					//se il livello di batteria L è <=55% si abbassa la frequenza di aggiornamento
 					//del servizio di activity recognition:
-					//se 20%<L<=30%: ogni 20 secondi, se 30%<L<=45%: ogni 10 secondi, 
-					//se L>45% ogni 5 secondi (impostazione di default)
-					if(batteryPct<=0.3f){						
+					//se 30%<L<=40%: ogni 20 secondi, se 40%<L<=55%: ogni 10 secondi, 
+					//se L>55% ogni 5 secondi (impostazione di default)
+					if(batteryPct<=0.4f){						
 						if(ActivityRecognitionUtils.getDetectionIntervalMilliseconds(context)!=20000){							
 							//si imposta la frequenza di aggiornamento a 20 secondi
 							ActivityRecognitionUtils.setDetectionIntervalMilliseconds(context, 20000);
 							restart=true;
 						}
 					}
-					else if(batteryPct<=0.45f){					
+					else if(batteryPct<=0.55f){					
 						if(ActivityRecognitionUtils.getDetectionIntervalMilliseconds(context)!=10000){
 							//si imposta la frequenza di aggiornamento a 10 secondi
 							ActivityRecognitionUtils.setDetectionIntervalMilliseconds(context, 10000);	
 							restart=true;
 						}						
 					}
-					else{ //batteryPct>0.45						
+					else{ //batteryPct>0.55						
 						if(ActivityRecognitionUtils.getDetectionIntervalMilliseconds(context)!=5000){
 							//si imposta la frequenza di aggiornamento a 5 secondi
 							ActivityRecognitionUtils.setDetectionIntervalMilliseconds(context, 5000);
